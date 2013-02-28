@@ -1,0 +1,1 @@
+V2: Will change open to fopen and use getc instead of read

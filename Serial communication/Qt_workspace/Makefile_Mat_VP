@@ -1,0 +1,20 @@
+#Makefile for pgp test
+#Created by Matthias Van Parys
+
+PROJECT = pgp_test
+LIB = ../../common
+CC = gcc
+
+INCLUDES = -I$(LIB)/inc/
+SRC = main.c \
+	$(LIB)/src/pgp.c \
+
+CFLAGS = $(INCLUDES) -o $(PROJECT) -Wall
+
+all: 
+	$(CC) $(CFLAGS) $(SRC)
+
+.PHONY: clean
+
+clean: 
+	rm -f $(PROJECT)

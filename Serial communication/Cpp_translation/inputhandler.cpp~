@@ -1,0 +1,12 @@
+#include "inputhandler.h"
+class InputHandler;
+
+InputHandler::InputHandler()
+{
+
+}
+
+InputHandler::~InputHandler()
+{
+
+}
