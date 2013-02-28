@@ -80,7 +80,8 @@ int XML::uploadData(std::string type, std::vector<std::pair<std::string, double>
 	XMLCh tempStr[100];
         std::cout << "begin of upload" << std::endl;
         xercesc::XMLString::transcode("impl", tempStr, 99);
-        xercesc::DOMImplementation* impl = xercesc::DOMImplementationRegistry::getDOMImplementation(tempStr);
+        xercesc::DOMImplementation* impl = xercesc::DOMImplementation::getImplementation();
+
 
         xercesc::XMLString::transcode("doc", tempStr, 99);
         xercesc::DOMDocument* doc = impl->createDocument(0, tempStr, 0);
@@ -198,7 +199,7 @@ std::string XML::analyzeLoginReply( std::string fileName)
 	XMLCh tempStr[100];
 	xercesc::XMLString::transcode("impl", tempStr, 99);
 
-       	xercesc::DOMImplementation *impl = xercesc::DOMImplementationRegistry::getDOMImplementation(tempStr);
+        xercesc::DOMImplementation* impl = xercesc::DOMImplementation::getImplementation();
 	xercesc::DOMLSParser       *parser = ((xercesc::DOMImplementationLS*)impl)->createLSParser(xercesc::DOMImplementationLS::MODE_SYNCHRONOUS, 0);
 //	xercesc::DOMConfiguration  *config = parser->getDomConfig();
 	xercesc::DOMDocument *doc;
@@ -209,7 +210,8 @@ std::string XML::analyzeLoginReply( std::string fileName)
 	//config->setParameter(xercesc::XMLUni::fgXercesSchemaFullChecking, schemaFullChecking);	
 
 	doc = parser->parseURI(fileName.c_str());
-
+	
+	serializeDOM(doc);
 
 
 
