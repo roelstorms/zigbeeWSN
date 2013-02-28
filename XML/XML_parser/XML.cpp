@@ -15,9 +15,11 @@ XML::~XML()
 }
 
 
-int XML::serializeDOM(xercesc::DOMNode* node) {
+std::string XML::serializeDOM(xercesc::DOMNode* node) {
 
         XMLCh tempStr[100];
+	std::string XMLOutput;
+
         xercesc::XMLString::transcode("LS", tempStr, 99);
         xercesc::DOMImplementation *impl = xercesc::DOMImplementationRegistry::getDOMImplementation(tempStr);
         xercesc::DOMLSSerializer* theSerializer = ((xercesc::DOMImplementationLS*)impl)->createLSSerializer();
@@ -45,7 +47,7 @@ int XML::serializeDOM(xercesc::DOMNode* node) {
 	xercesc::XMLFormatTarget *myFormTarget = new xercesc::StdOutFormatTarget();
         xercesc::DOMLSOutput* theOutput = ((xercesc::DOMImplementationLS*)impl)->createLSOutput();
         theOutput->setByteStream(myFormTarget);
-	theSerializer->writeToString(node);
+	XMLOutput = xercesc::XMLString::transcode(theSerializer->writeToString(node));
         try {
             // do the serialization through DOMLSSerializer::write();
             theSerializer->write(node, theOutput);
@@ -55,29 +57,29 @@ int XML::serializeDOM(xercesc::DOMNode* node) {
             std::cout << "Exception message is: \n"
                  << message << "\n";
             xercesc::XMLString::release(&message);
-            return -1;
         }
         catch (const xercesc::DOMException& toCatch) {
             char* message = xercesc::XMLString::transcode(toCatch.msg);
             std::cout << "Exception message is: \n"
                  << message << "\n";
             xercesc::XMLString::release(&message);
-            return -1;
         }
         catch (...) {
             std::cout << "Unexpected Exception \n" ;
-            return -1;
         }
 
         theOutput->release();
         theSerializer->release();
-        return 0;
+        return XMLOutput;
     }
 
-int XML::uploadData(std::string type, std::vector<std::pair<std::string, double>> input)	// need to accept multiple arguments (pairs of field names and values)
+std::string XML::uploadData(std::string type, std::vector<std::pair<std::string, double>> input)	// need to accept multiple arguments (pairs of field names and values)
 {
 
 	XMLCh tempStr[100];
+
+	std::string XMLOutput;
+
         std::cout << "begin of upload" << std::endl;
         xercesc::XMLString::transcode("impl", tempStr, 99);
         xercesc::DOMImplementation* impl = xercesc::DOMImplementation::getImplementation();
@@ -119,9 +121,6 @@ int XML::uploadData(std::string type, std::vector<std::pair<std::string, double>
 		field->appendChild(fieldvalue);
 	}
 
-        
-
-
      	xercesc::XMLString::transcode("utimestamp", tempStr, 99);
         xercesc::DOMElement* utimestamp = doc->createElement(tempStr);
         myType->appendChild(utimestamp);  
@@ -131,26 +130,27 @@ int XML::uploadData(std::string type, std::vector<std::pair<std::string, double>
 	utimestamp->appendChild(timestampValue);
         std::cout << "end of upload" << std::endl;
 	
-	serializeDOM(upload);
+	XMLOutput = serializeDOM(upload);
   	// Other terminations and cleanup.
+	return XMLOutput;
 }
 
-int XML::createNewType(std::string name)
+std::string XML::createNewType(std::string name)
 {
-
-	return 0;
+	std::string XMLOutput;
+	return XMLOutput;
 }
 
-int XML::createNewUser()
+std::string XML::createNewUser()
 {
-
-	return 0;
+	std::string XMLOutput;
+	return XMLOutput;
 }
 
-int XML::login(std::string username, std::string password)
+std::string XML::login(std::string username, std::string password)
 {
 	std::cout << "XML::login begin" << std::endl;
-
+	std::string XMLOutput;
 	XMLCh tempStr[100];
 
         xercesc::XMLString::transcode("impl", tempStr, 99);
@@ -183,7 +183,7 @@ int XML::login(std::string username, std::string password)
 	xercesc::DOMText* usernameValue = doc->createTextNode(tempStr);
 	usernameNode->appendChild(usernameValue);
 	
-	serializeDOM(userLoginNode);
+	XMLOutput = serializeDOM(userLoginNode);
 
 	std::cout << "XML::login end" << std::endl;
 	return 0;
@@ -210,8 +210,33 @@ std::string XML::analyzeLoginReply( std::string fileName)
 	//config->setParameter(xercesc::XMLUni::fgXercesSchemaFullChecking, schemaFullChecking);	
 
 	doc = parser->parseURI(fileName.c_str());
-	
-	serializeDOM(doc);
+	xercesc::DOMElement * docElement = doc->getDocumentElement();	
+	std::cout << "docElement count: " << docElement->getChildElementCount () << std::endl;
+	//for(int i = 0; i < docElement->getChildElementCount(); ++i)
+	xercesc::DOMElement * nextElement;
+	nextElement = docElement->getFirstElementChild();
+	while(nextElement != NULL)
+	{
+		//std::cout << "element name: " <<  xercesc::XMLString::transcode(nextElement->getTagName()) << std::endl;
+		if(xercesc::XMLString::compareIString(nextElement->getTagName(), xercesc::XMLString::transcode("token")) == 0)
+		{
+			//std::cout << "nextelement has children" << std::endl << xercesc::XMLString::transcode(nextElement->getTextContent()) << std::endl;
+			token = std::string(xercesc::XMLString::transcode(nextElement->getTextContent()));
+
+		}
+		else if(xercesc::XMLString::compareIString(nextElement->getTagName(), xercesc::XMLString::transcode("error")) == 0)
+		{
+			if(std::string(xercesc::XMLString::transcode(nextElement->getTextContent())) == std::string("True"))
+			{
+				//std::cout << "Error occured in receiving the token" << std::endl;
+				token = nullptr;
+			}
+
+		}
+
+		nextElement = nextElement->getNextElementSibling();
+		
+	}	
 
 
 

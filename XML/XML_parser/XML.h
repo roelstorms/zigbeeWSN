@@ -29,11 +29,12 @@ class XML
 	public:
 	XML();
 	~XML();
-	int serializeDOM(xercesc::DOMNode * node);
-	int uploadData(std::string type, std::vector<std::pair<std::string, double>> input);
-	int createNewType(std::string name);
-	int createNewUser();
-	int login(std::string username, std::string password);
+	std::string serializeDOM(xercesc::DOMNode * node);
+	std::string uploadData(std::string type, std::vector<std::pair<std::string, double>> input);
+	std::string createNewType(std::string name);
+	std::string createNewUser();
+	std::string createNewInstallation();
+	std::string login(std::string username, std::string password);
 	std::string analyzeLoginReply( std::string reply);
 	
 
