@@ -205,47 +205,9 @@ std::string XML::createNewInstallation(std::string nameValue, std::string descri
 	return XMLOutput;
 }
 
-std::string XML::createNewType(std::string aname)
+std::string XML::createNewType(std::string name)
 {
 	std::string XMLOutput;
-	XMLCh tempStr[100];
-	std::cout << "begin of createNewType" << std::endl;
-
-        xercesc::XMLString::transcode("doc", tempStr, 99);
-        xercesc::DOMDocument* doc = impl->createDocument(0, tempStr, 0);
-	xercesc::DOMElement* docElement = doc->getDocumentElement();
-
-        xercesc::XMLString::transcode("usertype", tempStr, 99);
-        xercesc::DOMElement* usertype = doc->createElement(tempStr);
-        docElement->appendChild(usertype);
-
-        xercesc::XMLString::transcode("field", tempStr, 99);
-        xercesc::DOMElement* field = doc->createElement(tempStr);
-        usertype->appendChild(field);
-        
-        xercesc::XMLString::transcode("sql", tempStr, 99);
-        xercesc::DOMElement* sql = doc->createElement(tempStr);
-        field->appendChild(sql);
-
-        xercesc::XMLString::transcode("l1", tempStr, 99);
-        xercesc::DOMElement* l1 = doc->createElement(tempStr);
-        sql->appendChild(l1);
-	
-	xercesc::XMLString::transcode("l2", tempStr, 99);
-        xercesc::DOMElement* l2 = doc->createElement(tempStr);
-        sql->appendChild(l2);
-
-	xercesc::XMLString::transcode("type", tempStr, 99);
-        xercesc::DOMElement* type = doc->createElement(tempStr);
-        field->appendChild(type);
-	
-	xercesc::XMLString::transcode("name", tempStr, 99);
-        xercesc::DOMElement* name = doc->createElement(tempStr);
-        field->appendChild(name);
-	
-	XMLOutput = serializeDOM(usertype);
-	doc->release();
-
 	return XMLOutput;
 }
 
