@@ -24,7 +24,7 @@
 class XML
 {
 	private:
-	
+	xercesc::DOMImplementation *impl; 
 
 	public:
 	XML();
@@ -36,7 +36,7 @@ class XML
 	std::string createNewInstallation();
 	std::string login(std::string username, std::string password);
 	std::string analyzeLoginReply( std::string reply);
-	
+	std::string createNewInstallation(std::string nameValue, std::string descriptionValue, std::string inuseValue);
 
 
 };

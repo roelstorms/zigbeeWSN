@@ -17,7 +17,9 @@ int main(int argc, char* argv[])
 
 //	XMLParser.login(std::string("roel"), std::string("roel"));
 
-	std::cout << XMLParser.analyzeLoginReply(std::string("../../Curl/HTTP/log.txt")) << std::endl; 
+//	std::cout << XMLParser.analyzeLoginReply(std::string("../../Curl/HTTP/log.txt")) << std::endl; 
+
+	std::cout << XMLParser.createNewInstallation(std::string("name"), std::string("description"), std::string("True"));
 	return 0;	
 }
 

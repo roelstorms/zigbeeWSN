@@ -5,8 +5,13 @@ XML::XML()
 	 	xercesc::XMLPlatformUtils::Initialize();
 	 }
 	 catch (const xercesc::XMLException& toCatch) {
-	 	// Do your failure processing here
+		 std::cout << "xercesc::XMLPlatformUtils::Initialize() failed" << std::endl << std::endl;// Do your failure processing here
 	 }
+ 
+	 XMLCh tempStr[100];
+    	 xercesc::XMLString::transcode("Range", tempStr, 99);
+	 impl = xercesc::DOMImplementationRegistry::getDOMImplementation(tempStr);
+
 }
 
 XML::~XML()
@@ -21,7 +26,6 @@ std::string XML::serializeDOM(xercesc::DOMNode* node) {
 	std::string XMLOutput;
 
         xercesc::XMLString::transcode("LS", tempStr, 99);
-        xercesc::DOMImplementation *impl = xercesc::DOMImplementationRegistry::getDOMImplementation(tempStr);
         xercesc::DOMLSSerializer* theSerializer = ((xercesc::DOMImplementationLS*)impl)->createLSSerializer();
 
         // optionally you can set some features on this serializer
@@ -75,15 +79,13 @@ std::string XML::serializeDOM(xercesc::DOMNode* node) {
 
 std::string XML::uploadData(std::string type, std::vector<std::pair<std::string, double>> input)	// need to accept multiple arguments (pairs of field names and values)
 {
-
 	XMLCh tempStr[100];
 
 	std::string XMLOutput;
 
         std::cout << "begin of upload" << std::endl;
         xercesc::XMLString::transcode("impl", tempStr, 99);
-        xercesc::DOMImplementation* impl = xercesc::DOMImplementation::getImplementation();
-
+        //xercesc::DOMImplementation* impl = xercesc::DOMImplementation::getImplementation();
 
         xercesc::XMLString::transcode("doc", tempStr, 99);
         xercesc::DOMDocument* doc = impl->createDocument(0, tempStr, 0);
@@ -93,8 +95,7 @@ std::string XML::uploadData(std::string type, std::vector<std::pair<std::string,
         xercesc::DOMElement* upload = doc->createElement(tempStr);
         docElement->appendChild(upload);
 
-
-        std::cout << "mid of upload" << std::endl;
+	std::cout << "mid of upload" << std::endl;
         xercesc::XMLString::transcode("items", tempStr, 99);
         xercesc::DOMElement* items = doc->createElement(tempStr);
         upload->appendChild(items);
@@ -135,6 +136,76 @@ std::string XML::uploadData(std::string type, std::vector<std::pair<std::string,
 	return XMLOutput;
 }
 
+std::string XML::createNewInstallation(std::string nameValue, std::string descriptionValue, std::string inuseValue)
+{
+	XMLCh tempStr[100];
+
+	std::string XMLOutput;
+
+        std::cout << "begin of createNewInstallation" << std::endl;
+        xercesc::XMLString::transcode("impl", tempStr, 99);
+        //xercesc::DOMImplementation* impl = xercesc::DOMImplementation::getImplementation();
+
+        xercesc::XMLString::transcode("doc", tempStr, 99);
+        xercesc::DOMDocument* doc = impl->createDocument(0, tempStr, 0);
+	xercesc::DOMElement* docElement = doc->getDocumentElement();
+
+        xercesc::XMLString::transcode("Installation", tempStr, 99);
+        xercesc::DOMElement* installation = doc->createElement(tempStr);
+        docElement->appendChild(installation);
+
+        xercesc::XMLString::transcode("start", tempStr, 99);
+        xercesc::DOMElement* start = doc->createElement(tempStr);
+        installation->appendChild(start);
+        
+        xercesc::XMLString::transcode("2013-02-28T14:48:29", tempStr, 99);
+//	xercesc::XMLString::transcode(fieldValue.c_str(), tempStr, 99);
+	xercesc::DOMText* startFieldValue = doc->createTextNode(tempStr);
+	start->appendChild(startFieldValue);
+
+        xercesc::XMLString::transcode("end", tempStr, 99);
+        xercesc::DOMElement* end = doc->createElement(tempStr);
+        installation->appendChild(end);
+
+        xercesc::XMLString::transcode("0001-01-01T00:00:00", tempStr, 99);
+//	xercesc::XMLString::transcode(fieldValue.c_str(), tempStr, 99);
+	xercesc::DOMText* endFieldValue = doc->createTextNode(tempStr);
+	end->appendChild(endFieldValue);
+
+        xercesc::XMLString::transcode("id", tempStr, 99);
+        xercesc::DOMElement* id = doc->createElement(tempStr);
+        installation->appendChild(id);
+
+        xercesc::XMLString::transcode("0", tempStr, 99);
+//	xercesc::XMLString::transcode(fieldValue.c_str(), tempStr, 99);
+	xercesc::DOMText* idFieldValue = doc->createTextNode(tempStr);
+	id->appendChild(idFieldValue);
+	
+        xercesc::XMLString::transcode("name", tempStr, 99);
+        xercesc::DOMElement* name = doc->createElement(tempStr);
+        installation->appendChild(name);
+
+	xercesc::XMLString::transcode(nameValue.c_str(), tempStr, 99);
+	xercesc::DOMText* nameFieldValue = doc->createTextNode(tempStr);
+	name->appendChild(nameFieldValue);
+        
+	xercesc::XMLString::transcode("description", tempStr, 99);
+        xercesc::DOMElement* description = doc->createElement(tempStr);
+        installation->appendChild(description);
+
+	xercesc::XMLString::transcode(descriptionValue.c_str(), tempStr, 99);
+	xercesc::DOMText* descriptionFieldValue = doc->createTextNode(tempStr);
+	description->appendChild(descriptionFieldValue);
+	
+	xercesc::XMLString::transcode("inuse", tempStr, 99);
+        xercesc::DOMElement* inuse = doc->createElement(tempStr);
+        installation->appendChild(inuse);
+
+	xercesc::XMLString::transcode(inuseValue.c_str(), tempStr, 99);
+	xercesc::DOMText* inuseFieldValue = doc->createTextNode(tempStr);
+	inuse->appendChild(inuseFieldValue);
+}
+
 std::string XML::createNewType(std::string name)
 {
 	std::string XMLOutput;
@@ -153,11 +224,14 @@ std::string XML::login(std::string username, std::string password)
 	std::string XMLOutput;
 	XMLCh tempStr[100];
 
-        xercesc::XMLString::transcode("impl", tempStr, 99);
-        xercesc::DOMImplementation* impl = xercesc::DOMImplementation::getImplementation();
+
+        //xercesc::XMLString::transcode("impl", tempStr, 99);
+        //xercesc::DOMImplementation* impl = xercesc::DOMImplementation::getImplementation();
 
 	std::cout << "XML::login mid" << std::endl;
-        
+        	
+	
+
 	xercesc::XMLString::transcode("doc", tempStr, 99);
         impl->createDocument(0, tempStr, 0);
 	xercesc::DOMDocument* doc = impl->createDocument();
@@ -186,7 +260,7 @@ std::string XML::login(std::string username, std::string password)
 	XMLOutput = serializeDOM(userLoginNode);
 
 	std::cout << "XML::login end" << std::endl;
-	return 0;
+	return XMLOutput;
 }
 
 
@@ -197,9 +271,10 @@ std::string XML::analyzeLoginReply( std::string fileName)
 	std::string token;
 	
 	XMLCh tempStr[100];
-	xercesc::XMLString::transcode("impl", tempStr, 99);
 
-        xercesc::DOMImplementation* impl = xercesc::DOMImplementation::getImplementation();
+	//xercesc::XMLString::transcode("impl", tempStr, 99);
+        //xercesc::DOMImplementation* impl = xercesc::DOMImplementation::getImplementation();
+
 	xercesc::DOMLSParser       *parser = ((xercesc::DOMImplementationLS*)impl)->createLSParser(xercesc::DOMImplementationLS::MODE_SYNCHRONOUS, 0);
 //	xercesc::DOMConfiguration  *config = parser->getDomConfig();
 	xercesc::DOMDocument *doc;
