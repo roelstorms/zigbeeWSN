@@ -19,8 +19,10 @@
 #include <iostream>
 #include <vector>
 #include <utility>
-
+#include <sys/time.h>
 #include <sstream>
+#include <stdlib.h>
+
 class XML
 {
 	private:
@@ -31,9 +33,8 @@ class XML
 	~XML();
 	std::string serializeDOM(xercesc::DOMNode * node);
 	std::string uploadData(std::string type, std::vector<std::pair<std::string, double>> input);
-	std::string createNewType(std::string name);
+	std::string createNewType(std::string nameValue, std::string typeValue);
 	std::string createNewUser();
-	std::string createNewInstallation();
 	std::string login(std::string username, std::string password);
 	std::string analyzeLoginReply( std::string reply);
 	std::string createNewInstallation(std::string nameValue, std::string descriptionValue, std::string inuseValue);
