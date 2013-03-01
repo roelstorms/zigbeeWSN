@@ -25,7 +25,7 @@ size_t Http::write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 	return size * nmemb;
 }
 
-std::ctring Http::generateDestination()
+std::string Http::generateDestination()
 {
 	// userID:installationID:sensorgroupID:timestamp:checksum
 	std::string output;
@@ -61,7 +61,7 @@ std::string Http::generateCode(std::string url)
 void Http::sendGet(std::string urlAddition)
 {
 	CURLcode result;
-	std::string url("http://ipsum.groept.be/");
+	std::string url("http://ipsum.groept.be");
 	url.append(urlAddition);	
 	std::cout << "string used:" << std::endl << url << std::endl << std::endl;
     	if(curl) {
@@ -85,7 +85,7 @@ void Http::sendGet(std::string urlAddition)
 void Http::sendPost(std::string urlAddition, std::string data)
 {
 	CURLcode result;
-	std::string url("http://ipsum.groept.be/");
+	std::string url("http://ipsum.groept.be");
 	url.append(urlAddition);	
 	std::cout << "string used:" << std::endl << url << std::endl << std::endl;
 	std::cout << "data sent: " << std::endl << data << std::endl << std::endl;

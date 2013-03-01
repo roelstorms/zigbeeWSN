@@ -38,8 +38,8 @@ class XML
 	std::string login(std::string username, std::string password);
 	std::string analyzeLoginReply( std::string reply);
 	std::string createNewInstallation(std::string nameValue, std::string descriptionValue, std::string inuseValue);
-
-
+	std::string createNewSensorGroup(std::string installationIDValue, std::string nameValue, std::string descriptionValue, std::string inuseValue); 
+	std::string createNewSensor(std::string sensorGroupIDValue, std::string nameValue, std::string descriptionValue, std::string inuseValue);
 };
 
 #endif

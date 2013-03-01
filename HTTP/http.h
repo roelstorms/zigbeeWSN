@@ -29,6 +29,7 @@ class Http
 		void sendGet(std::string urlAddition);
 		void sendPost(std::string urlAddition, std::string data);
 		std::string generateCode(std::string url);
+		std::string generateDestination();
 };
 
 #endif
