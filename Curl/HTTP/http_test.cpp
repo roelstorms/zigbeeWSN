@@ -9,5 +9,6 @@ int main(int argc, char * argv[])
 	url.append(socket.generateCode(std::string("/auth/a31dd4f1-9169-4475-b316-764e1e737653")));
 
 	socket.sendPost(url, std::string("<UserLogin><username>roel</username><password>roel</password></UserLogin>"));
+	
 	return 0;
 }

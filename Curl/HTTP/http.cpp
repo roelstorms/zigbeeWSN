@@ -23,7 +23,15 @@ size_t Http::write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 	myfile.open ("log.txt");
 	myfile << std::string((char *)buffer);
 	return size * nmemb;
-} 
+}
+
+std::ctring Http::generateDestination()
+{
+	// userID:installationID:sensorgroupID:timestamp:checksum
+	std::string output;
+	output.append("21");
+	return output;
+}
 
 std::string Http::generateCode(std::string url)
 {
