@@ -1,2 +1,0 @@
-all: 
-	g++ XMLTest.cpp -o XMLTest.out -lxerces-c 

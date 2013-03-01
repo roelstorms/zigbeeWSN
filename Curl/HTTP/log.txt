@@ -1,1 +1,0 @@
-<?xml version="1.0" encoding="utf-16"?><Credentials><token>bfbfaef9-bef7-4ea2-8110-c06d31e53ea4</token><error>False</error><expire>2013-02-27T12:30:49</expire></Credentials>
