@@ -98,8 +98,19 @@ std::string XML::uploadData(std::string type, std::vector<std::pair<std::string,
         xercesc::DOMElement* upload = doc->createElement(tempStr);
         docElement->appendChild(upload);
 
-	std::cout << "mid of upload" << std::endl;
-        xercesc::XMLString::transcode("items", tempStr, 99);
+     	xercesc::XMLString::transcode("utimestamp", tempStr, 99);
+        xercesc::DOMElement* utimestamp = doc->createElement(tempStr);
+        upload->appendChild(utimestamp);  
+
+	
+	unsigned long int sec = time(NULL);
+	std::cout << "time: " << std::endl << std::string(std::to_string(sec)) << std::endl;
+
+	xercesc::XMLString::transcode("2013-03-03T18:28:02", tempStr, 99);
+        xercesc::DOMText* timestampValue = doc->createTextNode(tempStr);
+	utimestamp->appendChild(timestampValue);
+        
+	xercesc::XMLString::transcode("items", tempStr, 99);
         xercesc::DOMElement* items = doc->createElement(tempStr);
         upload->appendChild(items);
 
@@ -123,14 +134,6 @@ std::string XML::uploadData(std::string type, std::vector<std::pair<std::string,
 		field->appendChild(fieldvalue);
 	}
 
-     	xercesc::XMLString::transcode("utimestamp", tempStr, 99);
-        xercesc::DOMElement* utimestamp = doc->createElement(tempStr);
-        myType->appendChild(utimestamp);  
-
-	xercesc::XMLString::transcode("0", tempStr, 99);
-        xercesc::DOMText* timestampValue = doc->createTextNode(tempStr);
-	utimestamp->appendChild(timestampValue);
-        std::cout << "end of upload" << std::endl;
 	
 	XMLOutput = serializeDOM(upload);
   	// Other terminations and cleanup.
@@ -157,9 +160,7 @@ std::string XML::createNewInstallation(std::string nameValue, std::string descri
         xercesc::DOMElement* start = doc->createElement(tempStr);
         installation->appendChild(start);
 
-	unsigned long int sec = time(NULL);
-	std::cout << "time: " << std::endl << std::string(std::to_string(sec)) << std::endl;
-        xercesc::XMLString::transcode("2013-02-28T14:48:29", tempStr, 99);
+	xercesc::XMLString::transcode("2013-02-28T14:48:29", tempStr, 99);
 	xercesc::DOMText* startFieldValue = doc->createTextNode(tempStr);
 	start->appendChild(startFieldValue);
 

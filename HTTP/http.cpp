@@ -25,11 +25,31 @@ size_t Http::write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 	return size * nmemb;
 }
 
-std::string Http::generateDestination()
+
+std::string Http::calculateDestination(int userID, int installationID, int sensorGroupID, int sensorID)
 {
-	// userID:installationID:sensorgroupID:timestamp:checksum
 	std::string output;
-	output.append("21");
+	output.append(std::to_string(userID));
+	output.append(":");
+	output.append(std::to_string(installationID));
+	output.append(":");
+	output.append(std::to_string(sensorGroupID));
+	output.append(":");
+	output.append(std::to_string(sensorID));
+	output.append(":");
+	
+	unsigned long int sec = time(NULL);
+	std::cout << "time: " << std::endl << std::string(std::to_string(sec)) << std::endl;
+	
+	output.append(std::to_string(sec));
+	output.append(":");
+
+	int checksum = userID + installationID + sensorGroupID + sensorID + sec;
+	std::string stringChecksum(std::to_string(checksum));
+	std::cout << "long checksum:" << std::endl << stringChecksum << std::endl;
+	std::string shortChecksum(stringChecksum.end()-6, stringChecksum.end());
+	output.append(shortChecksum);
+	
 	return output;
 }
 

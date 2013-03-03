@@ -23,13 +23,12 @@ class Http
 	public: 
 		Http(std::string urlBase);
 		~Http();
-
+		std::string calculateDestination(int userID, int installationID, int sensorGroupID, int sensorID);
 		size_t read_data( void *ptr, size_t size, size_t nmemb, void *userdata);
 		static size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp);
 		void sendGet(std::string urlAddition);
 		void sendPost(std::string urlAddition, std::string data);
 		std::string generateCode(std::string url);
-		std::string generateDestination();
 };
 
 #endif

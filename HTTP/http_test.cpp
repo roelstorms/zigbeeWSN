@@ -18,9 +18,13 @@ int main(int argc, char * argv[])
 	//url.append("/addInstall/");
 	//url.append("/addGroup/");
 	//url.append("/addSensor/");
-	url.append("/addType/");
-	url.append(token);
+	//url.append("/addType/");
+	url.append("/upload");
+	//url.append(token);
 	url.append("/");
+	url.append(socket.calculateDestination(21, 31, 320, 2029));
+	url.append("/");
+
 	temp.clear();
 	temp.append(url);
 	temp.append("a31dd4f1-9169-4475-b316-764e1e737653");
@@ -31,6 +35,20 @@ int main(int argc, char * argv[])
 
 	//socket.sendPost(url, XMLParser.createNewSensor(std::string("320"), std::string("LightSens1"), std::string("a test sensor to see if this request works"), std::string ("True")));
 
-	socket.sendPost(url, XMLParser.createNewType(std::string("lightSensor2"), std::string("lightSensorName2")));
+	//socket.sendPost(url, XMLParser.createNewType(std::string("lightSensor2"), std::string("lightSensorName2")));
+
+	std::pair<std::string, double> pair;
+	pair.first = std::string("field1");
+	pair.second = 1.1;
+	std::vector<std::pair<std::string, double>> input;
+	input.push_back(pair);
+	//pair.first = std::string("type2");
+	//pair.second = 0.6;
+	//input.push_back(pair);
+
+	socket.sendPost(url, XMLParser.uploadData(std::string("ddd89535f0ea3489cb23d1417f7c8eeca"), input));
+	
+
+
 	return 0;
 }
