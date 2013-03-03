@@ -12,14 +12,16 @@
 #include <sstream>
 #include <iterator>
 #include <stdlib.h>
-
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/date_time/local_time/local_time.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
 class Http
 {
 
 	private:
 	  	CURL *curl;	
 		std::string urlBase;
-		std::string personalKeyi;
+		std::string personalKey;
 	public: 
 		Http(std::string urlBase);
 		~Http();
@@ -29,6 +31,7 @@ class Http
 		void sendGet(std::string urlAddition);
 		void sendPost(std::string urlAddition, std::string data);
 		std::string generateCode(std::string url);
+		std::string getCurrentTimestamp();
 };
 
 #endif

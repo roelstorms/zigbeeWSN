@@ -49,6 +49,6 @@ int main(int argc, char * argv[])
 	socket.sendPost(url, XMLParser.uploadData(std::string("ddd89535f0ea3489cb23d1417f7c8eeca"), input));
 	
 
-
+	socket.getCurrentTimestamp();
 	return 0;
 }
