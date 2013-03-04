@@ -15,6 +15,24 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/local_time/local_time.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
+
+#include <boost/archive/iterators/base64_from_binary.hpp>
+#include <boost/archive/iterators/binary_from_base64.hpp>
+#include <boost/archive/iterators/insert_linebreaks.hpp>
+#include <boost/archive/iterators/transform_width.hpp>
+#include <boost/archive/iterators/ostream_iterator.hpp>
+
+#include <boost/archive/iterators/base64_from_binary.hpp>
+#include <boost/archive/iterators/binary_from_base64.hpp>
+#include <boost/archive/iterators/transform_width.hpp>
+#include <boost/archive/iterators/insert_linebreaks.hpp>
+#include <boost/archive/iterators/remove_whitespace.hpp>
+#include <iostream>
+#include <string>
+
+#include <sstream>
+
+#include "../XML/XML.h"
 class Http
 {
 
@@ -32,6 +50,8 @@ class Http
 		void sendPost(std::string urlAddition, std::string data);
 		std::string generateCode(std::string url);
 		std::string getCurrentTimestamp();
-};
+		void uploadData();
+		std::string toBase64(std::string input);	
+};	
 
 #endif

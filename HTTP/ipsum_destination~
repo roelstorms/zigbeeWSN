@@ -1,4 +1,32 @@
 user id 21
 installation id 31
 sensorgroup 320
+sensor 2029
+
+
+
+
+http://ipsum.groept.be/addType/51e94146-507c-41ff-9fc1-30bec4dee8d9/8664259f2b13a4922cea2a724b34c7396a384edf
+
+data sent: 
+
+<usertype name="lightSensorRoel">
+
+  <field>
+    <sql>
+      <type>decimal_ps_</type>
+      <l1>5</l1>
+      <l2>2</l2>
+    </sql>
+    <type>float</type>
+    <name>temperature</name>
+  </field>
+
+</usertype>
+
+
+reply:
+
+<?xml version="1.0" encoding="utf-16"?><UserObject><name>lightSensorRoel</name><dataname>d7b2e54076c9249a4b4df8fa10be90d78</dataname></UserObject>
+
 

@@ -106,7 +106,7 @@ std::string XML::uploadData(std::string type, std::vector<std::pair<std::string,
 	unsigned long int sec = time(NULL);
 	std::cout << "time: " << std::endl << std::string(std::to_string(sec)) << std::endl;
 
-	xercesc::XMLString::transcode("2013-03-03T18:28:02", tempStr, 99);
+	xercesc::XMLString::transcode(std::to_string(sec).c_str(), tempStr, 99);
         xercesc::DOMText* timestampValue = doc->createTextNode(tempStr);
 	utimestamp->appendChild(timestampValue);
         
@@ -132,6 +132,15 @@ std::string XML::uploadData(std::string type, std::vector<std::pair<std::string,
 		xercesc::XMLString::transcode(fieldValue.c_str(), tempStr, 99);
 		xercesc::DOMText* fieldvalue = doc->createTextNode(tempStr);
 		field->appendChild(fieldvalue);
+
+		xercesc::XMLString::transcode("utimestamp", tempStr, 99);
+		xercesc::DOMNode* fieldTimestamp = doc->createElement(tempStr);
+		myType->appendChild(fieldTimestamp);
+
+		xercesc::XMLString::transcode("0", tempStr, 99);
+		xercesc::DOMText* fieldTimestampValue = doc->createTextNode(tempStr);
+		fieldTimestamp->appendChild(fieldTimestampValue);
+
 	}
 
 	
@@ -388,7 +397,7 @@ std::string XML::createNewSensor(std::string sensorGroupIDValue, std::string nam
 	return XMLOutput;
 }
 
-std::string XML::createNewType(std::string nameValue, std::string typeValue)
+std::string XML::createNewType(std::string aName, std::string aFieldName)
 {
 	std::string XMLOutput;
 	XMLCh tempStr[100];
@@ -400,7 +409,7 @@ std::string XML::createNewType(std::string nameValue, std::string typeValue)
 
         xercesc::XMLString::transcode("usertype", tempStr, 99);
         xercesc::DOMElement* usertype = doc->createElement(tempStr);
-	usertype->setAttribute(xercesc::XMLString::transcode("name"), xercesc::XMLString::transcode(typeValue.c_str()));
+	usertype->setAttribute(xercesc::XMLString::transcode("name"), xercesc::XMLString::transcode(aName.c_str()));
         docElement->appendChild(usertype);
 
         xercesc::XMLString::transcode("field", tempStr, 99);
@@ -439,7 +448,7 @@ std::string XML::createNewType(std::string nameValue, std::string typeValue)
         xercesc::DOMElement* type = doc->createElement(tempStr);
         field->appendChild(type);
 	
-	xercesc::XMLString::transcode("int", tempStr, 99);
+	xercesc::XMLString::transcode("float", tempStr, 99);
 	xercesc::DOMText* typeFieldValue = doc->createTextNode(tempStr);
 	type->appendChild(typeFieldValue);
 
@@ -447,7 +456,7 @@ std::string XML::createNewType(std::string nameValue, std::string typeValue)
         xercesc::DOMElement* name = doc->createElement(tempStr);
         field->appendChild(name);
 	
-	xercesc::XMLString::transcode(nameValue.c_str(), tempStr, 99);
+	xercesc::XMLString::transcode(aFieldName.c_str(), tempStr, 99);
 	xercesc::DOMText* nameFieldValue = doc->createTextNode(tempStr);
 	name->appendChild(nameFieldValue);
 

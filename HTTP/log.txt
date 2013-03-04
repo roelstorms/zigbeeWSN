@@ -3,9 +3,10 @@ cf9c;} table td { border-right: 2px white solid; border-bottom: 2px white solid;
   <body>
     <div id="content">
       <p class="heading1">Request Error</p>
-      <p>The server encountered an error processing the request. The exception message is 'The input is not a valid Base-64 string as it contains a non-base 64 character, more than two padding characters, or a non-white space character among the padding characters. '. See server logs for more details. The exception stack trace is: </p>
-      <p>   at System.Convert.FromBase64String(String s)
-   at Ipsum.Control.Destination..ctor(String destination)
+      <p>The server encountered an error processing the request. The exception message is 'There is an error in XML document (1, 2).'. See server logs for more details. The exception stack trace is: </p>
+      <p>   at System.Xml.Serialization.XmlSerializer.Deserialize(XmlReader xmlReader, String encodingStyle, XmlDeserializationEvents events)
+   at System.Xml.Serialization.XmlSerializer.Deserialize(XmlReader xmlReader, String encodingStyle)
+   at Ipsum.Control.DBManager.UploadObjects(Destination destination, Stream input)
    at Ipsum.Service.Ipsum.Upload(String destination, String code, Stream input)
    at SyncInvokeUpload(Object , Object[] , Object[] )
    at System.ServiceModel.Dispatcher.SyncMethodInvoker.Invoke(Object instance, Object[] inputs, Object[]&amp; outputs)

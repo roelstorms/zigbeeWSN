@@ -33,7 +33,7 @@ class XML
 	~XML();
 	std::string serializeDOM(xercesc::DOMNode * node);
 	std::string uploadData(std::string type, std::vector<std::pair<std::string, double>> input);
-	std::string createNewType(std::string nameValue, std::string typeValue);
+	std::string createNewType(std::string aName, std::string aFieldName);
 	std::string createNewUser();
 	std::string login(std::string username, std::string password);
 	std::string analyzeLoginReply( std::string reply);
