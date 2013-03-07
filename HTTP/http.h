@@ -50,8 +50,9 @@ class Http
 		void sendPost(std::string urlAddition, std::string data);
 		std::string generateCode(std::string url);
 		std::string getCurrentTimestamp();
-		void uploadData();
-		std::string toBase64(std::string input);	
+		void uploadData(float data);
+		std::string toBase64(std::string input);
+		std::string getEntity(std::string destinationBase64);	
 };	
 
 #endif

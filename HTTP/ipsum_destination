@@ -57,6 +57,39 @@ data sent:
 
 </usertype>
 
-
-
+reply:
 <?xml version="1.0" encoding="utf-16"?><UserObject><name>lightSensor</name><dataname>d3bae7e83c3fd4165b90570163927da19</dataname></UserObject>
+
+
+
+
+
+
+http://ipsum.groept.be/addSensor/eb255533-d359-4fd6-bc3b-e5bf275475ad/cc12b852f1ea7755f18979518065152b5bfd656f
+
+data sent: 
+
+<Sensor>
+
+  <location>14.04</location>
+
+  <sensorgroupid>320</sensorgroupid>
+
+  <frequency>5</frequency>
+
+  <dataname>d3bae7e83c3fd4165b90570163927da19</dataname>
+
+  <id>0</id>
+
+  <name>Module4LightSens</name>
+
+  <description>a test sensor to see if this request works</description>
+
+  <inuse>True</inuse>
+
+  <infoname/>
+
+</Sensor>
+
+reply:
+<?xml version="1.0" encoding="utf-16"?><Sensor><location>14.04</location><sensorgroupid>320</sensorgroupid><frequency>5</frequency><dataname>d3bae7e83c3fd4165b90570163927da19</dataname><id>2041</id><name>Module4LightSens</name><description>a test sensor to see if this request works</description><inuse>True</inuse><infoname></infoname></Sensor>

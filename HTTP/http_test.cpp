@@ -1,11 +1,13 @@
 #include "http.h"
 #include "../XML/XML.h"
 
+
+
 int main(int argc, char * argv[])
 {
 
 	Http socket(std::string(""));
-	socket.uploadData();
+	socket.uploadData(2.1);
 /*	
 	XML XMLParser;
 	std::string url("/auth/");
@@ -18,8 +20,8 @@ int main(int argc, char * argv[])
 	url.clear();
 	//url.append("/addInstall/");
 	//url.append("/addGroup/");
-	//url.append("/addSensor/");
-	url.append("/addType/");
+	url.append("/addSensor/");
+	//url.append("/addType/");
 	//url.append("/upload");
 	//url.append("/query/");
 	url.append(token);
@@ -36,9 +38,9 @@ int main(int argc, char * argv[])
 	
 	//socket.sendPost(url, XMLParser.createNewSensorGroup(std::string("31"), std::string("Module 14"), std::string("a test sensor groep to see if this request works"), std::string ("True")));
 
-	//socket.sendPost(url, XMLParser.createNewSensor(std::string("320"), std::string("LightSens1"), std::string("a test sensor to see if this request works"), std::string ("True")));
+	socket.sendPost(url, XMLParser.createNewSensor(std::string("320"), std::string("Module4LightSens"), std::string("d3bae7e83c3fd4165b90570163927da19"), std::string("a test sensor to see if this request works"), std::string ("True")));
 
-	socket.sendPost(url, XMLParser.createNewType(std::string("lightSensor"), std::string("intensity")));
+	//socket.sendPost(url, XMLParser.createNewType(std::string("lightSensor"), std::string("intensity")));
 
 	//std::pair<std::string, double> pair;
 	//pair.first = std::string("field");
@@ -55,6 +57,6 @@ int main(int argc, char * argv[])
 
 	//std::string xml("<?xml version=\"1.0\" encoding=\"utf-8\"?><get><start>2012-01-01T00:00:00</start><end>9999-12-31T23:59:59</end><select><field><name>temperature</name></field></select></get>");
 	//socket.sendPost(url, xml);
-	*/
+*/	
 	return 0;
 }

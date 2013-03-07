@@ -6,6 +6,9 @@
 #include <stdio.h>   /* Standard input/output definitions */
 #include <iostream>
 #include <fstream>
+#include "../DataHandler.h"
+#include "../HTTP/http.h"
+#include "../XML/XML.h"
 
 class InputHandler
 {
@@ -27,7 +30,7 @@ class InputHandler
 	return *this;
 	}
 	unsigned char readByte(int fd);
-	void operator () ();
+	void operator () ( );
 	
 
 };

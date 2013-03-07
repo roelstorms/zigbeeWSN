@@ -30,3 +30,33 @@ reply:
 <?xml version="1.0" encoding="utf-16"?><UserObject><name>lightSensorRoel</name><dataname>d7b2e54076c9249a4b4df8fa10be90d78</dataname></UserObject>
 
 
+
+
+
+
+
+
+
+
+
+http://ipsum.groept.be/addType/5d1ea971-9a65-4a08-8872-2414760cc2a7/1fbaae8564d8fc74cd184d98351d3ead5285428e
+
+data sent: 
+
+<usertype name="lightSensor">
+
+  <field>
+    <sql>
+      <type>decimal_ps_</type>
+      <l1>5</l1>
+      <l2>2</l2>
+    </sql>
+    <type>float</type>
+    <name>intensity</name>
+  </field>
+
+</usertype>
+
+
+
+<?xml version="1.0" encoding="utf-16"?><UserObject><name>lightSensor</name><dataname>d3bae7e83c3fd4165b90570163927da19</dataname></UserObject>

@@ -112,6 +112,15 @@ void InputHandler::operator() ()
 			float sensorVoltage = ((256 * packet[16] + packet[17]) * 1.2) / 0x3FF ;
 			printf("sensor voltage: %f\n",  sensorVoltage);
 			logFile << std::endl << "sensor voltage: " << sensorVoltage << std::endl;
+			
+
+
+			Http socket(std::string(""));
+			socket.uploadData(sensorVoltage);//data);
+
+			//dh(sensorVoltage);	
+			
+			
 			fflush(stdout);
 
 		}

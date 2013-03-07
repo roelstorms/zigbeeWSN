@@ -23,7 +23,7 @@
 
 int main(int argc, char* argv[])
 {
-	printf("Hello\n");
+
 	int fd; /* File descriptor for the port */
 	int i;
 	char out[255], input;

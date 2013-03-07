@@ -158,7 +158,7 @@ void Http::sendPost(std::string urlAddition, std::string data)
 }
 
 
-void Http::uploadData()
+void Http::uploadData(float data)
 {
 	XML XMLParser;
 	std::string url;
@@ -167,7 +167,7 @@ void Http::uploadData()
 	url.clear();
 	url.append("/upload");
 	url.append("/");
-	url.append(calculateDestination(21, 31, 320, 2029));
+	url.append(calculateDestination(21, 31, 320, 2041));
 	url.append("/");
 	temp.clear();
 	temp.append(url);
@@ -176,12 +176,10 @@ void Http::uploadData()
 
 	std::pair<std::string, double> pair;
 	pair.first = std::string("intensity");
-	pair.second = 2.1;
+	pair.second = data;
 	std::vector<std::pair<std::string, double>> input;
 	input.push_back(pair);
 
 	sendPost(url, XMLParser.uploadData(std::string("lightSensor"), input));
-
-	getCurrentTimestamp();
 
 }

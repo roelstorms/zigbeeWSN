@@ -90,13 +90,10 @@ std::string XML::uploadData(std::string type, std::vector<std::pair<std::string,
 
         std::cout << "begin of upload" << std::endl;
 
-        xercesc::XMLString::transcode("doc", tempStr, 99);
-        xercesc::DOMDocument* doc = impl->createDocument(0, tempStr, 0);
-	xercesc::DOMElement* docElement = doc->getDocumentElement();
-
         xercesc::XMLString::transcode("upload", tempStr, 99);
-        xercesc::DOMElement* upload = doc->createElement(tempStr);
-        docElement->appendChild(upload);
+        xercesc::DOMDocument* doc = impl->createDocument(0, tempStr, 0);
+	xercesc::DOMElement* upload = doc->getDocumentElement();
+
 
      	xercesc::XMLString::transcode("utimestamp", tempStr, 99);
         xercesc::DOMElement* utimestamp = doc->createElement(tempStr);
@@ -306,7 +303,7 @@ std::string XML::createNewSensorGroup(std::string installationIDValue, std::stri
 	return XMLOutput;
 }
 
-std::string XML::createNewSensor(std::string sensorGroupIDValue, std::string nameValue, std::string descriptionValue, std::string inuseValue)
+std::string XML::createNewSensor(std::string sensorGroupIDValue, std::string nameValue, std::string dataNameValue, std::string descriptionValue, std::string inuseValue)
 {
 
 	XMLCh tempStr[100];
@@ -352,7 +349,7 @@ std::string XML::createNewSensor(std::string sensorGroupIDValue, std::string nam
         xercesc::DOMElement* dataname = doc->createElement(tempStr);
         sensor->appendChild(dataname);
 
-        xercesc::XMLString::transcode("light intensity", tempStr, 99);
+        xercesc::XMLString::transcode(dataNameValue.c_str(), tempStr, 99);
 	xercesc::DOMText* datanameFieldValue = doc->createTextNode(tempStr);
 	dataname->appendChild(datanameFieldValue);
 
