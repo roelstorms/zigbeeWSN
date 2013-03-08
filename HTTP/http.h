@@ -61,6 +61,7 @@ class Http
 		std::string toBase64(std::string input);
 		void uploadData(float data);
 		bool login();
+		void setUserRights(std::string entity, int userID, int rights);
 		std::string getEntity(std::string destinationBase64);	
 		void setToken(std::string aToken);
 };	

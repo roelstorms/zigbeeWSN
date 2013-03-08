@@ -8,7 +8,8 @@ int main(int argc, char * argv[])
 
 	Http socket(std::string(""));
 	socket.login();
-	socket.getEntity(socket.calculateDestination(21, 31, 320, 2029));
+	//socket.getEntity(socket.calculateDestination(21, 31, 320, 2029));
+	socket.setUserRights("<?xml version=\"1.0\" encoding=\"utf-16\"?><Sensor><location></location><sensorgroupid>320</sensorgroupid><frequency>5</frequency><dataname>d7b2e54076c9249a4b4df8fa10be90d78</dataname><id>2029</id><name>LightSens1</name><description>a test sensor to see if this request works</description><inuse>True</inuse><infoname></infoname></Sensor>",21, 255);
 	//socket.uploadData(2.1);
 	/*	
 		XML XMLParser;

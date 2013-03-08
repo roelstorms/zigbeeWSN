@@ -80,8 +80,8 @@ void Http::sendGet(std::string urlAddition, size_t (*callback) (void*, size_t, s
 		//curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 		//curl_easy_setopt(curl, CURLOPT_HEADER, 0);
 		//curl_easy_setopt(curl, CURLOPT_VERBOSE, 0);
-		//curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
-		//curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, callback); 
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, callback); 
 		/* Perform the request, res will get the return code */
 		result = curl_easy_perform(curl);
 		/* Check for errors */
@@ -260,6 +260,40 @@ bool Http::login()
 	sendPost(url, XMLParser.login(std::string("roel"), std::string("roel")), &Http::loginReplyWrapper);
 
 	return true;
+}
+void Http::setUserRights(std::string entity, int userID, int rights)
+{
+	std::cout << "Http::setUserRights" << std::endl;
+	
+	if(token.empty())
+	{	
+		waitingForCurl = true;
+		login();
+		//usleep(100); 	//Sleep microseconds waiing for token to be set
+	}	
+	while(waitingForCurl == true)
+	{
+		//
+	}
+	
+	std::string url;
+	std::string temp;
+	
+	// url format for entity: entity/{token}/{destination}/{code}
+	url.clear();
+	url.append("/setUser/");
+	url.append(std::to_string(userID) );
+	url.append(":");
+	url.append(std::to_string(rights));
+	url.append("/");
+	url.append(token);		
+	url.append("/");
+	temp.clear();
+	temp.append(url);
+	temp.append("a31dd4f1-9169-4475-b316-764e1e737653");
+	url.append(generateCode(temp));
+	sendPost(url, entity, &Http::standardReplyWrapper);
+
 }
 
 std::string Http::getEntity(std::string destinationBase64)
