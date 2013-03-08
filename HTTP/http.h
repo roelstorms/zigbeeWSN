@@ -32,6 +32,7 @@
 
 #include <sstream>
 
+#include <unistd.h>
 #include "../XML/XML.h"
 class Http
 {
@@ -41,12 +42,14 @@ class Http
 		std::string urlBase;
 		std::string personalKey;
 		std::string token;
+		bool waitingForCurl;
 	public: 
 		Http(std::string urlBase);
 		~Http();
 		size_t read_data( void *ptr, size_t size, size_t nmemb);
 		static size_t loginReplyWrapper(void *buffer, size_t size, size_t nmemb, void *obj);
 		size_t loginReply(void *buffer, size_t size, size_t nmemb);
+		static size_t standardReplyWrapper(void *buffer, size_t size, size_t nmemb, void *obj);
 		size_t write_data(void *buffer, size_t size, size_t nmemb);
 
 		void sendGet(std::string urlAddition, size_t (*callback) (void*, size_t, size_t, void*));

@@ -1,4 +1,4 @@
-nclude "XML.h"
+#include "XML.h"
 XML::XML()
 {
 	std::cout << "XML constructor" << std::endl << std::endl;
@@ -510,7 +510,7 @@ std::string XML::login(std::string username, std::string password)
 std::string XML::analyzeLoginReply( std::string fileName)
 {
 	std::cout << "XML::analyzeLoginReply() begin" << std::endl;
-
+	
 	std::string token;
 
 	XMLCh tempStr[100];
@@ -526,7 +526,7 @@ std::string XML::analyzeLoginReply( std::string fileName)
 	//config->setParameter(xercesc::XMLUni::fgXercesSchema, doSchema);
 	//config->setParameter(xercesc::XMLUni::fgXercesHandleMultipleImports, true);
 	//config->setParameter(xercesc::XMLUni::fgXercesSchemaFullChecking, schemaFullChecking);	
-	std::cout << "filename of log.txt: " << fileName << std::endl;
+	std::cout << "filename : " << fileName << std::endl;
 	doc = parser->parseURI(fileName.c_str());
 	xercesc::DOMElement * docElement = doc->getDocumentElement();	
 	std::cout << "docElement count: " << docElement->getChildElementCount () << std::endl;
@@ -546,7 +546,7 @@ std::string XML::analyzeLoginReply( std::string fileName)
 		{
 			if(std::string(xercesc::XMLString::transcode(nextElement->getTextContent())) == std::string("True"))
 			{
-				//std::cout << "Error occured in receiving the token" << std::endl;
+				std::cout << "Error occured in receiving the token" << std::endl;
 				token = nullptr;
 			}
 

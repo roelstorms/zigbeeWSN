@@ -3,15 +3,15 @@
 Http::Http(std::string urlBase): urlBase(urlBase)
 {
 	std::cout << "Http constructor" << std::endl;
-	curl = curl_easy_init();
+	curl_global_init(CURL_GLOBAL_ALL);
 	token = std::string();
+	waitingForCurl = false;
 }
 
 Http::~Http()
 {
-
+	curl_global_cleanup();
 	std::cout << "Http destructor" << std::endl;
-	curl_easy_cleanup(curl);
 }
 
 //Currently not in use
@@ -23,7 +23,7 @@ size_t Http::read_data( void *ptr, size_t size, size_t nmemb)
 
 size_t Http::loginReplyWrapper(void *buffer, size_t size, size_t nmemb, void *obj)
 {
-	std::cout << "inputhandler" << std::endl;
+	std::cout << "loginReplyWrapper" << std::endl;
 	return static_cast<Http*>(obj)->loginReply(buffer, size, nmemb);
 }
 
@@ -35,27 +35,41 @@ size_t Http::loginReply(void *buffer, size_t size, size_t nmemb)
 	myfile.open ("loginReply");
 	myfile << std::string((char *)buffer);
 	myfile.close();
+	std::cout << std::endl << std::endl << std::string((char*)buffer) << std::endl << std::endl;
 	token = XMLParser.analyzeLoginReply("loginReply");
+	std::cout << "token calculated from login reply:  " << token << std::endl;
 	if (token.empty())
 	{
 		std::cerr << "Login failed, reply contained error = true" << std::endl;
 	}
-
+	waitingForCurl = false;
 	return size * nmemb;
+}
+
+size_t Http::standardReplyWrapper(void *buffer, size_t size, size_t nmemb, void *obj)
+{
+	std::cout << "standardReplyWrapper" << std::endl;
+	return static_cast<Http*>(obj)->write_data(buffer, size, nmemb);
 }
 
 size_t Http::write_data(void *buffer, size_t size, size_t nmemb)
 {
-
+	std::cout << "write_data" << std::endl;
 	std::ofstream myfile;
 	myfile.open ("log.txt");
 	myfile << std::string((char *)buffer);
+	myfile.close();
+	std::cout << std::endl << std::endl << std::string((char*)buffer) << std::endl << std::endl;
 	return size * nmemb;
 }
 
 
 void Http::sendGet(std::string urlAddition, size_t (*callback) (void*, size_t, size_t, void*))
 {
+	curl = curl_easy_init();
+
+	std::cout << "sendGet" << std::endl;
+
 	CURLcode result;
 	std::string url("http://ipsum.groept.be");
 	url.append(urlAddition);	
@@ -63,10 +77,11 @@ void Http::sendGet(std::string urlAddition, size_t (*callback) (void*, size_t, s
 	if(curl) {
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		/* example.com is redirected, so we tell libcurl to follow redirection */
-		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-		curl_easy_setopt(curl, CURLOPT_HEADER, 0);
-		curl_easy_setopt(curl, CURLOPT_VERBOSE, 0);
-		//curl_easy_setopt(curl, CURLOPT_WRITEDATA, &internal_struct); 
+		//curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+		//curl_easy_setopt(curl, CURLOPT_HEADER, 0);
+		//curl_easy_setopt(curl, CURLOPT_VERBOSE, 0);
+		//curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
+		//curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, callback); 
 		/* Perform the request, res will get the return code */
 		result = curl_easy_perform(curl);
 		/* Check for errors */
@@ -75,10 +90,15 @@ void Http::sendGet(std::string urlAddition, size_t (*callback) (void*, size_t, s
 
 		/* always cleanup */
 	}
+
+	curl_easy_cleanup(curl);
 }
 
 void Http::sendPost(std::string urlAddition, std::string data, size_t (*callback) (void *, size_t, size_t, void *))
 {
+	curl = curl_easy_init();
+
+	std::cout << "sendPost" << std::endl;
 	CURLcode result;
 	std::string url("http://ipsum.groept.be");
 	url.append(urlAddition);	
@@ -103,6 +123,7 @@ void Http::sendPost(std::string urlAddition, std::string data, size_t (*callback
 
 		/* always cleanup */
 	}
+	curl_easy_cleanup(curl);
 }
 std::string Http::generateCode(std::string url)
 {
@@ -224,7 +245,7 @@ void Http::uploadData(float data)
 	std::vector<std::pair<std::string, double>> input;
 	input.push_back(pair);
 	XML XMLParser;
-	sendPost(url, XMLParser.uploadData(std::string("lightSensor"), input), &Http::loginReplyWrapper);
+	sendPost(url, XMLParser.uploadData(std::string("lightSensor"), input), &Http::standardReplyWrapper);
 
 }
 
@@ -243,27 +264,37 @@ bool Http::login()
 
 std::string Http::getEntity(std::string destinationBase64)
 {
-	/*	std::string url;
-		std::string temp;
 
-		url.clear();
-		url.append("/entity");
-		url.append("/");
-		url.append(destinationBase64);
-		url.append("/");
-		temp.clear();
-		temp.append(url);
-		temp.append("a31dd4f1-9169-4475-b316-764e1e737653");
-		url.append(generateCode(temp));
+	std::cout << "Http::getEntity" << std::endl;
+	XML XMLParser;
+	
+	if(token.empty())
+	{	
+		waitingForCurl = true;
+		login();
+		//usleep(100); 	//Sleep microseconds waiing for token to be set
+	}	
+	while(waitingForCurl == true)
+	{
+		//
+	}
 
-		std::pair<std::string, double> pair;
-		pair.first = std::string("intensity");
-		pair.second = data;
-		std::vector<std::pair<std::string, double>> input;
-		input.push_back(pair);
+	std::string url;
+	std::string temp;
+	
+	// url format for entity: entity/{token}/{destination}/{code}
+	url.clear();
+	url.append("/entity/");
+	url.append(token);		
+	url.append("/");
+	url.append(destinationBase64);
+	url.append("/");
+	temp.clear();
+	temp.append(url);
+	temp.append("a31dd4f1-9169-4475-b316-764e1e737653");
+	url.append(generateCode(temp));
+	sendGet(url, &Http::standardReplyWrapper);
 
-		sendPost(url, XMLParser.uploadData(std::string("lightSensor"), input));
-	 */
 	std::string output;
 
 	return output;	
