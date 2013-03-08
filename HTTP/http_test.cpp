@@ -7,7 +7,8 @@ int main(int argc, char * argv[])
 {
 
 	Http socket(std::string(""));
-	socket.uploadData(2.1);
+	socket.login();
+	//socket.uploadData(2.1);
 /*	
 	XML XMLParser;
 	std::string url("/auth/");

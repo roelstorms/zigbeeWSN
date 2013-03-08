@@ -4,6 +4,7 @@ Http::Http(std::string urlBase): urlBase(urlBase)
 {
 	std::cout << "Http constructor" << std::endl;
 	curl = curl_easy_init();
+	//token = nullptr;
 }
 
 Http::~Http()
@@ -11,17 +12,33 @@ Http::~Http()
 
 	std::cout << "Http destructor" << std::endl;
 	curl_easy_cleanup(curl);
+	//token = nullptr;
 }
+
 size_t Http::read_data( void *ptr, size_t size, size_t nmemb, void *userdata)
 {
 
 	return size * nmemb;
 }
+
 size_t Http::write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 {
 	std::ofstream myfile;
 	myfile.open ("log.txt");
 	myfile << std::string((char *)buffer);
+	return size * nmemb;
+}
+
+size_t Http::loginReply(void *buffer, size_t size, size_t nmemb, void *userp)
+{
+	XML XMLParser;
+	std::cout << "login reply is ready" << std::endl;	
+	std::ofstream myfile;
+	myfile.open ("loginReply");
+	myfile << std::string((char *)buffer);
+	std::cout << std::endl << "myfile: "  << myfile << std::endl;
+	myfile.close();
+	token = XMLParser.analyzeLoginReply("loginReply");
 	return size * nmemb;
 }
 
@@ -118,7 +135,7 @@ void Http::sendGet(std::string urlAddition)
 		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 		curl_easy_setopt(curl, CURLOPT_HEADER, 0);
 		curl_easy_setopt(curl, CURLOPT_VERBOSE, 0);
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, Http::write_data); 
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &Http::write_data); 
 		//curl_easy_setopt(curl, CURLOPT_WRITEDATA, &internal_struct); 
 		/* Perform the request, res will get the return code */
 		result = curl_easy_perform(curl);
@@ -130,7 +147,7 @@ void Http::sendGet(std::string urlAddition)
 	}
 }
 
-void Http::sendPost(std::string urlAddition, std::string data)
+void Http::sendPost(std::string urlAddition, std::string data, size_t (Http::*callback) (void *, size_t, size_t, void *))
 {
 	CURLcode result;
 	std::string url("http://ipsum.groept.be");
@@ -141,7 +158,7 @@ void Http::sendPost(std::string urlAddition, std::string data)
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
 
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, Http::write_data); 
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, this->callback); 
 
 		//curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 		//curl_easy_setopt(curl, CURLOPT_HEADER, 0);
@@ -160,7 +177,6 @@ void Http::sendPost(std::string urlAddition, std::string data)
 
 void Http::uploadData(float data)
 {
-	XML XMLParser;
 	std::string url;
 	std::string temp;
 
@@ -179,7 +195,56 @@ void Http::uploadData(float data)
 	pair.second = data;
 	std::vector<std::pair<std::string, double>> input;
 	input.push_back(pair);
-
-	sendPost(url, XMLParser.uploadData(std::string("lightSensor"), input));
+	XML XMLParser;
+	sendPost(url, XMLParser.uploadData(std::string("lightSensor"), input), &Http::write_data);
 
 }
+
+bool Http::login()
+{
+	std::string url("/auth/");
+	std::string temp;
+	temp.append(url);
+	url.append(generateCode(temp.append("a31dd4f1-9169-4475-b316-764e1e737653")));
+	
+	XML XMLParser;
+	sendPost(url, XMLParser.login(std::string("roel"), std::string("roel")), &Http::loginReply);
+
+	return true;
+}
+
+std::string Http::getEntity(std::string destinationBase64)
+{
+/*	std::string url;
+	std::string temp;
+
+	url.clear();
+	url.append("/entity");
+	url.append("/");
+	url.append(destinationBase64);
+	url.append("/");
+	temp.clear();
+	temp.append(url);
+	temp.append("a31dd4f1-9169-4475-b316-764e1e737653");
+	url.append(generateCode(temp));
+
+	std::pair<std::string, double> pair;
+	pair.first = std::string("intensity");
+	pair.second = data;
+	std::vector<std::pair<std::string, double>> input;
+	input.push_back(pair);
+
+	sendPost(url, XMLParser.uploadData(std::string("lightSensor"), input));
+*/
+	std::string output;
+
+	return output;	
+
+
+}
+
+void Http::setToken(std::string aToken)
+{
+	token = aToken;
+}
+

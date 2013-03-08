@@ -518,7 +518,7 @@ std::string XML::analyzeLoginReply( std::string fileName)
 	//xercesc::XMLString::transcode("impl", tempStr, 99);
         //xercesc::DOMImplementation* impl = xercesc::DOMImplementation::getImplementation();
 
-	xercesc::DOMLSParser       *parser = ((xercesc::DOMImplementationLS*)impl)->createLSParser(xercesc::DOMImplementationLS::MODE_SYNCHRONOUS, 0);
+	xercesc::DOMLSParser *parser = ((xercesc::DOMImplementationLS*)impl)->createLSParser(xercesc::DOMImplementationLS::MODE_SYNCHRONOUS, 0);
 //	xercesc::DOMConfiguration  *config = parser->getDomConfig();
 	xercesc::DOMDocument *doc;
 
