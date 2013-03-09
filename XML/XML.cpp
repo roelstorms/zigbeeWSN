@@ -553,7 +553,7 @@ std::string XML::analyzeLoginReply( std::string fileName)
 			{
 				std::cout << "Error occured in receiving the token" << std::endl;
 				token = nullptr;
-				
+				throw IpsumError();	
 			}
 
 		}
@@ -572,7 +572,7 @@ std::string XML::analyzeLoginReply( std::string fileName)
 
 
 
-std::string XML::selectData(std::vector<std::string> fields)
+std::string XML::selectData(std::vector<std::string> fields, std::string timestamp)
 {
 	std::string XMLOutput;
 
@@ -587,21 +587,33 @@ std::string XML::selectData(std::vector<std::string> fields)
 	xercesc::DOMElement* getNode = doc->createElement(tempStr);
 	doc->appendChild(getNode); 
 
+	xercesc::XMLString::transcode("start", tempStr, 99);
+	xercesc::DOMElement* startNode = doc->createElement(tempStr);
+	getNode->appendChild(startNode);
+
+
+	xercesc::XMLString::transcode(timestamp.c_str(), tempStr, 99);
+	xercesc::DOMText* startNodeValue = doc->createTextNode(tempStr);
+	startNode->appendChild(startNodeValue);
+
+
 	xercesc::XMLString::transcode("select", tempStr, 99);
 	xercesc::DOMElement* selectNode = doc->createElement(tempStr);
 	getNode->appendChild(selectNode);
 
-	xercesc::XMLString::transcode("field", tempStr, 99);
-	xercesc::DOMElement* fieldNode = doc->createElement(tempStr);
-	selectNode->appendChild(fieldNode);
+	
 
-	//for(auto it = fields.begin(); it < field.end(); ++it)
+	for(auto it = fields.begin(); it < fields.end(); ++it)
 	{
+		xercesc::XMLString::transcode("field", tempStr, 99);
+		xercesc::DOMElement* fieldNode = doc->createElement(tempStr);
+		selectNode->appendChild(fieldNode);
+		
 		xercesc::XMLString::transcode("name", tempStr, 99);
 		xercesc::DOMElement* nameNode = doc->createElement(tempStr);
 		fieldNode->appendChild(nameNode);
 
-		xercesc::XMLString::transcode(fields.at(0).c_str(), tempStr, 99);
+		xercesc::XMLString::transcode((*it).c_str(), tempStr, 99);
 		xercesc::DOMText* fieldValue = doc->createTextNode(tempStr);
 		nameNode->appendChild(fieldValue);
 	}
@@ -610,4 +622,28 @@ std::string XML::selectData(std::vector<std::string> fields)
 	XMLOutput = serializeDOM(doc);
 
 	return XMLOutput;
+}
+
+
+std::string XML::getTimestamp(int houres, int minutes, int seconds, int day, int month, int year)
+{
+	
+	boost::gregorian::date date(year, month, day);
+	boost::posix_time::time_duration time(houres, minutes, seconds);
+	
+	
+	boost::posix_time::ptime t(date, time);
+
+	return boost::posix_time::to_iso_extended_string(t);
+
+}
+
+std::string XML::getCurrentTimestamp()
+{
+	std::string output;
+	// formate: 2013-03-03T18:28:02
+	boost::posix_time::ptime t(boost::posix_time::second_clock::universal_time());
+	std::cout << "boost time" << boost::posix_time::to_iso_extended_string(t) << std::endl;	
+
+	return output;
 }

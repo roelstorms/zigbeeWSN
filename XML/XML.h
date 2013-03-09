@@ -23,7 +23,26 @@
 #include <sstream>
 #include <stdlib.h>
 
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/date_time/local_time/local_time.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
+
+#include <boost/archive/iterators/base64_from_binary.hpp>
+#include <boost/archive/iterators/binary_from_base64.hpp>
+#include <boost/archive/iterators/insert_linebreaks.hpp>
+#include <boost/archive/iterators/transform_width.hpp>
+#include <boost/archive/iterators/ostream_iterator.hpp>
+
+#include <boost/archive/iterators/base64_from_binary.hpp>
+#include <boost/archive/iterators/binary_from_base64.hpp>
+#include <boost/archive/iterators/transform_width.hpp>
+#include <boost/archive/iterators/insert_linebreaks.hpp>
+#include <boost/archive/iterators/remove_whitespace.hpp>
+#include <iostream>
+#include <string>
+
 #include "invalidxmlerror.h"
+#include "ipsumerror.h"
 
 class XML
 {
@@ -42,7 +61,10 @@ class XML
 	std::string createNewInstallation(std::string nameValue, std::string descriptionValue, std::string inuseValue);
 	std::string createNewSensorGroup(std::string installationIDValue, std::string nameValue, std::string descriptionValue, std::string inuseValue); 
 	std::string createNewSensor(std::string sensorGroupIDValue, std::string nameValue, std::string dataNameValue, std::string descriptionValue, std::string inuseValue);
-	std::string selectData(std::vector<std::string> fields);
+	std::string selectData(std::vector<std::string> fields, std::string timestamp);
+
+	std::string getTimestamp(int houres, int minutes, int seconds, int day, int month, int year);
+	std::string getCurrentTimestamp();
 };
 
 #endif

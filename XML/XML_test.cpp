@@ -4,8 +4,13 @@
 int main(int argc, char* argv[])
 {
 	XML XMLParser;
-	std::cout << XMLParser.analyzeLoginReply(std::string("garbage")) << std::endl;
-	std::cout << "end" << std::endl;
+
+	//std::vector<std::string> fields;
+	//fields.push_back(std::string("field1"));
+	//fields.push_back(std::string("field2"));
+	//XMLParser.selectData( fields);
+	std::cout << XMLParser.getTimestamp(10, 30, 20, 2, 12, 1989) << std::endl;
+
 
 	return 0;	
 }
