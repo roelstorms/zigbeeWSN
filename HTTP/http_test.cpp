@@ -5,11 +5,18 @@
 
 int main(int argc, char * argv[])
 {
+	Http socket(std::string("http://ipsum.groept.be"));
+	//socket.login();
+//	socket.getEntity(socket.calculateDestination(21, 31, 320, 2041));
+//socket.setUserRights("<?xml version=\"1.0\" encoding=\"utf-16\"?><Sensor><location></location><sensorgroupid>320</sensorgroupid><frequency>5</frequency><dataname>d3bae7e83c3fd4165b90570163927da19</dataname><id>2041</id><name>Module4LightSens</name><description>a test sensor to see if this request works</description><inuse>True</inuse><infoname></infoname></Sensor>",21, 255);
+	
+	//std::vector<std::string> fields;
+	//fields.push_back(std::string( "intensity" ));
+	//socket.selectData(socket.calculateDestination(21, 31, 320, 2041), fields);
 
-	Http socket(std::string(""));
-	socket.login();
-	//socket.getEntity(socket.calculateDestination(21, 31, 320, 2029));
-	socket.setUserRights("<?xml version=\"1.0\" encoding=\"utf-16\"?><Sensor><location></location><sensorgroupid>320</sensorgroupid><frequency>5</frequency><dataname>d7b2e54076c9249a4b4df8fa10be90d78</dataname><id>2029</id><name>LightSens1</name><description>a test sensor to see if this request works</description><inuse>True</inuse><infoname></infoname></Sensor>",21, 255);
+
+	//socket.testQuery();	
+//	socket.uploadData(0.8);
 	//socket.uploadData(2.1);
 	/*	
 		XML XMLParser;
@@ -31,7 +38,13 @@ int main(int argc, char * argv[])
 	url.append("/");
 	//url.append(socket.calculateDestination(21, 31, 320, 2029));
 	//url.append("/");
+*/
 
+
+	std::string url, temp;
+	url.append("/addSensor/");
+	socket.sendPost(url, "<get><start>2012-01-01T00:00:00</start><end>9999-12-31T23:59:59</end><select><field><function></function><name>intensity</name></field><operation></operation><as></as></select></get>", &Http::loginReplyWrapper);
+/*
 	temp.clear();
 	temp.append(url);
 	temp.append("a31dd4f1-9169-4475-b316-764e1e737653");
@@ -58,7 +71,7 @@ int main(int argc, char * argv[])
 	//socket.sendPost(url, XMLParser.uploadData(std::string("lightSensorRoel"), input));
 
 
-	//std::string xml("<?xml version=\"1.0\" encoding=\"utf-8\"?><get><start>2012-01-01T00:00:00</start><end>9999-12-31T23:59:59</end><select><field><name>temperature</name></field></select></get>")*/;
+	//std::string xml("<?xml version=\"1.0\" encoding=\"utf-8\"?><get><start>2012-01-01T00:00:00</start><end>9999-12-31T23:59:59</end><select><field><name>temperature</name></field></select></get>");*/
 	//socket.sendPost(url, xml);
 	return 0;
 }

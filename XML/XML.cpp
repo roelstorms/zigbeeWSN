@@ -510,7 +510,7 @@ std::string XML::login(std::string username, std::string password)
 std::string XML::analyzeLoginReply( std::string fileName)
 {
 	std::cout << "XML::analyzeLoginReply() begin" << std::endl;
-	
+
 	std::string token;
 
 	XMLCh tempStr[100];
@@ -528,6 +528,11 @@ std::string XML::analyzeLoginReply( std::string fileName)
 	//config->setParameter(xercesc::XMLUni::fgXercesSchemaFullChecking, schemaFullChecking);	
 	std::cout << "filename : " << fileName << std::endl;
 	doc = parser->parseURI(fileName.c_str());
+	if (doc == NULL)
+	{
+		throw InvalidXMLError(); 
+	}
+	
 	xercesc::DOMElement * docElement = doc->getDocumentElement();	
 	std::cout << "docElement count: " << docElement->getChildElementCount () << std::endl;
 	//for(int i = 0; i < docElement->getChildElementCount(); ++i)
@@ -548,6 +553,7 @@ std::string XML::analyzeLoginReply( std::string fileName)
 			{
 				std::cout << "Error occured in receiving the token" << std::endl;
 				token = nullptr;
+				
 			}
 
 		}
@@ -556,7 +562,52 @@ std::string XML::analyzeLoginReply( std::string fileName)
 
 
 	std::cout << "token: " << token << std::endl;
+
+
+
 	std::cout << "XML::analyzeLoginReply() end" << std::endl;
 	return token;
 
+}
+
+
+
+std::string XML::selectData(std::vector<std::string> fields)
+{
+	std::string XMLOutput;
+
+	XMLCh tempStr[100];
+
+
+	xercesc::XMLString::transcode("doc", tempStr, 99);
+	impl->createDocument(0, tempStr, 0);
+	xercesc::DOMDocument* doc = impl->createDocument();
+
+	xercesc::XMLString::transcode("get", tempStr, 99);
+	xercesc::DOMElement* getNode = doc->createElement(tempStr);
+	doc->appendChild(getNode); 
+
+	xercesc::XMLString::transcode("select", tempStr, 99);
+	xercesc::DOMElement* selectNode = doc->createElement(tempStr);
+	getNode->appendChild(selectNode);
+
+	xercesc::XMLString::transcode("field", tempStr, 99);
+	xercesc::DOMElement* fieldNode = doc->createElement(tempStr);
+	selectNode->appendChild(fieldNode);
+
+	//for(auto it = fields.begin(); it < field.end(); ++it)
+	{
+		xercesc::XMLString::transcode("name", tempStr, 99);
+		xercesc::DOMElement* nameNode = doc->createElement(tempStr);
+		fieldNode->appendChild(nameNode);
+
+		xercesc::XMLString::transcode(fields.at(0).c_str(), tempStr, 99);
+		xercesc::DOMText* fieldValue = doc->createTextNode(tempStr);
+		nameNode->appendChild(fieldValue);
+	}
+
+
+	XMLOutput = serializeDOM(doc);
+
+	return XMLOutput;
 }

@@ -5,7 +5,6 @@ Http::Http(std::string urlBase): urlBase(urlBase)
 	std::cout << "Http constructor" << std::endl;
 	curl_global_init(CURL_GLOBAL_ALL);
 	token = std::string();
-	waitingForCurl = false;
 }
 
 Http::~Http()
@@ -30,19 +29,8 @@ size_t Http::loginReplyWrapper(void *buffer, size_t size, size_t nmemb, void *ob
 size_t Http::loginReply(void *buffer, size_t size, size_t nmemb)
 {
 	XML XMLParser;
-	std::cout << "login reply is ready" << std::endl;	
-	std::ofstream myfile;
-	myfile.open ("loginReply");
-	myfile << std::string((char *)buffer);
-	myfile.close();
-	std::cout << std::endl << std::endl << std::string((char*)buffer) << std::endl << std::endl;
-	token = XMLParser.analyzeLoginReply("loginReply");
-	std::cout << "token calculated from login reply:  " << token << std::endl;
-	if (token.empty())
-	{
-		std::cerr << "Login failed, reply contained error = true" << std::endl;
-	}
-	waitingForCurl = false;
+	curlReply = std::string((char *)buffer);
+	std::cout << std::endl << std::endl << curlReply << std::endl << std::endl << std::endl;
 	return size * nmemb;
 }
 
@@ -55,52 +43,77 @@ size_t Http::standardReplyWrapper(void *buffer, size_t size, size_t nmemb, void 
 size_t Http::write_data(void *buffer, size_t size, size_t nmemb)
 {
 	std::cout << "write_data" << std::endl;
+	curlReply = std::string((char *)buffer);
 	std::ofstream myfile;
+	
 	myfile.open ("log.txt");
+	myfile << curlReply;
+	myfile.close();
+	std::cout << std::endl << std::endl << curlReply << std::endl << std::endl;
+	
+
+	return size * nmemb;
+}
+
+size_t Http::headerHandlerWrapper(void *buffer, size_t size, size_t nmemb, void *obj)
+{
+	std::cout << "Http::headerHandlerWrapper" << std::endl << std::endl;
+
+	std::ofstream myfile;
+	myfile.open ("header.txt");
 	myfile << std::string((char *)buffer);
 	myfile.close();
-	std::cout << std::endl << std::endl << std::string((char*)buffer) << std::endl << std::endl;
+
+	return size * nmemb;
+}
+
+size_t Http::headerHandler(void *buffer, size_t size, size_t nmemb)
+{
+	std::cout << "Http::headerHandler" << std::endl << std::endl;
 	return size * nmemb;
 }
 
 
-void Http::sendGet(std::string urlAddition, size_t (*callback) (void*, size_t, size_t, void*))
+
+std::string Http::sendGet(std::string urlAddition, size_t (*callback) (void*, size_t, size_t, void*)) throw (HttpError)
 {
 	curl = curl_easy_init();
 
 	std::cout << "sendGet" << std::endl;
 
 	CURLcode result;
-	std::string url("http://ipsum.groept.be");
+	std::string url(urlBase);
 	url.append(urlAddition);	
 	std::cout << "string used:" << std::endl << url << std::endl << std::endl;
 	if(curl) {
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		/* example.com is redirected, so we tell libcurl to follow redirection */
 		//curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-		//curl_easy_setopt(curl, CURLOPT_HEADER, 0);
-		//curl_easy_setopt(curl, CURLOPT_VERBOSE, 0);
+		curl_easy_setopt(curl, CURLOPT_HEADER, 1);
+		curl_easy_setopt(curl, CURLOPT_VERBOSE, 0);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, callback); 
 		/* Perform the request, res will get the return code */
 		result = curl_easy_perform(curl);
 		/* Check for errors */
 		if(result != CURLE_OK)
+		{
 			fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(result));
-
+			throw HttpError();
+		}		
 		/* always cleanup */
 	}
-
 	curl_easy_cleanup(curl);
+	return curlReply;
 }
 
-void Http::sendPost(std::string urlAddition, std::string data, size_t (*callback) (void *, size_t, size_t, void *))
+std::string Http::sendPost(std::string urlAddition, std::string data, size_t (*callback) (void *, size_t, size_t, void *)) throw (HttpError)
 {
 	curl = curl_easy_init();
 
 	std::cout << "sendPost" << std::endl;
 	CURLcode result;
-	std::string url("http://ipsum.groept.be");
+	std::string url(urlBase);
 	url.append(urlAddition);	
 	std::cout << "string used:" << std::endl << url << std::endl << std::endl;
 	std::cout << "data sent: " << std::endl << data << std::endl << std::endl;
@@ -109,21 +122,31 @@ void Http::sendPost(std::string urlAddition, std::string data, size_t (*callback
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
 
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, callback); 
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, callback);
+		
+		curl_easy_setopt(curl, CURLOPT_WRITEHEADER, this);
+ 		curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, headerHandlerWrapper);
 
-		//curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-		//curl_easy_setopt(curl, CURLOPT_HEADER, 0);
-		//curl_easy_setopt(curl, CURLOPT_VERBOSE, 0);
+		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+		curl_easy_setopt(curl, CURLOPT_HEADER, 1);
+		curl_easy_setopt(curl, CURLOPT_VERBOSE, 0);
 
 		/* Perform the request, res will get the return code */
+
 		result = curl_easy_perform(curl);
 		/* Check for errors */
 		if(result != CURLE_OK)
+		{	
 			fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(result));
-
+			throw HttpError();
+		}
 		/* always cleanup */
 	}
+	std::cout << "end of sendpost" << std::endl;
 	curl_easy_cleanup(curl);
+
+	return curlReply;
+
 }
 std::string Http::generateCode(std::string url)
 {
@@ -257,7 +280,19 @@ bool Http::login()
 	url.append(generateCode(temp.append("a31dd4f1-9169-4475-b316-764e1e737653")));
 
 	XML XMLParser;
-	sendPost(url, XMLParser.login(std::string("roel"), std::string("roel")), &Http::loginReplyWrapper);
+	
+	std::ofstream myfile;
+	myfile.open ("loginReply");
+	myfile << sendPost(url, XMLParser.login(std::string("roel"), std::string("roel")), &Http::loginReplyWrapper);
+	myfile.close();
+
+	token = XMLParser.analyzeLoginReply("loginReply");
+	std::cout << "token calculated from login reply:  " << token << std::endl;
+
+	if (token.empty())
+	{
+		std::cerr << "Login failed, reply contained error = true" << std::endl;
+	}
 
 	return true;
 }
@@ -267,15 +302,10 @@ void Http::setUserRights(std::string entity, int userID, int rights)
 	
 	if(token.empty())
 	{	
-		waitingForCurl = true;
 		login();
 		//usleep(100); 	//Sleep microseconds waiing for token to be set
-	}	
-	while(waitingForCurl == true)
-	{
-		//
 	}
-	
+
 	std::string url;
 	std::string temp;
 	
@@ -304,13 +334,9 @@ std::string Http::getEntity(std::string destinationBase64)
 	
 	if(token.empty())
 	{	
-		waitingForCurl = true;
+		std::cout << std::endl <<  "not logged in yet, trying to log in now" << std::endl;	
 		login();
 		//usleep(100); 	//Sleep microseconds waiing for token to be set
-	}	
-	while(waitingForCurl == true)
-	{
-		//
 	}
 
 	std::string url;
@@ -341,3 +367,66 @@ void Http::setToken(std::string aToken)
 	token = aToken;
 }
 
+std::string Http::selectData(std::string destinationBase64, std::vector<std::string> fields)
+{
+
+	std::cout << std::endl << "Http::selectData" << std::endl << std::endl;
+	XML XMLParser;
+	
+	if(token.empty())
+	{	
+		login();
+		//usleep(100); 	//Sleep microseconds waiing for token to be set
+	}	
+
+	std::string url;
+	std::string temp;
+	
+	// url format for entity: select/{token}/{destination}/{code}
+	url.clear();
+	url.append("/select/");
+	url.append(token);		
+	url.append("/");
+	
+	url.append(destinationBase64);
+
+	url.append("/");
+	temp.clear();
+	temp.append(url);
+	temp.append("a31dd4f1-9169-4475-b316-764e1e737653");
+	url.append(generateCode(temp));
+
+	
+	//sendPost(url, XMLParser.selectData(fields), &Http::standardReplyWrapper);
+	sendPost(url, "<get><start>2012-01-01T00:00:00</start><end>9999-12-31T23:59:59</end><select><field><function></function><name>intensity</name></field><operation></operation><as></as></select></get>", &Http::standardReplyWrapper);
+
+	std::string output;
+
+	return output;	
+
+
+}
+
+
+std::string Http::testQuery()
+{
+	std::string url, temp;
+	// url format for entity: entity/{token}/{destination}/{code}
+	url.append("/SecureEcho/");
+	url.append(calculateDestination(21, 31));//, 320, 2041));
+	url.append("/");
+	temp.clear();
+	temp.append(url);
+	temp.append("a31dd4f1-9169-4475-b316-764e1e737653");
+	url.append(generateCode(temp));
+
+	
+	//sendPost(url, XMLParser.selectData(fields), &Http::standardReplyWrapper);
+	sendPost(url, "<get><start>2012-01-01T00:00:00</start><end>9999-12-31T23:59:59</end><select><field><function></function><name>intensity</name></field><operation></operation><as></as></select></get>", &Http::standardReplyWrapper);
+
+
+
+
+	std::string output;
+	return output;
+}

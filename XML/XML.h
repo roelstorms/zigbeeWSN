@@ -23,6 +23,8 @@
 #include <sstream>
 #include <stdlib.h>
 
+#include "invalidxmlerror.h"
+
 class XML
 {
 	private:
@@ -40,7 +42,7 @@ class XML
 	std::string createNewInstallation(std::string nameValue, std::string descriptionValue, std::string inuseValue);
 	std::string createNewSensorGroup(std::string installationIDValue, std::string nameValue, std::string descriptionValue, std::string inuseValue); 
 	std::string createNewSensor(std::string sensorGroupIDValue, std::string nameValue, std::string dataNameValue, std::string descriptionValue, std::string inuseValue);
-	
+	std::string selectData(std::vector<std::string> fields);
 };
 
 #endif
