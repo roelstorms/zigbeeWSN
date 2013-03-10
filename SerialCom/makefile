@@ -1,7 +1,9 @@
 # this is a example of Makefile
 
 all:	inputhandler.o connection.o userinput.o APIFrames.o packet.o ATCommandResponsePacket.o
-	g++ main.cpp -o main.out ./obj/inputhandler.o ./obj/connection.o ./obj/userinput.o ./obj/APIFrames.o ./obj/packet.o -lboost_thread -std=c++11
+	g++ main.cpp -o main.out ./obj/inputhandler.o ./obj/connection.o ./obj/userinput.o ./obj/APIFrames.o ./obj/packet.o ../HTTP/http.o ../XML/XML.o -lxerces-c -lboost_date_time -lboost_thread -std=c++11 -lcurl
+serialunblockingtest:
+	g++ serialunblockingtest.cpp -o serialunblockingtest.out ./obj/inputhandler.o ./obj/connection.o ./obj/userinput.o ./obj/APIFrames.o ./obj/packet.o ../HTTP/http.o ../XML/XML.o -lxerces-c -lboost_date_time -lboost_thread -std=c++11 -lcurl
 APIRemoteATTest: APIFrames.o
 	g++ ./tests/APIFramesTest_RemoteATCommand.cpp -o ./tests/APIFramesTest_RemoteATCommand.out ./obj/APIFrames.o ./obj/connection.o ./obj/userinput.o ./obj/inputhandler.o -lboost_thread -std=c++11
 DataIOTest: DataIOPacket.o

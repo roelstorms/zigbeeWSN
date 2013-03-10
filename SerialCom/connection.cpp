@@ -13,7 +13,6 @@ Connection::Connection(std::string portNumber)
 	//sprintf(port, adres);
 	connectionDescriptor = open(adres , O_RDWR | O_NOCTTY | O_NDELAY);
 
-
  	if (connectionDescriptor == -1)
  	{
 		/*
@@ -22,9 +21,11 @@ Connection::Connection(std::string portNumber)
 	
 		sprintf(port, "open_port: Unable to open %s", port); // puts string into buffer
 		perror(port);
+		throw SerialError();
 	}
    	else
     	{
+		fcntl(connectionDescriptor, F_SETFL, FNDELAY);
 		fcntl(connectionDescriptor, F_SETFL, 0);
     	}
 	

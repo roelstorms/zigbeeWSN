@@ -15,6 +15,7 @@
 #include <boost/thread.hpp>
 #include "userinput.h"
 #include "inputhandler.h"
+#include "serialerror.h"
 
 class Connection
 {
