@@ -169,15 +169,6 @@ std::string Http::generateCode(std::string url)
 	return code;
 }
 
-std::string Http::getCurrentTimestamp()
-{
-	std::string output;
-	// formate: 2013-03-03T18:28:02
-	boost::posix_time::ptime t(boost::posix_time::second_clock::universal_time());
-	std::cout << "boost time" << boost::posix_time::to_iso_extended_string(t) << std::endl;	
-
-	return output;
-}
 
 std::string Http::calculateDestination(int userID, int installationID, int sensorGroupID, int sensorID)
 {

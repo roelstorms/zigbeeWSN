@@ -63,7 +63,6 @@ class Http
 		std::string sendPost(std::string urlAddition, std::string data, size_t (*callback) (void *, size_t, size_t, void *)) throw (HttpError);
 
 		std::string generateCode(std::string url);
-		std::string getCurrentTimestamp();
 		std::string calculateDestination(int userID, int installationID = -1, int sensorGroupID = -1, int sensorID = -1);
 		std::string toBase64(std::string input);
 
