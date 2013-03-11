@@ -3,30 +3,26 @@
 Connection::Connection(std::string portNumber)
 {
 
-	char port[255];
 	std::string device("/dev/ttyUSB");
-
-
 	device.append(portNumber);
+	
 	std::cout << "device : " << device << std::endl;
-	const char * adres = device.c_str();
-	//sprintf(port, adres);
-	connectionDescriptor = open(adres , O_RDWR | O_NOCTTY | O_NDELAY);
-
+	const char * address = device.c_str();
+	connectionDescriptor = open(address , O_RDWR | O_NOCTTY | O_NDELAY);
+	std::cout << "connectionDescripto: " << connectionDescriptor << std::endl;
  	if (connectionDescriptor == -1)
  	{
 		/*
 		* Could not open the port.
 		*/
-	
-		sprintf(port, "open_port: Unable to open %s", port); // puts string into buffer
-		perror(port);
+		std::cerr << "open_port: Unable to open " << address << std::endl;
 		throw SerialError();
 	}
    	else
     	{
-		fcntl(connectionDescriptor, F_SETFL, FNDELAY);
-		fcntl(connectionDescriptor, F_SETFL, 0);
+		std::cout << "set up connection" << std::endl;
+		fcntl(connectionDescriptor, F_SETFL, FNDELAY);		// Set the port to unblocking
+		//fcntl(connectionDescriptor, F_SETFL, 0);		// Set the port to blocking
     	}
 	
 	// 9600 baud, NO parity, 1 stop bit
@@ -35,15 +31,15 @@ Connection::Connection(std::string portNumber)
     	tcgetattr(connectionDescriptor, &options);
 
 	//options.c_cflag |= (CLOCAL | CREAD);
-	options.c_cflag = B9600;
-	options.c_cflag |= CS8;
+	options.c_cflag = B9600;		//Set baudrate to 9600 baud
+	options.c_cflag |= CS8;	
 	options.c_cflag |= CLOCAL;
 	// no parity 8N1
-	options.c_cflag &= ~PARENB;
-	options.c_cflag &= ~CSTOPB;
-	options.c_cflag &= ~CSIZE;
-	options.c_cflag |= CREAD;
-	options.c_cflag |= CS8;
+	options.c_cflag &= ~PARENB;		// Set parity bit
+	options.c_cflag &= ~CSTOPB;		// Set Stopbit
+	options.c_cflag &= ~CSIZE;		
+	options.c_cflag |= CREAD;		
+	options.c_cflag |= CS8;		
 	options.c_oflag = 0;
 	options.c_lflag = 0;
 	options.c_cc[VTIME] = 0;
@@ -55,7 +51,7 @@ Connection::Connection(std::string portNumber)
 
 Connection::~Connection()
 {
-
+	closeConnection();
 }
 
 bool Connection::sendPacket(std::vector<unsigned char> packet)
@@ -79,8 +75,7 @@ void Connection::startInputHandler()
 }
 
 void Connection::closeConnection()
-{
-	
+{	
 	std::cout << "Closing connection file descriptor" << std::endl;
 	close(connectionDescriptor);
 }

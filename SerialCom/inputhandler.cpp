@@ -31,15 +31,21 @@ InputHandler::~InputHandler()
 unsigned char InputHandler::readByte(int fd)
 {
 	int input = 0x0;
-	read(fd, &input, 1);
-	if(input == 0x7D)
+	if(read(fd, &input, 1) > 0)
 	{
-		read(fd, &input, 1);
-		std::cout << "input: " << std::hex << input << std::endl;	
-		input = input ^ 0x20;
-		std::cout << "XOR'ed input: " << std::hex << input << std::endl;	
+		printf("%X\n", input);
+		if(input == 0x7D)
+		{
+			read(fd, &input, 1);
+			std::cout << "input: " << std::hex << input << std::endl;	
+			input = input ^ 0x20;
+			std::cout << "XOR'ed input: " << std::hex << input << std::endl;	
+		}
+		return input;
 	}
-	return input;
+	return 0x0;	// Not correct since input could be 0X0 as well. A bool should be returned to let the caller know if a byte was read or not. 
+			// A pointer to a buffer could be passed as argument to store the unsigned char read from fd. 
+			// Need to figure out where I want to put the blocking while loop that waits for input. In this function or somewhere when this function is called.
 }
 
 
@@ -55,7 +61,7 @@ void InputHandler::operator() ()
     	{
 		//std::cout << "stop inside inputhandler while loop: " << *stop << std::endl;
 		input = readByte(fileDescriptor);
-		std::cout << "input in while loop: " << std::hex << input << std::endl;
+		//std::cout << "input in while loop: " << std::hex << input << std::endl;
 		if(input == 0x7E)
 		{
 			
@@ -115,7 +121,7 @@ void InputHandler::operator() ()
 			
 
 
-			Http socket(std::string(""));
+			Http socket(std::string("http://ipsum.groept.be"));
 			socket.uploadData(sensorVoltage);//data);
 
 			//dh(sensorVoltage);	

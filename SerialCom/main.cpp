@@ -28,10 +28,13 @@ int main(int argc, char* argv[])
 	int i;
 	char out[255], input;
 	int status;
-	
+	std::cout << "argc: " << argc << std::endl;
+	if(argc != 2)
+	{
+		std::cout << "also provide the port number" << std::endl;
+		return 1;
+	}
 	Connection con(argv[1]);
-
-
      		
 	bool stop = false;
 	int connectionDescriptor = con.getConnectionDescriptor();

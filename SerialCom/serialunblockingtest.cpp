@@ -20,6 +20,20 @@
 #include "inputhandler.h"
 #include "connection.h"
 #include "userinput.h"
+#include <stropts.h>
+
+unsigned char readByte(int fd)
+{
+	int input = 0x0;
+	int count = read(fd, &input, 1);
+	if (count > 0)
+	{
+		printf("%X\n", input);
+	}
+	//ioctl(fd, I_FLUSH, FLUSHR); //Flush read and write stream
+	return input;
+}
+
 
 int main(int argc, char* argv[])
 {
@@ -29,11 +43,10 @@ int main(int argc, char* argv[])
 
 	Connection con(argv[1]);
 	fd = con.getConnectionDescriptor();
-	while()
+	while(true)
 	{
 		input = readByte(fd);
-		printf("%X\n", input);
-
+		
 	}
 
 	return 0;
