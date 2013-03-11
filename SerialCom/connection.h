@@ -22,9 +22,34 @@ class Connection
 	private:
 	int connectionDescriptor;
 	public:
-	Connection(std::string portNumber);
+	
+	Connection();
 	~Connection();
+
+	/*
+	 * Returns a list of all serial ports available. To open these ports just use /dev/ttyUSB'i' with i one of the port numbers
+	 * If you don't use a USB connection to the serial port this method will not return the correct value OR just call openPort(int).
+	 *
+	 * NEEDS IMPLEMENTATION
+	 */
+	std::vector<int> listPortNumbers();
+
+
+	/*
+	 *	Openport needs the port number, a list of port numbers can be obtained using listPortNumber()
+	 *	To get a list of all available ports use listPorts();
+	 *	Return: filedescriptor
+	 */
+	int openPort(int portNumber);
+	
+
 	bool sendPacket(std::vector<unsigned char> packet);
+
+	/*
+	 *	statInputHandler();
+	 *	NEEDS IMPLEMENTATION BUT WILL PROBABLY BE DELETED
+	 *
+	 */
 	void startInputHandler();
 	int getConnectionDescriptor();
 	void closeConnection();

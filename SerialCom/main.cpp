@@ -34,10 +34,10 @@ int main(int argc, char* argv[])
 		std::cout << "also provide the port number" << std::endl;
 		return 1;
 	}
-	Connection con(argv[1]);
-     		
+	Connection con;
+     
 	bool stop = false;
-	int connectionDescriptor = con.getConnectionDescriptor();
+	int connectionDescriptor = con.openPort(atoi(argv[1]));
 	InputHandler inputHandler(connectionDescriptor, &stop);
 	std::cout << "adress of stop in Connection: " << &stop << std::endl;
 	boost::thread inputThread(boost::ref(inputHandler));

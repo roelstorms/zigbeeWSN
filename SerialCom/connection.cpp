@@ -1,20 +1,38 @@
 #include "connection.h"
 
-Connection::Connection(std::string portNumber)
+Connection::Connection()
 {
+	std::cout << "connection constructor" << std::endl;
+}
 
+Connection::~Connection()
+{
+	closeConnection();
+}
+
+std::vector <int> Connection::listPortNumbers()
+{
+	std::vector<int> list;
+
+
+
+	return list;
+}
+
+int Connection::openPort(int portNumber)
+{
 	std::string device("/dev/ttyUSB");
-	device.append(portNumber);
+	device.append(std::to_string(portNumber));
 	
 	std::cout << "device : " << device << std::endl;
 	const char * address = device.c_str();
 	connectionDescriptor = open(address , O_RDWR | O_NOCTTY | O_NDELAY);
-	std::cout << "connectionDescripto: " << connectionDescriptor << std::endl;
+	std::cout << "connectionDescriptor: " << connectionDescriptor << std::endl;
  	if (connectionDescriptor == -1)
  	{
 		/*
-		* Could not open the port.
-		*/
+		 * Could not open the port.
+		 */
 		std::cerr << "open_port: Unable to open " << address << std::endl;
 		throw SerialError();
 	}
@@ -47,12 +65,11 @@ Connection::Connection(std::string portNumber)
 	tcsetattr(connectionDescriptor , TCSANOW, &options);
 	tcflush(connectionDescriptor, TCIFLUSH);
 	tcflush(connectionDescriptor, TCOFLUSH);  
+	
+	return connectionDescriptor;
 }
 
-Connection::~Connection()
-{
-	closeConnection();
-}
+
 
 bool Connection::sendPacket(std::vector<unsigned char> packet)
 {
