@@ -6,6 +6,9 @@ serialunblockingtest:
 	g++ serialunblockingtest.cpp -o serialunblockingtest.out ./obj/inputhandler.o ./obj/connection.o ./obj/userinput.o ./obj/APIFrames.o ./obj/packet.o ../HTTP/http.o ../XML/XML.o -lxerces-c -lboost_date_time -lboost_thread -std=c++11 -g -lcurl
 APIRemoteATTest: APIFrames.o
 	g++ ./tests/APIFramesTest_RemoteATCommand.cpp -o ./tests/APIFramesTest_RemoteATCommand.out ./obj/APIFrames.o ./obj/connection.o ./obj/userinput.o ./obj/inputhandler.o -lboost_thread -std=c++11
+APIFramesTestATCommand:
+	g++ ./tests/APIFramesTest_ATCommand.cpp -o ./tests/APIFramesTest_ATCommand.out ./obj/APIFrames.o ./obj/packet.o ./obj/connection.o  ./obj/inputhandler.o ../HTTP/http.o ../XML/XML.o -lboost_date_time -lboost_thread -std=c++11 -g -lxerces-c -lcurl
+
 DataIOTest: DataIOPacket.o
 	g++ ./tests/dataIOPacketTest.cpp -o ./tests/dataIOPacketTest.out ./obj/packet.o ./obj/dataIOPacket.o ./obj/connection.o -lboost_thread -std=c++11
 APIData: APIFrames.o

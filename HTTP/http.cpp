@@ -124,11 +124,11 @@ std::string Http::sendPost(std::string urlAddition, std::string data, size_t (*c
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, callback);
 		
-		curl_easy_setopt(curl, CURLOPT_WRITEHEADER, this);
- 		curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, headerHandlerWrapper);
+		//curl_easy_setopt(curl, CURLOPT_WRITEHEADER, this);
+ 		//curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, headerHandlerWrapper);
 
 		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-		curl_easy_setopt(curl, CURLOPT_HEADER, 1);
+		//curl_easy_setopt(curl, CURLOPT_HEADER, 1);
 		curl_easy_setopt(curl, CURLOPT_VERBOSE, 0);
 
 		/* Perform the request, res will get the return code */
@@ -165,7 +165,7 @@ std::string Http::generateCode(std::string url)
 
 	}
 	std::cout << std::endl << "code: " << code << std::endl;
-
+	delete output;
 	return code;
 }
 
@@ -389,7 +389,7 @@ std::string Http::selectData(std::string destinationBase64, std::vector<std::str
 
 	
 	//sendPost(url, XMLParser.selectData(fields), &Http::standardReplyWrapper);
-	sendPost(url, "<get><start>2012-01-01T00:00:00</start><end>9999-12-31T23:59:59</end><select><field><function></function><name>intensity</name></field><operation></operation><as></as></select></get>", &Http::standardReplyWrapper);
+	sendPost(url, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<get>\n<start>2012-01-01T00:00:00</start>\n<end>9999-12-31T23:59:59</end>\n<select><field><function></function><name>temperature</name></field><operation></operation><as></as></select></get>", &Http::standardReplyWrapper);
 
 	std::string output;
 

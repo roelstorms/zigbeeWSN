@@ -17,11 +17,6 @@
 #include <xercesc/dom/DOMText.hpp>
 #include <string>
 #include <iostream>
-#include <vector>
-#include <utility>
-#include <sys/time.h>
-#include <sstream>
-#include <stdlib.h>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/local_time/local_time.hpp>
@@ -32,38 +27,63 @@
 #include <boost/archive/iterators/insert_linebreaks.hpp>
 #include <boost/archive/iterators/transform_width.hpp>
 #include <boost/archive/iterators/ostream_iterator.hpp>
-
-#include <boost/archive/iterators/base64_from_binary.hpp>
-#include <boost/archive/iterators/binary_from_base64.hpp>
-#include <boost/archive/iterators/transform_width.hpp>
-#include <boost/archive/iterators/insert_linebreaks.hpp>
 #include <boost/archive/iterators/remove_whitespace.hpp>
-#include <iostream>
-#include <string>
 
-#include "invalidxmlerror.h"
-#include "ipsumerror.h"
+#include "../errors.h"
 
 class XML
 {
 	private:
 	xercesc::DOMImplementation *impl; 
 
+	/*
+   	 *	Give the top node of the DOM tree you want to serialize and XML code will be returned.
+	 */	 
+	std::string serializeDOM(xercesc::DOMNode * node);
+
 	public:
 	XML();
 	~XML();
-	std::string serializeDOM(xercesc::DOMNode * node);
+
 	std::string uploadData(std::string type, std::vector<std::pair<std::string, double>> input);
-	std::string createNewType(std::string aName, std::string aFieldName);
-	std::string createNewUser();
-	std::string login(std::string username, std::string password);
-	std::string analyzeLoginReply( std::string reply);
+
 	std::string createNewInstallation(std::string nameValue, std::string descriptionValue, std::string inuseValue);
 	std::string createNewSensorGroup(std::string installationIDValue, std::string nameValue, std::string descriptionValue, std::string inuseValue); 
 	std::string createNewSensor(std::string sensorGroupIDValue, std::string nameValue, std::string dataNameValue, std::string descriptionValue, std::string inuseValue);
-	std::string selectData(std::vector<std::string> fields, std::string timestamp);
+	std::string createNewType(std::string aName, std::string aFieldName);
+	std::string createNewUser();
 
+	std::string login(std::string username, std::string password);
+
+	/*
+	 *	Input is the XML returned from ipsum on a login request
+	 *	Function returns token needed by ipsum for requests which required to be logged in.
+	 */
+	std::string analyzeLoginReply( std::string reply);
+
+	/*
+	 *	Generates XML needed by the ipsum POST request to do a select.
+	 *	No possibility to apply functions or name as or where which are all supported by ipsum.
+	 *	TODO: test new implementation 
+	 */
+	std::string selectData(std::vector<std::string> fields, std::string startTime, std::string endTime);
+
+	/*
+	 *	analyzeSelect analyzes the ipsum XML response on a select call.
+	 *	Returns a list of pairs where pair.first is the fieldname and pair.second is the value
+	 *
+	 *	TODO: NEEDS IMPLEMENTATION
+	 */
+	std::vector<std::pair<std::string, std::string>> analyzeSelect(std::string input);
+
+	/*
+	 * 	getTimestamp returns a timestamp in the format YYYY-DD-MMThh:mm:ss
+	 */
 	std::string getTimestamp(int houres, int minutes, int seconds, int day, int month, int year);
+
+	/*
+	 *	Does the same as getTimestamp but for the current time
+	 */
 	std::string getCurrentTimestamp();
 };
 

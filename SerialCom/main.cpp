@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
 	Connection con;
      
 	bool stop = false;
-	int connectionDescriptor = con.openPort(atoi(argv[1]));
+	int connectionDescriptor = con.openPort(atoi(argv[1]), 9600);
 	InputHandler inputHandler(connectionDescriptor, &stop);
 	std::cout << "adress of stop in Connection: " << &stop << std::endl;
 	boost::thread inputThread(boost::ref(inputHandler));

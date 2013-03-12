@@ -140,8 +140,9 @@ std::string XML::uploadData(std::string type, std::vector<std::pair<std::string,
 
 	}
 
-
+	doc->release();
 	XMLOutput = serializeDOM(upload);
+	
 	// Other terminations and cleanup.
 	return XMLOutput;
 }
@@ -502,6 +503,7 @@ std::string XML::login(std::string username, std::string password)
 	passwordNode->appendChild(passwordValue);
 
 	XMLOutput = serializeDOM(userLoginNode);
+	doc->release();
 
 	std::cout << "XML::login end" << std::endl;
 	return XMLOutput;
@@ -514,7 +516,7 @@ std::string XML::analyzeLoginReply( std::string fileName)
 	std::string token;
 
 	XMLCh tempStr[100];
-
+	char * temp;
 	//xercesc::XMLString::transcode("impl", tempStr, 99);
 	//xercesc::DOMImplementation* impl = xercesc::DOMImplementation::getImplementation();
 
@@ -541,22 +543,31 @@ std::string XML::analyzeLoginReply( std::string fileName)
 	while(nextElement != NULL)
 	{
 		//std::cout << "element name: " <<  xercesc::XMLString::transcode(nextElement->getTagName()) << std::endl;
-		if(xercesc::XMLString::compareIString(nextElement->getTagName(), xercesc::XMLString::transcode("token")) == 0)
+		XMLCh * tokentemp = xercesc::XMLString::transcode("token");
+		XMLCh * errortemp = xercesc::XMLString::transcode("error");
+
+		if(xercesc::XMLString::compareIString(nextElement->getTagName(), tokentemp) == 0)
 		{
 			//std::cout << "nextelement has children" << std::endl << xercesc::XMLString::transcode(nextElement->getTextContent()) << std::endl;
-			token = std::string(xercesc::XMLString::transcode(nextElement->getTextContent()));
+			temp = xercesc::XMLString::transcode(nextElement->getTextContent());
+			token = std::string(temp);
+			xercesc::XMLString::release(&temp);
 
 		}
-		else if(xercesc::XMLString::compareIString(nextElement->getTagName(), xercesc::XMLString::transcode("error")) == 0)
+		else if(xercesc::XMLString::compareIString(nextElement->getTagName(), errortemp) == 0)
 		{
-			if(std::string(xercesc::XMLString::transcode(nextElement->getTextContent())) == std::string("True"))
+			temp = xercesc::XMLString::transcode(nextElement->getTextContent());
+			if(std::string(temp) == std::string("True"))
 			{
 				std::cout << "Error occured in receiving the token" << std::endl;
 				token = nullptr;
 				throw IpsumError();	
 			}
-
+			xercesc::XMLString::release(&temp);
 		}
+		xercesc::XMLString::release(&tokentemp);
+		xercesc::XMLString::release(&errortemp);
+
 		nextElement = nextElement->getNextElementSibling();
 	}	
 
@@ -564,6 +575,8 @@ std::string XML::analyzeLoginReply( std::string fileName)
 	std::cout << "token: " << token << std::endl;
 
 
+	doc->release();
+//	parser->release();
 
 	std::cout << "XML::analyzeLoginReply() end" << std::endl;
 	return token;
@@ -572,7 +585,7 @@ std::string XML::analyzeLoginReply( std::string fileName)
 
 
 
-std::string XML::selectData(std::vector<std::string> fields, std::string timestamp)
+std::string XML::selectData(std::vector<std::string> fields, std::string startTime, std::string endTime)
 {
 	std::string XMLOutput;
 
@@ -592,10 +605,17 @@ std::string XML::selectData(std::vector<std::string> fields, std::string timesta
 	getNode->appendChild(startNode);
 
 
-	xercesc::XMLString::transcode(timestamp.c_str(), tempStr, 99);
+	xercesc::XMLString::transcode(startTime.c_str(), tempStr, 99);
 	xercesc::DOMText* startNodeValue = doc->createTextNode(tempStr);
 	startNode->appendChild(startNodeValue);
 
+	xercesc::XMLString::transcode("end", tempStr, 99);
+	xercesc::DOMElement* endNode = doc->createElement(tempStr);
+	getNode->appendChild(endNode);
+
+	xercesc::XMLString::transcode(endTime.c_str(), tempStr, 99);
+	xercesc::DOMText* endNodeValue = doc->createTextNode(tempStr);
+	endNode->appendChild(endNodeValue);
 
 	xercesc::XMLString::transcode("select", tempStr, 99);
 	xercesc::DOMElement* selectNode = doc->createElement(tempStr);
@@ -620,10 +640,18 @@ std::string XML::selectData(std::vector<std::string> fields, std::string timesta
 
 
 	XMLOutput = serializeDOM(doc);
+	doc->release();
 
 	return XMLOutput;
 }
 
+std::vector<std::pair<std::string, std::string>> analyzeSelect(std::string input)
+{
+	std::vector<std::pair<std::string, std::string>> output;
+	
+	
+	return output;
+}
 
 std::string XML::getTimestamp(int houres, int minutes, int seconds, int day, int month, int year)
 {

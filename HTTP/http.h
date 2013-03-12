@@ -1,42 +1,25 @@
+/*
+ *	Created by Roel Storms
+ *	Does all the IPSUM connection and uses XML.cpp to generate and interprete the correct XML 
+ */
+
 #ifndef HTTP_H
 #define HTTP_H
 
 #include <curl/curl.h>
 #include <string.h>
-#include <iostream>
-#include <fstream>
+
 #include <stdio.h>
 #include <openssl/sha.h>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <iterator>
-#include <stdlib.h>
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/date_time/local_time/local_time.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp>
-
-#include <boost/archive/iterators/base64_from_binary.hpp>
-#include <boost/archive/iterators/binary_from_base64.hpp>
-#include <boost/archive/iterators/insert_linebreaks.hpp>
-#include <boost/archive/iterators/transform_width.hpp>
-#include <boost/archive/iterators/ostream_iterator.hpp>
-
-#include <boost/archive/iterators/base64_from_binary.hpp>
-#include <boost/archive/iterators/binary_from_base64.hpp>
-#include <boost/archive/iterators/transform_width.hpp>
-#include <boost/archive/iterators/insert_linebreaks.hpp>
-#include <boost/archive/iterators/remove_whitespace.hpp>
-#include <iostream>
-#include <string>
-
-#include <sstream>
-
 #include <unistd.h>
 
 #include "../XML/XML.h"
+#include "../errors.h"
 
-#include "httperror.h"
 class Http
 {
 

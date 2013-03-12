@@ -1,7 +1,7 @@
 #include "http.h"
 #include "../XML/XML.h"
 
-
+#include <string>
 
 int main(int argc, char * argv[])
 {
@@ -10,10 +10,7 @@ int main(int argc, char * argv[])
 //	socket.getEntity(socket.calculateDestination(21, 31, 320, 2041));
 //socket.setUserRights("<?xml version=\"1.0\" encoding=\"utf-16\"?><Sensor><location></location><sensorgroupid>320</sensorgroupid><frequency>5</frequency><dataname>d3bae7e83c3fd4165b90570163927da19</dataname><id>2041</id><name>Module4LightSens</name><description>a test sensor to see if this request works</description><inuse>True</inuse><infoname></infoname></Sensor>",21, 255);
 	
-	//std::vector<std::string> fields;
-	//fields.push_back(std::string( "intensity" ));
-	//socket.selectData(socket.calculateDestination(21, 31, 320, 2041), fields);
-
+	
 
 	//socket.testQuery();	
 //	socket.uploadData(0.8);
@@ -40,10 +37,11 @@ int main(int argc, char * argv[])
 	//url.append("/");
 */
 
+	std::vector<std::string> fields;
+	fields.push_back(std::string( "intensity" ));
 
-	std::string url, temp;
-	url.append("/addSensor/");
-	socket.sendPost(url, "<get><start>2012-01-01T00:00:00</start><end>9999-12-31T23:59:59</end><select><field><function></function><name>intensity</name></field><operation></operation><as></as></select></get>", &Http::loginReplyWrapper);
+	socket.selectData(socket.calculateDestination(21, 31, 320, 2029), fields);
+
 /*
 	temp.clear();
 	temp.append(url);

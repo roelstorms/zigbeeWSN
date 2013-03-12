@@ -19,7 +19,7 @@ std::vector <int> Connection::listPortNumbers()
 	return list;
 }
 
-int Connection::openPort(int portNumber)
+int Connection::openPort(int portNumber, int baudrate)
 {
 	std::string device("/dev/ttyUSB");
 	device.append(std::to_string(portNumber));
@@ -49,6 +49,38 @@ int Connection::openPort(int portNumber)
     	tcgetattr(connectionDescriptor, &options);
 
 	//options.c_cflag |= (CLOCAL | CREAD);
+	switch (baudrate)
+	{
+		case 1200:
+		options.c_cflag = B1200;		//Set baudrate to 9600 baud
+		break;
+		case 2400:
+		options.c_cflag = B2400;		//Set baudrate to 9600 baud
+		break;
+		case 4800:
+		options.c_cflag = B4800;		//Set baudrate to 9600 baud
+		break;
+		case 9600:
+		options.c_cflag = B9600;		//Set baudrate to 9600 baud
+		break;
+		case 19200:
+		options.c_cflag = B19200;		//Set baudrate to 9600 baud
+		break;
+		case 38400:
+		options.c_cflag = B38400;		//Set baudrate to 9600 baud
+		break;
+		case 57600:
+		options.c_cflag = B57600;		//Set baudrate to 9600 baud
+		break;
+		case 115200:
+		options.c_cflag = B115200;		//Set baudrate to 9600 baud
+		break;
+
+
+
+
+	}
+
 	options.c_cflag = B9600;		//Set baudrate to 9600 baud
 	options.c_cflag |= CS8;	
 	options.c_cflag |= CLOCAL;
