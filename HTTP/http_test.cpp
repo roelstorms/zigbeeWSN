@@ -40,7 +40,8 @@ int main(int argc, char * argv[])
 	std::vector<std::string> fields;
 	fields.push_back(std::string( "intensity" ));
 
-	socket.selectData(socket.calculateDestination(21, 31, 320, 2029), fields);
+	socket.selectData(socket.calculateDestination(21, 31, 320, 2041), fields);
+	socket.getEntity(socket.calculateDestination(21, 31, 320, 2041));	
 
 /*
 	temp.clear();

@@ -49,8 +49,7 @@ size_t Http::write_data(void *buffer, size_t size, size_t nmemb)
 	myfile.open ("log.txt");
 	myfile << curlReply;
 	myfile.close();
-	std::cout << std::endl << std::endl << curlReply << std::endl << std::endl;
-	
+	std::cout << std::endl << std::endl << curlReply << std::endl << std::endl;	
 
 	return size * nmemb;
 }
@@ -124,11 +123,11 @@ std::string Http::sendPost(std::string urlAddition, std::string data, size_t (*c
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, callback);
 		
-		//curl_easy_setopt(curl, CURLOPT_WRITEHEADER, this);
- 		//curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, headerHandlerWrapper);
+		//curl_easy_setopt(curl, CURLOPT_HEADER, 1);			// Enables the output of header information
+		//curl_easy_setopt(curl, CURLOPT_WRITEHEADER, this);		// Give this as a paramater to the HEADERFUNCTION
+ 		//curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, headerHandlerWrapper);		// set headerHandlerWrapper as a callbackfunction to parse header information
 
 		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-		//curl_easy_setopt(curl, CURLOPT_HEADER, 1);
 		curl_easy_setopt(curl, CURLOPT_VERBOSE, 0);
 
 		/* Perform the request, res will get the return code */
@@ -208,10 +207,10 @@ std::string Http::calculateDestination(int userID, int installationID, int senso
 	std::string stringChecksum(std::to_string(checksum));
 	std::cout << "long checksum:" << std::endl << stringChecksum << std::endl;
 	std::string shortChecksum(stringChecksum.end()-6, stringChecksum.end());
+	std::cout << "short checksum" << std::endl << shortChecksum << std::endl;
 	output.append(shortChecksum);
 
 	std::string output2 = toBase64(output);
-	std::cout << "destination base64 2:" << output2 << std::endl;
 	return output2;
 }
 
@@ -388,8 +387,8 @@ std::string Http::selectData(std::string destinationBase64, std::vector<std::str
 	url.append(generateCode(temp));
 
 	
-	//sendPost(url, XMLParser.selectData(fields), &Http::standardReplyWrapper);
-	sendPost(url, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<get>\n<start>2012-01-01T00:00:00</start>\n<end>9999-12-31T23:59:59</end>\n<select><field><function></function><name>temperature</name></field><operation></operation><as></as></select></get>", &Http::standardReplyWrapper);
+	sendPost(url, XMLParser.selectData(fields,  XMLParser.getTimestamp(1, 0, 0, 1, 3, 2013), XMLParser.getCurrentTimestamp()), &Http::standardReplyWrapper);
+	//sendPost(url, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<get>\n<start>2012-01-01T00:00:00</start>\n<end>9999-12-31T23:59:59</end>\n<select>\n<field>\n<name>intensity</name>\n</field>\n</select>\n</get>", &Http::standardReplyWrapper);
 
 	std::string output;
 

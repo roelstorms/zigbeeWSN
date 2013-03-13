@@ -57,7 +57,7 @@ std::string XML::serializeDOM(xercesc::DOMNode* node) {
 	xercesc::DOMLSOutput* theOutput = ((xercesc::DOMImplementationLS*)impl)->createLSOutput();
 	theOutput->setByteStream(myFormTarget);
 	XMLCh * XMLTemp = theSerializer->writeToString(node);
-	char * temp = xercesc::XMLString::transcode(tempStr);
+	char * temp = xercesc::XMLString::transcode(XMLTemp);
 	//xercesc::XMLString::release(&tempStr);
 	XMLOutput.append(temp);
 	xercesc::XMLString::release(&XMLTemp);
@@ -508,10 +508,11 @@ std::string XML::login(std::string username, std::string password)
 	xercesc::DOMText* passwordValue = doc->createTextNode(tempStr);
 	passwordNode->appendChild(passwordValue);
 
-	XMLOutput = serializeDOM(userLoginNode);
+	XMLOutput = serializeDOM(doc);
+
+
 	doc->release();
 
-	std::cout << "XML::login end" << std::endl;
 	return XMLOutput;
 }
 
@@ -524,7 +525,7 @@ std::string XML::analyzeLoginReply( std::string fileName)
 	XMLCh tempStr[100];
 	char * temp;
 	//xercesc::XMLString::transcode("impl", tempStr, 99);
-	//xercesc::DOMImplementation* impl = xercesc::DOMImplementation::getImplementation();
+	xercesc::DOMImplementation* impl = xercesc::DOMImplementation::getImplementation();
 
 	xercesc::DOMLSParser *parser = ((xercesc::DOMImplementationLS*)impl)->createLSParser(xercesc::DOMImplementationLS::MODE_SYNCHRONOUS, 0);
 	//	xercesc::DOMConfiguration  *config = parser->getDomConfig();
@@ -584,7 +585,7 @@ std::string XML::analyzeLoginReply( std::string fileName)
 	doc->release();
 //	parser->release();
 
-	std::cout << "XML::analyzeLoginReply() end" << std::endl;
+	std::cout << "XML::analyzeLoginReply() end token: "  <<std::endl;
 	return token;
 
 }
@@ -673,10 +674,9 @@ std::string XML::getTimestamp(int houres, int minutes, int seconds, int day, int
 
 std::string XML::getCurrentTimestamp()
 {
-	std::string output;
 	// formate: 2013-03-03T18:28:02
 	boost::posix_time::ptime t(boost::posix_time::second_clock::universal_time());
 	std::cout << "boost time" << boost::posix_time::to_iso_extended_string(t) << std::endl;	
 
-	return output;
+	return boost::posix_time::to_iso_extended_string(t);
 }
