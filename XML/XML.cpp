@@ -27,7 +27,7 @@ XML::~XML()
 
 std::string XML::serializeDOM(xercesc::DOMNode* node) {
 
-	XMLCh tempStr[100];
+	XMLCh tempStr[100];// = (XMLCh *) malloc(sizeof(XMLCh) * 100);
 	std::string XMLOutput;
 
 	xercesc::XMLString::transcode("LS", tempStr, 99);
@@ -56,7 +56,13 @@ std::string XML::serializeDOM(xercesc::DOMNode* node) {
 	xercesc::XMLFormatTarget *myFormTarget = new xercesc::StdOutFormatTarget();
 	xercesc::DOMLSOutput* theOutput = ((xercesc::DOMImplementationLS*)impl)->createLSOutput();
 	theOutput->setByteStream(myFormTarget);
-	XMLOutput = xercesc::XMLString::transcode(theSerializer->writeToString(node));
+	XMLCh * XMLTemp = theSerializer->writeToString(node);
+	char * temp = xercesc::XMLString::transcode(tempStr);
+	//xercesc::XMLString::release(&tempStr);
+	XMLOutput.append(temp);
+	xercesc::XMLString::release(&XMLTemp);
+	xercesc::XMLString::release(&temp);
+
 	try {
 		// do the serialization through DOMLSSerializer::write();
 		theSerializer->write(node, theOutput);
@@ -591,9 +597,7 @@ std::string XML::selectData(std::vector<std::string> fields, std::string startTi
 
 	XMLCh tempStr[100];
 
-
 	xercesc::XMLString::transcode("doc", tempStr, 99);
-	impl->createDocument(0, tempStr, 0);
 	xercesc::DOMDocument* doc = impl->createDocument();
 
 	xercesc::XMLString::transcode("get", tempStr, 99);
@@ -641,6 +645,7 @@ std::string XML::selectData(std::vector<std::string> fields, std::string startTi
 
 	XMLOutput = serializeDOM(doc);
 	doc->release();
+
 
 	return XMLOutput;
 }
