@@ -145,10 +145,10 @@ std::string XML::uploadData(std::string type, std::vector<std::pair<std::string,
 		fieldTimestamp->appendChild(fieldTimestampValue);
 
 	}
+	XMLOutput = serializeDOM(upload);
 
 	doc->release();
-	XMLOutput = serializeDOM(upload);
-	
+	std::cout << "XMLouput:" << std::endl << XMLOutput << std::endl;	
 	// Other terminations and cleanup.
 	return XMLOutput;
 }

@@ -241,6 +241,7 @@ void Http::uploadData(float data)
 {
 	std::string url;
 	std::string temp;
+	std::cout << "Http::uploadData" << std::endl;
 
 	url.clear();
 	url.append("/upload");

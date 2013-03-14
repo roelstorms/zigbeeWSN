@@ -18,19 +18,18 @@ APIRemoteATResponseTest: APIFrames.o
 unwrap: APIFrames.o
 	g++ ./tests/APIFramesTest_unwrap.cpp -o ./tests/APIFramesTest_unwrap.out ./obj/APIFrames.o ./obj/connection.o ./obj/userinput.o ./obj/inputhandler.o -lboost_thread -std=c++11
 inputhandler.o:
-	g++ -c inputhandler.cpp -o ./obj/inputhandler.o -std=c++11
+	g++ -c inputhandler.cpp -o ./obj/inputhandler.o -std=c++11 -g
 connection.o: inputhandler.o userinput.o
-	g++ -c connection.cpp -o ./obj/connection.o -lboost_thread -std=c++11
+	g++ -c connection.cpp -o ./obj/connection.o -lboost_thread -std=c++11 -g
 userinput.o:
-	g++ -c userinput.cpp -o ./obj/userinput.o  -std=c++11
+	g++ -c userinput.cpp -o ./obj/userinput.o  -std=c++11 -g
 APIFrames.o: ATCommandResponsePacket.o
-	g++ -c APIFrames.cpp -o ./obj/APIFrames.o -std=c++11
+	g++ -c APIFrames.cpp -o ./obj/APIFrames.o -std=c++11 -g
 packet.o:
-	g++ -c packet.cpp -o ./obj/packet.o -std=c++11
+	g++ -c packet.cpp -o ./obj/packet.o -std=c++11 -g
 ATCommandResponsePacket.o: packet.o
-	g++ -c ATCommandResponsePacket.cpp -o ./obj/ATCommandResponsePacket.o -std=c++11
+	g++ -c ATCommandResponsePacket.cpp -o ./obj/ATCommandResponsePacket.o -std=c++11 -g
 DataIOPacket.o: packet.o
-	g++ -c dataIOPacket.cpp -o ./obj/dataIOPacket.o -std=c++11
-
+	g++ -c dataIOPacket.cpp -o ./obj/dataIOPacket.o -std=c++11 -g
 clean:
-	rm ./obj/inputhandler.o ./obj/connection.o ./obj/userinput.o ./obj/APIFrames.o
+	rm ./obj/inputhandler.o ./obj/connection.o ./obj/userinput.o ./obj/APIFrames.o -g

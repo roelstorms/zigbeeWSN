@@ -30,20 +30,26 @@ InputHandler::~InputHandler()
 
 unsigned char InputHandler::readByte(int fd)
 {
+
 	int input = 0x0;
-	if(read(fd, &input, 1) > 0)
+	while(read(fd, &input, 1) <= 0)
 	{
-		printf("%X\n", input);
-		if(input == 0x7D)
-		{
-			read(fd, &input, 1);
-			std::cout << "input: " << std::hex << input << std::endl;	
-			input = input ^ 0x20;
-			std::cout << "XOR'ed input: " << std::hex << input << std::endl;	
-		}
-		return input;
+
 	}
-	return 0x0;	// Not correct since input could be 0X0 as well. A bool should be returned to let the caller know if a byte was read or not. 
+	printf("%X\n", input);
+	if(input == 0x7D)
+	{
+		while(read(fd, &input, 1) <= 0)
+		{
+
+		}
+		std::cout << "input: " << std::hex << input << std::endl;	
+		input = input ^ 0x20;
+		std::cout << "XOR'ed input: " << std::hex << input << std::endl;	
+	}
+	return input;
+	
+	//return 0x0;	// Not correct since input could be 0X0 as well. A bool should be returned to let the caller know if a byte was read or not. 
 			// A pointer to a buffer could be passed as argument to store the unsigned char read from fd. 
 			// Need to figure out where I want to put the blocking while loop that waits for input. In this function or somewhere when this function is called.
 }
@@ -113,15 +119,16 @@ void InputHandler::operator() ()
 			
 			
 
-			printf("          	%X\n",  packet[16]);
-			printf("          	%X\n",  packet[17]);
-			float sensorVoltage = ((256 * packet[16] + packet[17]) * 1.2) / 0x3FF ;
+			printf("          	%X\n",  packet[18]);
+			printf("          	%X\n",  packet[19]);
+			float sensorVoltage = ((256 * packet[18] + packet[19]) * 1.2) / 0x3FF ;
 			printf("sensor voltage: %f\n",  sensorVoltage);
 			logFile << std::endl << "sensor voltage: " << sensorVoltage << std::endl;
 			
 
 
 			Http socket(std::string("http://ipsum.groept.be"));
+			socket.login();
 			socket.uploadData(sensorVoltage);//data);
 
 			//dh(sensorVoltage);	
