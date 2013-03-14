@@ -153,7 +153,7 @@ double DataIOPacket::readAnalog(int pin)
 {
 	if(analogChannelMask.at(pin) != 0)
 	{
-		return 256 * analogInput.at(pin * 2) + analogInput.at(pin * 2 + 1);
+		return ((256 * (double)analogInput.at(pin * 2) + (double)analogInput.at(pin * 2 + 1)) * 1.2 / 0x3FF);
 	}
 	std::cout << "You tried to read an input which was not enabled" << std::endl;
 	return -1;

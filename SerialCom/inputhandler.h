@@ -9,15 +9,16 @@
 #include "../DataHandler.h"
 #include "../HTTP/http.h"
 #include "../XML/XML.h"
+#include "dataIOPacket.h"
+#include "../errors.h"
 
 class InputHandler
 {
 	private:
 	std::ofstream logFile;
-	bool * stop;
 	int fileDescriptor;	
 	public:
-	InputHandler(int fd, bool * a_stop);
+	InputHandler(int fd);
 	~InputHandler();
 
 	// Copy constructor
