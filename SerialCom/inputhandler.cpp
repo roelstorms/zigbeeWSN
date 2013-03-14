@@ -54,11 +54,12 @@ unsigned char InputHandler::readByte(int fd)
 			// Need to figure out where I want to put the blocking while loop that waits for input. In this function or somewhere when this function is called.
 }
 
-
+/*
 void InputHandler::operator() ()
 {
 	unsigned char input = 0x0;
 	int count = 0;
+	
 	logFile.open("log.txt");
 	logFile << "start test" << std::endl;
 	std::cout << "bool stop in inputhandler: " << *stop << std::endl;	
@@ -73,6 +74,94 @@ void InputHandler::operator() ()
 			
 			std::cout << std::endl << std::endl << "previous packetsize : " << count << std::endl;
 			logFile << std::endl << std::endl << "previous packetSize : " << count << std::endl;
+			count = 0;
+
+			input = readByte(fileDescriptor);
+			//packet[1] = input;
+			printf("1: %X\n",  input);
+			logFile << std::hex <<  input << std::flush;
+			int packetSize = input * 255;
+
+			input = readByte(fileDescriptor);
+			//packet[2] = input;
+			packetSize += input;	
+			//packetSize--; 		// Will contain the size of the data contained in the packets, this excludes the checksum
+			printf("2: %X\n",  input);
+			logFile << std::hex << input << std::flush;
+			
+
+			//read(fileDescriptor, &input, 1);	// will contain type identifier
+			
+			unsigned char packet[packetSize+ 1 ];
+			std::cout << "packetsize derived from packet info: " << packetSize << std::endl;
+			printf("pSize: %d\n", packetSize);
+			for(int position = 0; position <= packetSize; ++position)
+			{
+				input = readByte(fileDescriptor);
+				packet[position] = input;
+				count++;
+				printf("   %d: %X\n",  position, input);
+				logFile << std::hex << input << std::flush;
+				fflush(stdout);
+			}
+			int sum = 0;
+			for(int position = 0; position <= packetSize; ++position)
+			{
+				printf("          %d: %X\n",  position, packet[position]);
+				fflush(stdout);
+				sum += packet[position];
+			        std::cout << "		sum : " << std::hex << sum << std::endl;	
+			}
+			printf("sum: %X\n", sum);
+			//sum = sum + packet[packetSize];	
+			printf("sum: %X\n", sum);
+			//std::cout << "sum: " << std::hex << sum << std::endl;
+			//check packet integrity
+			
+			
+
+			printf("          	%X\n",  packet[18]);
+			printf("          	%X\n",  packet[19]);
+			float sensorVoltage = ((256 * packet[18] + packet[19]) * 1.2) / 0x3FF ;
+			printf("sensor voltage: %f\n",  sensorVoltage);
+			logFile << std::endl << "sensor voltage: " << sensorVoltage << std::endl;
+			
+
+
+			Http socket(std::string("http://ipsum.groept.be"));
+			socket.login();
+			socket.uploadData(sensorVoltage);//data);
+
+			//dh(sensorVoltage);	
+			
+			
+			fflush(stdout);
+
+		}
+		else
+		{
+			count++;
+			printf("%X\n",  input);
+			fprintf(logFile, "%X\n",  input);
+			fflush(stdout);
+		}
+    	}
+	logFile.close();
+	std::cout << "End of inputhandler" << std::endl;	
+}
+*/
+
+void InputHandler::operator() ()
+{
+	unsigned char input = 0x0;
+	int count = 0;
+	
+	while(true)
+    	{
+		input = readByte(fileDescriptor);
+		if(input == 0x7E)
+		{
+			
 			count = 0;
 
 			input = readByte(fileDescriptor);
