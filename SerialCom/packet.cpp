@@ -1,5 +1,6 @@
 #include "packet.h"
 
+/*
 Packet::Packet(const Packet& aPacket)
 {
 	std::cout << "Copyconstructor" << std::endl;
@@ -7,12 +8,12 @@ Packet::Packet(const Packet& aPacket)
 	type = aPacket.getType();
 	sizeLSB = aPacket.getSizeLSB();
 	sizeMSB = aPacket.getSizeMSB();
+	encodedPacket = aPacket.getEncodedPacket();
 }
+*/
 
-Packet::Packet(std::vector<unsigned char> input)
+Packet::Packet(std::vector<unsigned char> input) : encodedPacket(input)
 {
-	encodedPacket = input;
-	Packet outputPacket;
 	if(input.front() != 0x7E)
 	{
 		std::cout << "error: invalid packet" << std::endl;
@@ -42,7 +43,7 @@ Packet::Packet(std::vector<unsigned char> input)
 	std::cout << "sum: " << std::hex <<  (int)sum << std::endl;
 	if(sum != 0xFF)
 	{
-		std::cout << "checksum is wrong" << std::endl;
+		std::cerr << "checksum is wrong, corrupted packed" << std::endl;
 	}
 
 	checksum = input.back();
@@ -76,6 +77,11 @@ unsigned char Packet::getSizeLSB() const
 unsigned char Packet::getSizeMSB() const
 {
 	return sizeMSB;
+}
+
+std::vector<unsigned char> Packet::getEncodedPacket() const
+{
+	return encodedPacket;
 }
 
 bool Packet::getValidPacket() const
@@ -113,3 +119,4 @@ void Packet::setEncodedPacket(std::vector<unsigned char> aEncodedPacket)
 {
 	encodedPacket = aEncodedPacket;
 }
+

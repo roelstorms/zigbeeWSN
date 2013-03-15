@@ -23,11 +23,17 @@
 
 int main(int argc, char* argv[])
 {
+	int user;
+	user = getuid();
+	if (user != 0)
+	{
+		std::cerr << "root privleges needed" << std::endl;
+		return 1;
+	}
 
-	int fd; /* File descriptor for the port */
-	int i;
-	char out[255], input;
-	int status;
+	std::deque<DataIOPacket> dataIOPacketDeque;
+    	boost::mutex dataIOPacketMutex;
+	
 	std::cout << "argc: " << argc << std::endl;
 	if(argc != 2)
 	{
@@ -37,9 +43,29 @@ int main(int argc, char* argv[])
 	Connection con;
      
 	int connectionDescriptor = con.openPort(atoi(argv[1]), 9600);
-	InputHandler inputHandler(connectionDescriptor);
+	InputHandler inputHandler(connectionDescriptor, &dataIOPacketDeque, &dataIOPacketMutex);
 	boost::thread inputThread(boost::ref(inputHandler));
-	
+
+	while(true)
+	{
+		try
+		{
+			dataIOPacketMutex.lock();
+		
+		}
+		catch(boost::thread_resource_error)
+		{
+			std::cerr << "Could not lock dataIOPacketMutex in main thread" << std::endl;
+			continue;
+		}
+		if(!dataIOPacketDeque.empty())
+		{
+			std::cout << "packet received in main: " << dataIOPacketDeque.back().readAnalog(0) << "V"  <<std::endl;
+			std::cout << "packet received in main: " << dataIOPacketDeque.back() << std::endl;
+			dataIOPacketDeque.pop_back();
+		}
+		dataIOPacketMutex.unlock();
+	}
 	inputThread.join();
 	
 	return 0;

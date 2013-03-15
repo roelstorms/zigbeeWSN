@@ -11,25 +11,24 @@
 #include "../XML/XML.h"
 #include "dataIOPacket.h"
 #include "../errors.h"
+#include <boost/thread/mutex.hpp>
+
 
 class InputHandler
 {
 	private:
 	std::ofstream logFile;
 	int fileDescriptor;	
-	public:
-	InputHandler(int fd);
-	~InputHandler();
-
+	std::deque<DataIOPacket> * dataIOPacketDeque;	
+	boost::mutex * dataIOPacketMutex;
 	// Copy constructor
 	InputHandler(const InputHandler& source);	 
-	
-	// Assignment operator
-	InputHandler& operator = (const InputHandler& source)
-	{
-	fileDescriptor=source.fileDescriptor;
-	return *this;
-	}
+
+	public:
+	InputHandler(int fd, std::deque<DataIOPacket> * aDataIOPacketDeque, boost::mutex * aDataIOPacketMutex);
+	~InputHandler();
+
+		
 	unsigned char readByte(int fd);
 	void operator () ( );
 	

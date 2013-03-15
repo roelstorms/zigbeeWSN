@@ -1,19 +1,14 @@
 #include "inputhandler.h"
 
-InputHandler::InputHandler(const InputHandler& source)
-{
-	fileDescriptor = source.fileDescriptor;
-	std::cout << "Copy constructor" << std::endl;
-}
 
-InputHandler::InputHandler(int fd) : fileDescriptor(fd)
+InputHandler::InputHandler(int fd, std::deque<DataIOPacket> * aDataIOPacketDeque,  boost::mutex * aDataIOPacketMutex) : fileDescriptor(fd), dataIOPacketDeque(aDataIOPacketDeque), dataIOPacketMutex(aDataIOPacketMutex)
 {	
-	std::cout << "constructor" << std::endl;
+	std::cout << "Inputhandler constructor" << std::endl;
 }
 
 InputHandler::~InputHandler()
 {
-	std::cout << "destructor" << std::endl;
+	std::cout << "Inputhandler destructor" << std::endl;
 }
 
 unsigned char InputHandler::readByte(int fd)
@@ -168,12 +163,26 @@ void InputHandler::operator() ()
 			}
 			unsigned char packetType = packet.at(3);	
 			std::cout << "packet type: " << std::uppercase << std::setw(2) << std::setfill('0') << std::hex  << (int) packetType << std::endl;
-			Packet APIPacket;
-
+			
+			DataIOPacket dataIOPacket(packet);
 			switch(packetType)
 			{
 				case 0x92:
-				APIPacket = DataIOPacket(packet);
+				try
+				{
+					dataIOPacketMutex->lock();
+					
+				}
+				catch(boost::thread_resource_error)
+				{
+					std::cerr << "dataIOPacketMutex could not be locked so the read in data packed wasn't stored in dataIOPacketDeque. \nPacked lost: " <<  std::endl;
+					std::cerr << dataIOPacket;
+					continue;
+				}
+					
+					dataIOPacketDeque->push_front(std::move(dataIOPacket));
+					std::cout << "packet received in inputhandler: " << dataIOPacketDeque->back() << std::endl;
+					dataIOPacketMutex->unlock();
 				break;
 
 				default :

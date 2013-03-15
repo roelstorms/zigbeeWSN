@@ -1,13 +1,13 @@
-#ifndef DATAIOPACKET_H
-#define DATAIOPACKET_H
-
+#ifndef ATCOMMANDPACKET_H 
+#define ATCOMMANDPACKET_H 
+ 
 #include <string>
 #include <stdio.h>   /* Standard input/output definitions */
 #include <iostream>
 #include "packet.h"
 #include <iomanip>
 
-class DataIOPacket : public Packet
+class ATCommandPacket : public Packet
 {
 	private:
 	unsigned char receiveOptions, numberOfSamples;
