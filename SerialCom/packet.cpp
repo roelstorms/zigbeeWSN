@@ -59,6 +59,26 @@ Packet::~Packet()
 	std::cout << "Packet destructor" << std::endl;
 }
 
+void Packet::wrap(std::vector<unsigned char> content)
+{
+	encodedPacket.clear();
+	encodedPacket.push_back(0x7E);
+	int size = content.size();
+	sizeMSB = size/256;
+	sizeLSB = size%256; //- (sizeMSB * 256);
+	encodedPacket.push_back(sizeMSB);
+	encodedPacket.push_back(sizeLSB);
+	std::cout << "size of packet MSB: " << std::hex << (int)sizeMSB << "LSB: " << std::hex << (int)sizeLSB << std::endl;
+	int sum = 0;
+	for(int i = 0; i < size; ++i)
+	{
+		encodedPacket.push_back(content.at(i));
+		sum += content.at(i);
+	}
+	checksum = 0xFF - sum;
+	encodedPacket.push_back(checksum);
+}
+
 unsigned char Packet::getType() const
 {
 	return type;

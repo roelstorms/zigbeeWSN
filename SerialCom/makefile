@@ -29,7 +29,11 @@ packet.o:
 	g++ -c packet.cpp -o ./obj/packet.o -std=c++11 -g
 ATCommandResponsePacket.o: packet.o
 	g++ -c ATCommandResponsePacket.cpp -o ./obj/ATCommandResponsePacket.o -std=c++11 -g
+ATCommandPacket.o: packet.o
+	g++ -c ATCommandPacket.cpp -o ./obj/ATCommandPacket.o -std=c++11 -g
 DataIOPacket.o: packet.o
 	g++ -c dataIOPacket.cpp -o ./obj/dataIOPacket.o -std=c++11 -g
+ATCommandTest: ATCommandPacket.o
+	g++ ./tests/ATCommandTest.cpp -o ./tests/ATCommandTest.out ./obj/packet.o ./obj/ATCommandPacket.o -std=c++11 -g
 clean:
 	rm ./obj/inputhandler.o ./obj/connection.o ./obj/userinput.o ./obj/APIFrames.o -g

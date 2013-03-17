@@ -20,12 +20,16 @@ class Packet
 	Packet(std::vector<unsigned char> input);
 	Packet(unsigned char aChecksum, unsigned char aType, unsigned char aSizeLSB, unsigned char aSizeMSB,std::vector<unsigned char> aEncodedPacket);
 	~Packet();
+	
+	void wrap(std::vector<unsigned char> content); 
+
 	unsigned char getType() const;
 	unsigned char getChecksum() const;
 	unsigned char getSizeLSB() const;
 	unsigned char getSizeMSB() const;
 	std::vector<unsigned char> getEncodedPacket() const;
-	bool getValidPacket() const;	
+	bool getValidPacket() const;
+	
 	void setSizeLSB(unsigned char aSizeLSB);
 	void setSizeMSB(unsigned char aSizeMSB);
 	void setType(unsigned char aType);

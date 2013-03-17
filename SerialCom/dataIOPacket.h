@@ -19,7 +19,7 @@ class DataIOPacket : public Packet
 	public:
 	DataIOPacket();
 	DataIOPacket(std::vector<unsigned char>);
-	DataIOPacket(unsigned char aChecksum, unsigned char aType, unsigned char aSizeLSB, unsigned char aSizeMSB,std::vector<unsigned char> aEncodedPacket, unsigned char aFrameID, unsigned char aCommandStatus, std::vector <unsigned char>aATCommand, std::vector<unsigned char> aData);
+	//DataIOPacket(unsigned char aChecksum, unsigned char aType, unsigned char aSizeLSB, unsigned char aSizeMSB,std::vector<unsigned char> aEncodedPacket, unsigned char aFrameID, unsigned char aCommandStatus, std::vector <unsigned char>aATCommand, std::vector<unsigned char> aData);
 	~DataIOPacket();
 	double readAnalog(int pin);
 	bool readDigital(int pin);	
