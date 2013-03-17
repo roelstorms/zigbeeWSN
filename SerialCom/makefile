@@ -1,7 +1,7 @@
 # this is a example of Makefile
 
-all:	packet.o DataIOPacket.o inputhandler.o connection.o userinput.o APIFrames.o  ATCommandResponsePacket.o
-	g++ main.cpp -o main.out ./obj/inputhandler.o ./obj/connection.o ./obj/userinput.o ./obj/APIFrames.o ./obj/dataIOPacket.o ./obj/packet.o ../HTTP/http.o ../XML/XML.o -lxerces-c -lboost_date_time -lboost_thread -std=c++11 -lcurl -g
+all:	packet.o DataIOPacket.o inputhandler.o connection.o userinput.o APIFrames.o  ATCommandResponsePacket.o sendpacket.o
+	g++ main.cpp -o main.out ./obj/inputhandler.o ./obj/SendPacket.o ./obj/connection.o ./obj/userinput.o ./obj/APIFrames.o ./obj/dataIOPacket.o ./obj/ATCommandPacket.o ./obj/packet.o ../HTTP/http.o ../XML/XML.o -lxerces-c -lboost_date_time -lboost_thread -std=c++11 -lcurl -g
 serialunblockingtest:
 	g++ serialunblockingtest.cpp -o serialunblockingtest.out ./obj/inputhandler.o ./obj/connection.o ./obj/userinput.o ./obj/APIFrames.o ./obj/packet.o ../HTTP/http.o ../XML/XML.o -lxerces-c -lboost_date_time -lboost_thread -std=c++11 -g -lcurl
 APIRemoteATTest: APIFrames.o
@@ -19,6 +19,8 @@ unwrap: APIFrames.o
 	g++ ./tests/APIFramesTest_unwrap.cpp -o ./tests/APIFramesTest_unwrap.out ./obj/APIFrames.o ./obj/connection.o ./obj/userinput.o ./obj/inputhandler.o -lboost_thread -std=c++11
 inputhandler.o:
 	g++ -c inputhandler.cpp -o ./obj/inputhandler.o -std=c++11 -g
+sendpacket.o:
+	g++ -c SendPacket.cpp -o ./obj/SendPacket.o -std=c++11 -g
 connection.o: inputhandler.o userinput.o
 	g++ -c connection.cpp -o ./obj/connection.o -lboost_thread -std=c++11 -g
 userinput.o:

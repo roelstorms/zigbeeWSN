@@ -8,6 +8,6 @@ int main(int argc, char* argv[])
 	ATCommand.push_back('O');	
 	ATCommand.push_back('P');	
 	ATCommandPacket atcommandpacket(ATCommand, parameter, 1, false);
-	std::cout << "ATCommandPacket" << atcommandpacket << std::endl;
+	std::cout << "ATCommandPacket: " << atcommandpacket << std::endl;
 	return 0;
 }

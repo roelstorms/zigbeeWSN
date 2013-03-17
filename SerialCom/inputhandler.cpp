@@ -1,7 +1,7 @@
 #include "inputhandler.h"
 
 
-InputHandler::InputHandler(int fd, std::deque<DataIOPacket> * aDataIOPacketDeque,  boost::mutex * aDataIOPacketMutex) : fileDescriptor(fd), dataIOPacketDeque(aDataIOPacketDeque), dataIOPacketMutex(aDataIOPacketMutex)
+InputHandler::InputHandler(int fd, std::queue<DataIOPacket> * aDataIOPacketQueue,  boost::mutex * aDataIOPacketMutex) : fileDescriptor(fd), dataIOPacketQueue(aDataIOPacketQueue), dataIOPacketMutex(aDataIOPacketMutex)
 {	
 	std::cout << "Inputhandler constructor" << std::endl;
 }
@@ -164,27 +164,32 @@ void InputHandler::operator() ()
 			unsigned char packetType = packet.at(3);	
 			std::cout << "packet type: " << std::uppercase << std::setw(2) << std::setfill('0') << std::hex  << (int) packetType << std::endl;
 			
-			DataIOPacket dataIOPacket(packet);
+			DataIOPacket dataIOPacket;
 			switch(packetType)
 			{
 				case 0x92:
-				try
-				{
-					dataIOPacketMutex->lock();
+					dataIOPacket = DataIOPacket(packet);
+					std::cout << "packet of type 92 received" << std::endl;
+					try
+					{
+						dataIOPacketMutex->lock();
+						
+					}
+					catch(boost::thread_resource_error)
+					{
+						std::cerr << "dataIOPacketMutex could not be locked so the read in data packed wasn't stored in dataIOPacketQueue. \nPacked lost: " <<  std::endl;
+						std::cerr << dataIOPacket;
+						continue;
+					}
 					
-				}
-				catch(boost::thread_resource_error)
-				{
-					std::cerr << "dataIOPacketMutex could not be locked so the read in data packed wasn't stored in dataIOPacketDeque. \nPacked lost: " <<  std::endl;
-					std::cerr << dataIOPacket;
-					continue;
-				}
-					
-					dataIOPacketDeque->push_front(std::move(dataIOPacket));
-					std::cout << "packet received in inputhandler: " << dataIOPacketDeque->back() << std::endl;
+					dataIOPacketQueue->push(std::move(dataIOPacket));
+					std::cout << "packet received in inputhandler: " << dataIOPacketQueue->front() << std::endl;
 					dataIOPacketMutex->unlock();
 				break;
-
+				case 0x88:
+					std::cout << "ATCommandResponsePacket received, and thrown away" << std::endl;
+						//Processing needed here
+				break;
 				default :
 				throw unknownPacketType();
 

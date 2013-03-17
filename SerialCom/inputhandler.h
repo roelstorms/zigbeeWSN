@@ -12,25 +12,25 @@
 #include "dataIOPacket.h"
 #include "../errors.h"
 #include <boost/thread/mutex.hpp>
-
+#include <queue>
 
 class InputHandler
 {
 	private:
 	std::ofstream logFile;
 	int fileDescriptor;	
-	std::deque<DataIOPacket> * dataIOPacketDeque;	
+	std::queue<DataIOPacket> * dataIOPacketQueue;	
 	boost::mutex * dataIOPacketMutex;
 	// Copy constructor
 	InputHandler(const InputHandler& source);	 
 
 	public:
-	InputHandler(int fd, std::deque<DataIOPacket> * aDataIOPacketDeque, boost::mutex * aDataIOPacketMutex);
+	InputHandler(int fd, std::queue<DataIOPacket> * aDataIOPacketQueue, boost::mutex * aDataIOPacketMutex);
 	~InputHandler();
 
 		
 	unsigned char readByte(int fd);
-	void operator () ( );
+	void operator () ();
 	
 
 };
