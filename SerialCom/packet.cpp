@@ -79,32 +79,32 @@ void Packet::wrap(std::vector<unsigned char> content)
 	encodedPacket.push_back(checksum);
 }
 
-unsigned char Packet::getType() const
+const unsigned char& Packet::getType() const
 {
 	return type;
 }
 
-unsigned char Packet::getChecksum() const
+const unsigned char& Packet::getChecksum() const
 {
 	return checksum;
 }
 
-unsigned char Packet::getSizeLSB() const
+const unsigned char& Packet::getSizeLSB() const
 {
 	return sizeLSB;
 }
 
-unsigned char Packet::getSizeMSB() const
+const unsigned char& Packet::getSizeMSB() const
 {
 	return sizeMSB;
 }
 
-std::vector<unsigned char> Packet::getEncodedPacket() const
+const std::vector<unsigned char>& Packet::getEncodedPacket() const
 {
 	return encodedPacket;
 }
 
-bool Packet::getValidPacket() const
+const bool& Packet::getValidPacket() const
 {
 	return validPacket;
 }

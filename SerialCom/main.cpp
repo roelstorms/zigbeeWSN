@@ -5,6 +5,7 @@
  *	sudo chmod 666 /dev/ttyUSB0 to allow acces to the serial port
  *
  *	TODO: change all getters to return const references
+ *	TODO: rewrite packet classes so that information is not stored 2ce, once in encoded packet and once in fields such as networkAddress, frameID etc. Make getters and setters that manipulate the encoded packet directly
  */
 
 #include <stdio.h>   /* Standard input/output definitions */
@@ -22,6 +23,32 @@
 #include "connection.h"
 #include "userinput.h"
 #include "SendPacket.h"
+#include "datapacket.h"
+
+void dataIOPacketHandler(std::queue<DataIOPacket> * dataIOPacketQueue, boost::mutex * dataIOPacketMutex)
+{
+		try
+		{
+			dataIOPacketMutex->lock();
+		
+		}
+		catch(boost::thread_resource_error)
+		{
+			std::cerr << "Could not lock dataIOPacketMutex in main thread" << std::endl;
+			return;
+		}
+		if(!dataIOPacketQueue->empty())
+		{
+			std::cout << "packet received in main: " << dataIOPacketQueue->front().readAnalog(0) << "V"  <<std::endl;
+			std::cout << "packet received in main: " << dataIOPacketQueue->front() << std::endl;
+			dataIOPacketQueue->pop();
+		}
+		dataIOPacketMutex->unlock();
+}
+
+
+
+
 
 int main(int argc, char* argv[])
 {
@@ -36,6 +63,10 @@ int main(int argc, char* argv[])
 	std::queue<DataIOPacket> dataIOPacketQueue;
     	boost::mutex dataIOPacketMutex;
 	
+	std::queue<DataPacket> dataPacketQueue;
+    	boost::mutex dataPacketMutex;
+	
+
 	std::queue<ATCommandPacket> ATCommandPacketQueue;
     	boost::mutex ATCommandPacketMutex;
 
@@ -49,7 +80,7 @@ int main(int argc, char* argv[])
 	Connection con;
      
 	int connectionDescriptor = con.openPort(atoi(argv[1]), 9600);
-	InputHandler inputHandler(connectionDescriptor, &dataIOPacketQueue, &dataIOPacketMutex);
+	InputHandler inputHandler(connectionDescriptor, &dataIOPacketQueue, &dataIOPacketMutex, &dataPacketQueue, &dataPacketMutex);
 	boost::thread inputThread(boost::ref(inputHandler));
 
 	SendPacket sendPacket(connectionDescriptor, &ATCommandPacketQueue, &ATCommandPacketMutex);
@@ -67,23 +98,26 @@ int main(int argc, char* argv[])
 	std::cout << "going into main while loop" << std::endl;
 	while(true)
 	{
+	
+		dataIOPacketHandler(&dataIOPacketQueue, &dataIOPacketMutex);
+
 		try
 		{
-			dataIOPacketMutex.lock();
+			dataPacketMutex.lock();
 		
 		}
 		catch(boost::thread_resource_error)
 		{
-			std::cerr << "Could not lock dataIOPacketMutex in main thread" << std::endl;
+			std::cerr << "Could not lock dataPacketMutex in main thread" << std::endl;
 			continue;
 		}
-		if(!dataIOPacketQueue.empty())
+		if(!dataPacketQueue.empty())
 		{
-			std::cout << "packet received in main: " << dataIOPacketQueue.front().readAnalog(0) << "V"  <<std::endl;
-			std::cout << "packet received in main: " << dataIOPacketQueue.front() << std::endl;
-			dataIOPacketQueue.pop();
+			std::cout << "packet received in main: " << dataPacketQueue.front() << std::endl;
+			dataPacketQueue.pop();
 		}
-		dataIOPacketMutex.unlock();
+		dataPacketMutex.unlock();
+
 	}
 	inputThread.join();
 	

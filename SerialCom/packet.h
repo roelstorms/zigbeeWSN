@@ -23,12 +23,12 @@ class Packet
 	
 	void wrap(std::vector<unsigned char> content); 
 
-	unsigned char getType() const;
-	unsigned char getChecksum() const;
-	unsigned char getSizeLSB() const;
-	unsigned char getSizeMSB() const;
-	std::vector<unsigned char> getEncodedPacket() const;
-	bool getValidPacket() const;
+	const unsigned char& getType() const;
+	const unsigned char& getChecksum() const;
+	const unsigned char& getSizeLSB() const;
+	const unsigned char& getSizeMSB() const;
+	const std::vector<unsigned char>& getEncodedPacket() const;
+	const bool& getValidPacket() const;
 	
 	void setSizeLSB(unsigned char aSizeLSB);
 	void setSizeMSB(unsigned char aSizeMSB);

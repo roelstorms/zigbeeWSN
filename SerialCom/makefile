@@ -1,7 +1,7 @@
 # this is a example of Makefile
 
-all:	packet.o DataIOPacket.o inputhandler.o connection.o userinput.o APIFrames.o  ATCommandResponsePacket.o sendpacket.o
-	g++ main.cpp -o main.out ./obj/inputhandler.o ./obj/SendPacket.o ./obj/connection.o ./obj/userinput.o ./obj/APIFrames.o ./obj/dataIOPacket.o ./obj/ATCommandPacket.o ./obj/packet.o ../HTTP/http.o ../XML/XML.o -lxerces-c -lboost_date_time -lboost_thread -std=c++11 -lcurl -g
+all:	packet.o DataIOPacket.o inputhandler.o connection.o userinput.o APIFrames.o  ATCommandResponsePacket.o sendpacket.o datapacket.o
+	g++ main.cpp -o main.out ./obj/inputhandler.o ./obj/SendPacket.o ./obj/connection.o ./obj/userinput.o ./obj/APIFrames.o ./obj/dataIOPacket.o ./obj/datapacket.o ./obj/ATCommandPacket.o ./obj/packet.o ../HTTP/http.o ../XML/XML.o -lxerces-c -lboost_date_time -lboost_thread -std=c++11 -lcurl -g
 serialunblockingtest:
 	g++ serialunblockingtest.cpp -o serialunblockingtest.out ./obj/inputhandler.o ./obj/connection.o ./obj/userinput.o ./obj/APIFrames.o ./obj/packet.o ../HTTP/http.o ../XML/XML.o -lxerces-c -lboost_date_time -lboost_thread -std=c++11 -g -lcurl
 APIRemoteATTest: APIFrames.o
@@ -35,6 +35,8 @@ ATCommandPacket.o: packet.o
 	g++ -c ATCommandPacket.cpp -o ./obj/ATCommandPacket.o -std=c++11 -g
 DataIOPacket.o: packet.o
 	g++ -c dataIOPacket.cpp -o ./obj/dataIOPacket.o -std=c++11 -g
+datapacket.o: packet.o
+	g++ -c datapacket.cpp -o ./obj/datapacket.o -std=c++11 -g
 ATCommandTest: ATCommandPacket.o
 	g++ ./tests/ATCommandTest.cpp -o ./tests/ATCommandTest.out ./obj/packet.o ./obj/ATCommandPacket.o -std=c++11 -g
 clean:

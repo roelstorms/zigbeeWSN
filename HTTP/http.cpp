@@ -57,18 +57,19 @@ size_t Http::write_data(void *buffer, size_t size, size_t nmemb)
 size_t Http::headerHandlerWrapper(void *buffer, size_t size, size_t nmemb, void *obj)
 {
 	std::cout << "Http::headerHandlerWrapper" << std::endl << std::endl;
+	return static_cast<Http*>(obj)->headerHandler(buffer, size, nmemb);
+}
+
+size_t Http::headerHandler(void *buffer, size_t size, size_t nmemb)
+{
 
 	std::ofstream myfile;
 	myfile.open ("header.txt");
 	myfile << std::string((char *)buffer);
 	myfile.close();
 
-	return size * nmemb;
-}
 
-size_t Http::headerHandler(void *buffer, size_t size, size_t nmemb)
-{
-	std::cout << "Http::headerHandler" << std::endl << std::endl;
+	std::cout << (char *)buffer << std::endl;
 	return size * nmemb;
 }
 
@@ -88,7 +89,11 @@ std::string Http::sendGet(std::string urlAddition, size_t (*callback) (void*, si
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		/* example.com is redirected, so we tell libcurl to follow redirection */
 		//curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-		curl_easy_setopt(curl, CURLOPT_HEADER, 1);
+		
+		curl_easy_setopt(curl, CURLOPT_HEADER, 1);			// Enables the output of header information
+		curl_easy_setopt(curl, CURLOPT_WRITEHEADER, this);		// Give this as a paramater to the HEADERFUNCTION
+ 		curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, headerHandlerWrapper);		// set headerHandlerWrapper as a callbackfunction to parse header information
+
 		curl_easy_setopt(curl, CURLOPT_VERBOSE, 0);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, callback); 
@@ -123,9 +128,9 @@ std::string Http::sendPost(std::string urlAddition, std::string data, size_t (*c
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, callback);
 		
-		//curl_easy_setopt(curl, CURLOPT_HEADER, 1);			// Enables the output of header information
-		//curl_easy_setopt(curl, CURLOPT_WRITEHEADER, this);		// Give this as a paramater to the HEADERFUNCTION
- 		//curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, headerHandlerWrapper);		// set headerHandlerWrapper as a callbackfunction to parse header information
+		curl_easy_setopt(curl, CURLOPT_HEADER, 1);			// Enables the output of header information
+		curl_easy_setopt(curl, CURLOPT_WRITEHEADER, this);		// Give this as a paramater to the HEADERFUNCTION
+ 		curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, headerHandlerWrapper);		// set headerHandlerWrapper as a callbackfunction to parse header information
 
 		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 		curl_easy_setopt(curl, CURLOPT_VERBOSE, 0);
@@ -243,6 +248,8 @@ void Http::uploadData(float data)
 	std::string temp;
 	std::cout << "Http::uploadData" << std::endl;
 
+	login();
+
 	url.clear();
 	url.append("/upload");
 	url.append("/");
@@ -265,38 +272,41 @@ void Http::uploadData(float data)
 
 bool Http::login()
 {
-	std::string url("/auth/");
-	std::string temp;
-	temp.append(url);
-	url.append(generateCode(temp.append("a31dd4f1-9169-4475-b316-764e1e737653")));
-
-	XML XMLParser;
-	
-	std::ofstream myfile;
-	myfile.open ("loginReply");
-	myfile << sendPost(url, XMLParser.login(std::string("roel"), std::string("roel")), &Http::loginReplyWrapper);
-	myfile.close();
-
-	token = XMLParser.analyzeLoginReply("loginReply");
-	std::cout << "token calculated from login reply:  " << token << std::endl;
-
-	if (token.empty())
+	if(token.empty() || tokenExpireTime <= boost::posix_time::second_clock::universal_time())
 	{
-		std::cerr << "Login failed, reply contained error = true" << std::endl;
-	}
+		std::string url("/auth/");
+		std::string temp;
+		temp.append(url);
+		url.append(generateCode(temp.append("a31dd4f1-9169-4475-b316-764e1e737653")));
 
+		XML XMLParser;
+		
+		std::ofstream myfile;
+		myfile.open ("loginReply");
+		myfile << sendPost(url, XMLParser.login(std::string("roel"), std::string("roel")), &Http::loginReplyWrapper);
+		myfile.close();
+
+		token = XMLParser.analyzeLoginReply("loginReply");
+		std::cout << "token calculated from login reply:  " << token << std::endl;
+
+		if (token.empty())
+		{
+			std::cerr << "Login failed, reply contained error = true" << std::endl;
+		}
+		else
+		{
+			tokenExpireTime = boost::posix_time::ptime (boost::posix_time::second_clock::universal_time() + boost::posix_time::minutes(30));
+			std::cout << "tokenExpireTime: " << boost::posix_time::to_simple_string(tokenExpireTime) << std::endl;
+		}
+	}
 	return true;
 }
 void Http::setUserRights(std::string entity, int userID, int rights)
 {
 	std::cout << "Http::setUserRights" << std::endl;
 	
-	if(token.empty())
-	{	
-		login();
-		//usleep(100); 	//Sleep microseconds waiing for token to be set
-	}
-
+	login();
+	
 	std::string url;
 	std::string temp;
 	
@@ -322,14 +332,9 @@ std::string Http::getEntity(std::string destinationBase64)
 
 	std::cout << "Http::getEntity" << std::endl;
 	XML XMLParser;
-	
-	if(token.empty())
-	{	
-		std::cout << std::endl <<  "not logged in yet, trying to log in now" << std::endl;	
-		login();
-		//usleep(100); 	//Sleep microseconds waiing for token to be set
-	}
 
+	login();
+	
 	std::string url;
 	std::string temp;
 	
@@ -363,12 +368,8 @@ std::string Http::selectData(std::string destinationBase64, std::vector<std::str
 
 	std::cout << std::endl << "Http::selectData" << std::endl << std::endl;
 	XML XMLParser;
-	
-	if(token.empty())
-	{	
-		login();
-		//usleep(100); 	//Sleep microseconds waiing for token to be set
-	}	
+
+	login();
 
 	std::string url;
 	std::string temp;

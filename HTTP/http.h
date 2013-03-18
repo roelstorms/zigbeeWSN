@@ -28,6 +28,7 @@ class Http
 		std::string urlBase;
 		std::string personalKey;
 		std::string token;
+		boost::posix_time::ptime tokenExpireTime;
 		std::string curlReply;
 	public: 
 		Http(std::string urlBase);

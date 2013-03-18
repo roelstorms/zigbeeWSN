@@ -1,7 +1,7 @@
 #include "inputhandler.h"
 
 
-InputHandler::InputHandler(int fd, std::queue<DataIOPacket> * aDataIOPacketQueue,  boost::mutex * aDataIOPacketMutex) : fileDescriptor(fd), dataIOPacketQueue(aDataIOPacketQueue), dataIOPacketMutex(aDataIOPacketMutex)
+InputHandler::InputHandler(int fd, std::queue<DataIOPacket> * aDataIOPacketQueue,  boost::mutex * aDataIOPacketMutex, std::queue<DataPacket> * aDataPacketQueue, boost::mutex * aDataPacketMutex ) : fileDescriptor(fd), dataIOPacketQueue(aDataIOPacketQueue), dataIOPacketMutex(aDataIOPacketMutex), dataPacketQueue(aDataPacketQueue), dataPacketMutex(aDataPacketMutex)
 {	
 	std::cout << "Inputhandler constructor" << std::endl;
 }
@@ -165,8 +165,29 @@ void InputHandler::operator() ()
 			std::cout << "packet type: " << std::uppercase << std::setw(2) << std::setfill('0') << std::hex  << (int) packetType << std::endl;
 			
 			DataIOPacket dataIOPacket;
+			DataPacket * dataPacket;
 			switch(packetType)
 			{
+				case 0x90:
+					dataPacket = new DataPacket(packet);
+					std::cout << "packet of type 90 received" << std::endl;
+					try
+					{
+						dataPacketMutex->lock();
+						
+					}
+					catch(boost::thread_resource_error)
+					{
+						std::cerr << "dataPacketMutex could not be locked so the read in data packed wasn't stored in dataPacketQueue. \nPacked lost: " <<  std::endl;
+						std::cerr << *dataPacket;
+						continue;
+					}
+					
+					dataPacketQueue->push(std::move(*dataPacket));
+					std::cout << "packet received in inputhandler: " << dataPacketQueue->front() << std::endl;
+					dataPacketMutex->unlock();
+
+					break;
 				case 0x92:
 					dataIOPacket = DataIOPacket(packet);
 					std::cout << "packet of type 92 received" << std::endl;
