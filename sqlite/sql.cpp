@@ -1,24 +1,4 @@
-
 #include "sql.h"
-
-int Sql::callbackWrapper(void *thisPointer, int argc, char **argv, char **azColName)
-{
-
-	return static_cast<Sql *>(thisPointer)->callback( argc,  argv, azColName);
-}
-
-int Sql::callback(int argc, char **argv, char **azColName)
-{
-	int i;
-	for(i=0; i<argc; i++)
-	{
-		selectReturn.insert(std::pair<std::string, std::string>(std::string(azColName[i]), std::string(argv[i])));
-		printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
-	}
-	printf("\n");
-
-	return 0;
-}
 
 Sql::Sql(std::string dbName)
 {
@@ -36,7 +16,29 @@ Sql::~Sql()
 	sqlite3_close(db);
 }
 
-std::multimap<std::string, std::string> Sql::executeQuery(std::string aQuery)
+int Sql::callbackWrapper(void *thisPointer, int argc, char **argv, char **azColName)
+{
+
+	return static_cast<Sql *>(thisPointer)->callback( argc,  argv, azColName);
+}
+
+int Sql::callback(int argc, char **argv, char **azColName)
+{
+	int i;
+	std::map<std::string, std::string> map;
+	for(i=0; i<argc; i++)
+	{
+		map.insert(std::pair<std::string, std::string>(std::string(azColName[i]), std::string(argv[i])));
+		//printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+	}
+	selectReturn.push_back(map);
+	printf("\n");
+
+	return 0;
+}
+
+
+std::vector<std::map<std::string, std::string>> Sql::executeQuery(std::string aQuery)
 {
 	char *zErrMsg = 0;
 
@@ -62,9 +64,9 @@ void Sql::addIpsumPacket(const std::string& url, const std::string& XML)
 	executeQuery(query);
 }	
 
-std::multimap<std::string, std::string> Sql::retrieveIpsumPacket(std::string& url, std::string& XML)
+std::vector<std::map<std::string, std::string>> Sql::retrieveIpsumPacket()
 {
-	std::string query("SELECT FROM ipsum_packets (url, XML)");
-	std::multimap<std::string, std::string> ipsumPacket = executeQuery(query);
+	std::string query("SELECT url, XML FROM ipsum_packets");
+	std::vector<std::map<std::string, std::string>> ipsumPacket = executeQuery(query);
 	return ipsumPacket;
 }	
