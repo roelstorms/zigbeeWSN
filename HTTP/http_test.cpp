@@ -5,7 +5,7 @@
 
 int main(int argc, char * argv[])
 {
-	Http socket(std::string("http://ipsum.groept.be"));
+	Http socket(std::string("localhost:8080"));//http://ipsum.groept.be"));
 
 	/*
 	std::vector<std::pair<std::string, std::string>> aListOfFields;
@@ -36,7 +36,8 @@ int main(int argc, char * argv[])
 	input.push_back(std::pair<std::string, double> (std::string("battery"), 5.6));
 	socket.uploadData(std::string("libeliumSensorType"), socket.calculateDestination(21, 31, 320, 2421), input); 
 	*/
-
+	
+	/*
 	std::vector<std::string> fieldNames;
 	fieldNames.push_back(std::string("temperature"));
 	fieldNames.push_back(std::string("humidity"));
@@ -44,8 +45,10 @@ int main(int argc, char * argv[])
 	fieldNames.push_back(std::string("co2"));
 	fieldNames.push_back(std::string("battery"));
 	std::cout << "data from ipsum: " << std::endl << socket.selectData(socket.calculateDestination(21, 31, 320, 2421), fieldNames) << std::endl;
+	*/
 
 
+	std::cout << "reply from own webservice" << socket.sendPost(std::string("/lol"), std::string("POST DATA") ,  &Http::standardReplyWrapper) << std::endl;	
 
 	//socket.login();
 //	socket.getEntity(socket.calculateDestination(21, 31, 320, 2041));
