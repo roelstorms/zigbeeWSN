@@ -1,10 +1,17 @@
-#include <stdio.h>
-#include <string.h>
-#include "mongoose.h"
+#include "webservice.h"
 
 // This function will be called by mongoose on every new request.
-static int begin_request_handler(struct mg_connection *conn) {
+int Webservice::beginRequestHandlerWrapper(struct mg_connection *conn)
+{
 	const struct mg_request_info *request_info = mg_get_request_info(conn);
+	
+	return static_cast<Webservice*>(request_info->user_data)->beginRequestHandler(conn);
+}
+
+int Webservice::beginRequestHandler(struct mg_connection *conn)
+{
+	const struct mg_request_info *request_info = mg_get_request_info(conn);
+
 	char content[500];
 	int post_data_len;
 	char post_data[1024] = "";
@@ -26,28 +33,26 @@ static int begin_request_handler(struct mg_connection *conn) {
 	// Returning non-zero tells mongoose that our function has replied to
 	// the client, and mongoose should not send client any more data.
 	return 1;
+
 }
 
-int main(void) {
-	struct mg_context *ctx;
-	struct mg_callbacks callbacks;
 
-	// List of options. Last element must be NULL.
-	const char *options[] = {"listening_ports", "8080", NULL};
+
+Webservice::Webservice()
+{
+	const char *options[] = {"listening_ports", "8080", "error_log_file", "./webservice_error.txt", NULL};
 
 	// Prepare callbacks structure. We have only one callback, the rest are NULL.
 	memset(&callbacks, 0, sizeof(callbacks));
-	callbacks.begin_request = begin_request_handler;
+	callbacks.begin_request = &Webservice::beginRequestHandlerWrapper;
 
 	// Start the web server.
-	ctx = mg_start(&callbacks, NULL, options);
+	ctx = mg_start(&callbacks, (void*) this, options);
+}
 
-	// Wait until user hits "enter". Server is running in separate thread.
-	// Navigating to http://localhost:8080 will invoke begin_request_handler().
-	getchar();
-
+Webservice::~Webservice()
+{
 	// Stop the server.
 	mg_stop(ctx);
 
-	return 0;
 }

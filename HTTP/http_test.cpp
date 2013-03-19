@@ -48,7 +48,7 @@ int main(int argc, char * argv[])
 	*/
 
 
-	std::cout << "reply from own webservice" << socket.sendPost(std::string("/lol"), std::string("POST DATA") ,  &Http::standardReplyWrapper) << std::endl;	
+	std::cout << "reply from own webservice" << socket.sendPost(std::string("/lol"), std::string("POST DATA TEST LONG TEKST\r") ,  &Http::standardReplyWrapper) << std::endl;	
 
 	//socket.login();
 //	socket.getEntity(socket.calculateDestination(21, 31, 320, 2041));
