@@ -16,6 +16,7 @@
 #include <sstream>
 #include <iterator>
 #include <unistd.h>
+#include <boost/lexical_cast.hpp>
 
 #include "../XML/XML.h"
 #include "../errors.h"
@@ -30,6 +31,7 @@ class Http
 		std::string token;
 		boost::posix_time::ptime tokenExpireTime;
 		std::string curlReply;
+		int httpError;
 	public: 
 		Http(std::string urlBase);
 		~Http();
@@ -50,13 +52,17 @@ class Http
 		std::string calculateDestination(int userID, int installationID = -1, int sensorGroupID = -1, int sensorID = -1);
 		std::string toBase64(std::string input);
 
-		void uploadData(float data);
-		bool login();
-		void setUserRights(std::string entity, int userID, int rights);
-		std::string getEntity(std::string destinationBase64);	
+		void uploadData(std::string aSensorType, std::string destinationBase64, std::vector<std::pair<std::string, double>> input) throw (HttpError);
+		bool login() throw (HttpError, InvalidLogin);
+		void setUserRights(std::string entity, int userID, int rights) throw (HttpError);
+		std::string getEntity(std::string destinationBase64) throw (HttpError);	
 		void setToken(std::string aToken);
-		std::string selectData(std::string destinationBase64, std::vector<std::string> fields);
-		std::string testQuery();
+		std::string selectData(std::string destinationBase64, std::vector<std::string> fields) throw (HttpError);
+		std::string testQuery() throw (HttpError);
+		std::string ipsumInfo() throw (HttpError);
+		std::string createNewSensor(std::string sensorGroupIDValue, std::string nameValue, std::string dataNameValue, std::string descriptionValue, std::string inuseValue) throw (HttpError);
+		std::string createNewType(std::string aName, std::vector<std::pair<std::string, std::string>> aListOfFields) throw (HttpError);
+
 };	
 
 #endif	

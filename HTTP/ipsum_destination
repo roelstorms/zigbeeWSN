@@ -97,3 +97,24 @@ data sent:
 
 reply:
 <?xml version="1.0" encoding="utf-16"?><Sensor><location>14.04</location><sensorgroupid>320</sensorgroupid><frequency>5</frequency><dataname>d3bae7e83c3fd4165b90570163927da19</dataname><id>2041</id><name>Module4LightSens</name><description>a test sensor to see if this request works</description><inuse>True</inuse><infoname></infoname></Sensor>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Libelium sensor and type:
+
+<?xml version="1.0" encoding="utf-16"?><UserObject><name>libeliumSensorType</name><dataname>dede9bb15bdb8490997179d013fd41346</dataname></UserObject>
+
+<?xml version="1.0" encoding="utf-16"?><Sensor><location>14.04</location><sensorgroupid>320</sensorgroupid><frequency>5</frequency><dataname>dede9bb15bdb8490997179d013fd41346</dataname><id>2421</id><name>Libelium01</name><description>First libelium sensor board that sends all data</description><inuse>True</inuse><infoname></infoname></Sensor>
+

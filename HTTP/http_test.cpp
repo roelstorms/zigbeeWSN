@@ -6,6 +6,47 @@
 int main(int argc, char * argv[])
 {
 	Http socket(std::string("http://ipsum.groept.be"));
+
+	/*
+	std::vector<std::pair<std::string, std::string>> aListOfFields;
+	aListOfFields.push_back(std::pair<std::string, std::string>(std::string("temperature"), std::string("float_n_")));
+	aListOfFields.push_back(std::pair<std::string, std::string>(std::string("humidity"), std::string("float_n_")));
+	aListOfFields.push_back(std::pair<std::string, std::string>(std::string("pressure"), std::string("float_n_")));
+	aListOfFields.push_back(std::pair<std::string, std::string>(std::string("CO2"), std::string("float_n_")));
+	aListOfFields.push_back(std::pair<std::string, std::string>(std::string("battery"), std::string("int_")));
+
+	socket.createNewType(std::string("libeliumSensorType"), aListOfFields);
+	*/
+
+	/*
+	socket.createNewSensor(std::string("320"), std::string("Libelium01"), std::string("dede9bb15bdb8490997179d013fd41346"), std::string("First libelium sensor board that sends all data"), std::string("true"));
+	*/
+
+
+	/*
+	   socket.setUserRights("<?xml version=\"1.0\" encoding=\"utf-16\"?><Sensor><location>14.04</location><sensorgroupid>320</sensorgroupid><frequency>5</frequency><dataname>dede9bb15bdb8490997179d013fd41346</dataname><id>2421</id><name>Libelium01</name><description>First libelium sensor board that sends all data</description><inuse>True</inuse><infoname></infoname></Sensor>", 21, 255);
+	*/
+
+	/*	
+	std::vector<std::pair<std::string, double>> input;
+	input.push_back(std::pair<std::string, double> (std::string("temperature"), 1.2));
+	input.push_back(std::pair<std::string, double> (std::string("humidity"), 2.3));
+	input.push_back(std::pair<std::string, double> (std::string("pressure"), 3.4));
+	input.push_back(std::pair<std::string, double> (std::string("co2"), 4.5));
+	input.push_back(std::pair<std::string, double> (std::string("battery"), 5.6));
+	socket.uploadData(std::string("libeliumSensorType"), socket.calculateDestination(21, 31, 320, 2421), input); 
+	*/
+
+	std::vector<std::string> fieldNames;
+	fieldNames.push_back(std::string("temperature"));
+	fieldNames.push_back(std::string("humidity"));
+	fieldNames.push_back(std::string("pressure"));
+	fieldNames.push_back(std::string("co2"));
+	fieldNames.push_back(std::string("battery"));
+	std::cout << "data from ipsum: " << std::endl << socket.selectData(socket.calculateDestination(21, 31, 320, 2421), fieldNames) << std::endl;
+
+
+
 	//socket.login();
 //	socket.getEntity(socket.calculateDestination(21, 31, 320, 2041));
 //socket.setUserRights("<?xml version=\"1.0\" encoding=\"utf-16\"?><Sensor><location></location><sensorgroupid>320</sensorgroupid><frequency>5</frequency><dataname>d3bae7e83c3fd4165b90570163927da19</dataname><id>2041</id><name>Module4LightSens</name><description>a test sensor to see if this request works</description><inuse>True</inuse><infoname></infoname></Sensor>",21, 255);
@@ -36,12 +77,6 @@ int main(int argc, char * argv[])
 	//url.append(socket.calculateDestination(21, 31, 320, 2029));
 	//url.append("/");
 */
-
-	std::vector<std::string> fields;
-	fields.push_back(std::string( "intensity" ));
-
-	socket.selectData(socket.calculateDestination(21, 31, 320, 2041), fields);
-	socket.getEntity(socket.calculateDestination(21, 31, 320, 2041));	
 
 /*
 	temp.clear();

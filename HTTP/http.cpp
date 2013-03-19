@@ -5,6 +5,7 @@ Http::Http(std::string urlBase): urlBase(urlBase)
 	std::cout << "Http constructor" << std::endl;
 	curl_global_init(CURL_GLOBAL_ALL);
 	token = std::string();
+	httpError = -1;
 }
 
 Http::~Http()
@@ -28,9 +29,7 @@ size_t Http::loginReplyWrapper(void *buffer, size_t size, size_t nmemb, void *ob
 
 size_t Http::loginReply(void *buffer, size_t size, size_t nmemb)
 {
-	XML XMLParser;
 	curlReply = std::string((char *)buffer);
-	std::cout << std::endl << std::endl << curlReply << std::endl << std::endl << std::endl;
 	return size * nmemb;
 }
 
@@ -44,12 +43,6 @@ size_t Http::write_data(void *buffer, size_t size, size_t nmemb)
 {
 	std::cout << "write_data" << std::endl;
 	curlReply = std::string((char *)buffer);
-	std::ofstream myfile;
-	
-	myfile.open ("log.txt");
-	myfile << curlReply;
-	myfile.close();
-	std::cout << std::endl << std::endl << curlReply << std::endl << std::endl;	
 
 	return size * nmemb;
 }
@@ -62,14 +55,11 @@ size_t Http::headerHandlerWrapper(void *buffer, size_t size, size_t nmemb, void 
 
 size_t Http::headerHandler(void *buffer, size_t size, size_t nmemb)
 {
-
-	std::ofstream myfile;
-	myfile.open ("header.txt");
-	myfile << std::string((char *)buffer);
-	myfile.close();
-
-
-	std::cout << (char *)buffer << std::endl;
+	std::string header((char *) buffer);
+	if(header.find(std::string("HTTP/1.1 ")) != std::string::npos)
+	{
+		httpError = boost::lexical_cast<int>(header.substr(header.find(std::string("HTTP/1.1 ")) + 9, 3));
+	}
 	return size * nmemb;
 }
 
@@ -242,7 +232,7 @@ std::string Http::toBase64(std::string input)
 
 
 
-void Http::uploadData(float data)
+void Http::uploadData(std::string aSensorType, std::string destinationBase64, std::vector<std::pair<std::string, double>> input) throw (HttpError)
 {
 	std::string url;
 	std::string temp;
@@ -253,24 +243,23 @@ void Http::uploadData(float data)
 	url.clear();
 	url.append("/upload");
 	url.append("/");
-	url.append(calculateDestination(21, 31, 320, 2041));
+	url.append(destinationBase64);
 	url.append("/");
 	temp.clear();
 	temp.append(url);
 	temp.append("a31dd4f1-9169-4475-b316-764e1e737653");
 	url.append(generateCode(temp));
-
-	std::pair<std::string, double> pair;
-	pair.first = std::string("intensity");
-	pair.second = data;
-	std::vector<std::pair<std::string, double>> input;
-	input.push_back(pair);
+	
 	XML XMLParser;
-	sendPost(url, XMLParser.uploadData(std::string("lightSensor"), input), &Http::standardReplyWrapper);
-
+	httpError = -1;
+	sendPost(url, XMLParser.uploadData(aSensorType, input), &Http::standardReplyWrapper);
+	if(httpError != 200)
+	{
+		throw HttpError();
+	}
 }
 
-bool Http::login()
+bool Http::login() throw (HttpError, InvalidLogin)
 {
 	if(token.empty() || tokenExpireTime <= boost::posix_time::second_clock::universal_time())
 	{
@@ -280,11 +269,15 @@ bool Http::login()
 		url.append(generateCode(temp.append("a31dd4f1-9169-4475-b316-764e1e737653")));
 
 		XML XMLParser;
-		
+		httpError = -1;	
 		std::ofstream myfile;
 		myfile.open ("loginReply");
 		myfile << sendPost(url, XMLParser.login(std::string("roel"), std::string("roel")), &Http::loginReplyWrapper);
 		myfile.close();
+		if(httpError != 200)
+		{
+			throw HttpError();
+		}
 
 		token = XMLParser.analyzeLoginReply("loginReply");
 		std::cout << "token calculated from login reply:  " << token << std::endl;
@@ -292,6 +285,8 @@ bool Http::login()
 		if (token.empty())
 		{
 			std::cerr << "Login failed, reply contained error = true" << std::endl;
+			throw InvalidLogin();
+			return false;
 		}
 		else
 		{
@@ -301,7 +296,7 @@ bool Http::login()
 	}
 	return true;
 }
-void Http::setUserRights(std::string entity, int userID, int rights)
+void Http::setUserRights(std::string entity, int userID, int rights) throw (HttpError)
 {
 	std::cout << "Http::setUserRights" << std::endl;
 	
@@ -327,7 +322,7 @@ void Http::setUserRights(std::string entity, int userID, int rights)
 
 }
 
-std::string Http::getEntity(std::string destinationBase64)
+std::string Http::getEntity(std::string destinationBase64) throw (HttpError)
 {
 
 	std::cout << "Http::getEntity" << std::endl;
@@ -363,7 +358,8 @@ void Http::setToken(std::string aToken)
 	token = aToken;
 }
 
-std::string Http::selectData(std::string destinationBase64, std::vector<std::string> fields)
+std::string Http::selectData(std::string destinationBase64, std::vector<std::string> fields) throw (HttpError)
+
 {
 
 	std::cout << std::endl << "Http::selectData" << std::endl << std::endl;
@@ -389,18 +385,16 @@ std::string Http::selectData(std::string destinationBase64, std::vector<std::str
 	url.append(generateCode(temp));
 
 	
-	sendPost(url, XMLParser.selectData(fields,  XMLParser.getTimestamp(1, 0, 0, 1, 3, 2013), XMLParser.getCurrentTimestamp()), &Http::standardReplyWrapper);
+	return sendPost(url, XMLParser.selectData(fields,  XMLParser.getTimestamp(1, 0, 0, 1, 3, 2013), XMLParser.getCurrentTimestamp()), &Http::standardReplyWrapper);
 	//sendPost(url, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<get>\n<start>2012-01-01T00:00:00</start>\n<end>9999-12-31T23:59:59</end>\n<select>\n<field>\n<name>intensity</name>\n</field>\n</select>\n</get>", &Http::standardReplyWrapper);
 
-	std::string output;
-
-	return output;	
 
 
 }
 
 
-std::string Http::testQuery()
+std::string Http::testQuery() throw (HttpError)
+
 {
 	std::string url, temp;
 	// url format for entity: entity/{token}/{destination}/{code}
@@ -421,4 +415,58 @@ std::string Http::testQuery()
 
 	std::string output;
 	return output;
+}
+
+std::string Http::ipsumInfo() throw (HttpError)
+{
+	std::string url;
+	url.append("/info");
+
+	return sendGet(url, &Http::standardReplyWrapper);
+}
+
+std::string Http::createNewSensor(std::string sensorGroupIDValue, std::string nameValue, std::string dataNameValue, std::string descriptionValue, std::string inuseValue) throw (HttpError)
+{
+	XML XMLParser;
+	
+	login();
+
+	std::string url;
+	std::string temp;
+	
+	// url format for entity: select/{token}/{destination}/{code}
+	url.clear();
+	url.append("/addSensor/");
+	url.append(token);		
+	url.append("/");
+	temp.clear();
+	temp.append(url);
+	temp.append("a31dd4f1-9169-4475-b316-764e1e737653");
+	url.append(generateCode(temp));
+
+	return sendPost(url, XMLParser.createNewSensor(sensorGroupIDValue, nameValue, dataNameValue, descriptionValue, inuseValue), &Http::standardReplyWrapper);
+}
+
+std::string Http::createNewType(std::string aName, std::vector<std::pair<std::string, std::string>> aListOfFields) throw (HttpError)
+
+{
+	XML XMLParser;
+	
+	login();
+
+	std::string url;
+	std::string temp;
+	
+	// url format for entity: select/{token}/{destination}/{code}
+	url.clear();
+	url.append("/addType/");
+	url.append(token);		
+	url.append("/");
+	
+	temp.clear();
+	temp.append(url);
+	temp.append("a31dd4f1-9169-4475-b316-764e1e737653");
+	url.append(generateCode(temp));
+
+	return sendPost(url, XMLParser.createNewType(aName, aListOfFields), &Http::standardReplyWrapper);
 }

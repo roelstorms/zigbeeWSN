@@ -1,6 +1,12 @@
 #ifndef APIFrames_H
 #define APIFrames_H
 
+
+/*
+ * 	Written by Roel Storms
+ * 	Depreciated, has been replaced by the different packet classes
+ */
+
 #include <string>
 #include <boost/thread.hpp>
 #include <stdio.h>   /* Standard input/output definitions */

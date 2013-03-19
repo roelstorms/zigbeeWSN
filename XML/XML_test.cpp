@@ -5,13 +5,11 @@ int main(int argc, char* argv[])
 {
 	XML XMLParser;
 
-	std::vector<std::string> fields;
-	fields.push_back(std::string("field1"));
-	fields.push_back(std::string("field2"));
-	XMLParser.selectData(fields, XMLParser.getCurrentTimestamp() , XMLParser.getCurrentTimestamp());
-	std::cout << XMLParser.getTimestamp(10, 30, 20, 2, 12, 1989) << std::endl;
 
-
+	std::vector<std::pair<std::string, std::string>> aListOfFields;
+	aListOfFields.push_back(std::pair<std::string, std::string>(std::string("namefield2"), std::string("decimal_ps_")));
+	aListOfFields.push_back(std::pair<std::string, std::string>(std::string("namefield1"), std::string("float_n_")));
+	std::cout << XMLParser.createNewType(std::string("aName"), aListOfFields) << std::endl;		
 	return 0;	
 }
 

@@ -21,6 +21,7 @@ class Sql
 	std::vector<std::map<std::string, std::string>> executeQuery(std::string aQuery);		
 	void addIpsumPacket(const std::string& url, const std::string& XML);
 	std::vector<std::map<std::string, std::string>> retrieveIpsumPacket();
+	void removeIpsumPacket(int id);
 };
 
 #endif

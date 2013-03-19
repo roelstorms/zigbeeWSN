@@ -45,36 +45,41 @@ class XML
 	XML();
 	~XML();
 
-	std::string uploadData(std::string type, std::vector<std::pair<std::string, double>> input);
+	std::string uploadData(const std::string& type, const std::vector<std::pair<std::string, double>>& input);
 
-	std::string createNewInstallation(std::string nameValue, std::string descriptionValue, std::string inuseValue);
-	std::string createNewSensorGroup(std::string installationIDValue, std::string nameValue, std::string descriptionValue, std::string inuseValue); 
-	std::string createNewSensor(std::string sensorGroupIDValue, std::string nameValue, std::string dataNameValue, std::string descriptionValue, std::string inuseValue);
-	std::string createNewType(std::string aName, std::string aFieldName);
-	std::string createNewUser();
-
-	std::string login(std::string username, std::string password);
+	std::string createNewInstallation(const std::string& nameValue, const std::string& descriptionValue, const std::string& inuseValue);
+	std::string createNewSensorGroup(const std::string& installationIDValue, const std::string& nameValue, const std::string& descriptionValue, const std::string& inuseValue); 
+	std::string createNewSensor(const std::string& sensorGroupIDValue, const std::string& nameValue, const std::string& dataNameValue, const std::string& descriptionValue, const std::string& inuseValue);
 
 	/*
-	 *	Input is the XML returned from ipsum on a login request
+	 *	Creates XML that generates a new type on the ipsum server. You can specify the name of this new type and several different field. 
+	 *	Each field has a name and a type (for instance float_n or int_ or text (see ipsum documentation for the different types possible)
+	 *
+	 */
+	std::string createNewType(const std::string& aName, const std::vector<std::pair<std::string, std::string>>& aListOfFields) throw (UnknownDataType);		
+	std::string createNewUser();
+
+	std::string login(const std::string& username, const std::string& password);
+
+	/*
+	 *	Reply is filename where the XML returned from ipsum on a login request is stored.
 	 *	Function returns token needed by ipsum for requests which required to be logged in.
 	 */
-	std::string analyzeLoginReply( std::string reply);
+	std::string analyzeLoginReply(const std::string& reply);
 
 	/*
 	 *	Generates XML needed by the ipsum POST request to do a select.
 	 *	No possibility to apply functions or name as or where which are all supported by ipsum.
 	 *	TODO: test new implementation 
 	 */
-	std::string selectData(std::vector<std::string> fields, std::string startTime, std::string endTime);
+	std::string selectData(const std::vector<std::string>& fields, const std::string& startTime, const std::string& endTime);
 
 	/*
 	 *	analyzeSelect analyzes the ipsum XML response on a select call.
 	 *	Returns a list of pairs where pair.first is the fieldname and pair.second is the value
 	 *
-	 *	TODO: NEEDS IMPLEMENTATION
 	 */
-	std::vector<std::pair<std::string, std::string>> analyzeSelect(std::string input);
+	std::vector<std::pair<std::string, std::string>> analyzeSelect(const std::string& input);
 
 	/*
 	 * 	getTimestamp returns a timestamp in the format YYYY-DD-MMThh:mm:ss

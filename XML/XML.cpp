@@ -88,7 +88,7 @@ std::string XML::serializeDOM(xercesc::DOMNode* node) {
 	return XMLOutput;
 }
 
-std::string XML::uploadData(std::string type, std::vector<std::pair<std::string, double>> input)	// need to accept multiple arguments (pairs of field names and values)
+std::string XML::uploadData(const std::string& type, const std::vector<std::pair<std::string, double>>& input)
 {
 	XMLCh tempStr[100];
 
@@ -136,15 +136,16 @@ std::string XML::uploadData(std::string type, std::vector<std::pair<std::string,
 		xercesc::DOMText* fieldvalue = doc->createTextNode(tempStr);
 		field->appendChild(fieldvalue);
 
-		xercesc::XMLString::transcode("utimestamp", tempStr, 99);
-		xercesc::DOMNode* fieldTimestamp = doc->createElement(tempStr);
-		myType->appendChild(fieldTimestamp);
-
-		xercesc::XMLString::transcode("0", tempStr, 99);
-		xercesc::DOMText* fieldTimestampValue = doc->createTextNode(tempStr);
-		fieldTimestamp->appendChild(fieldTimestampValue);
-
+		
 	}
+	xercesc::XMLString::transcode("utimestamp", tempStr, 99);
+	xercesc::DOMNode* fieldTimestamp = doc->createElement(tempStr);
+	myType->appendChild(fieldTimestamp);
+
+	xercesc::XMLString::transcode("0", tempStr, 99);
+	xercesc::DOMText* fieldTimestampValue = doc->createTextNode(tempStr);
+	fieldTimestamp->appendChild(fieldTimestampValue);
+
 	XMLOutput = serializeDOM(upload);
 
 	doc->release();
@@ -153,7 +154,7 @@ std::string XML::uploadData(std::string type, std::vector<std::pair<std::string,
 	return XMLOutput;
 }
 
-std::string XML::createNewInstallation(std::string nameValue, std::string descriptionValue, std::string inuseValue)
+std::string XML::createNewInstallation(const std::string& nameValue, const std::string& descriptionValue, const std::string& inuseValue)
 {
 	XMLCh tempStr[100];
 
@@ -226,7 +227,7 @@ std::string XML::createNewInstallation(std::string nameValue, std::string descri
 	return XMLOutput;
 }
 
-std::string XML::createNewSensorGroup(std::string installationIDValue, std::string nameValue, std::string descriptionValue, std::string inuseValue)
+std::string XML::createNewSensorGroup(const std::string& installationIDValue, const std::string& nameValue, const std::string& descriptionValue, const std::string& inuseValue)
 {
 
 	XMLCh tempStr[100];
@@ -310,7 +311,7 @@ std::string XML::createNewSensorGroup(std::string installationIDValue, std::stri
 	return XMLOutput;
 }
 
-std::string XML::createNewSensor(std::string sensorGroupIDValue, std::string nameValue, std::string dataNameValue, std::string descriptionValue, std::string inuseValue)
+std::string XML::createNewSensor(const std::string& sensorGroupIDValue, const std::string& nameValue, const std::string& dataNameValue, const std::string& descriptionValue, const std::string& inuseValue)
 {
 
 	XMLCh tempStr[100];
@@ -401,7 +402,7 @@ std::string XML::createNewSensor(std::string sensorGroupIDValue, std::string nam
 	return XMLOutput;
 }
 
-std::string XML::createNewType(std::string aName, std::string aFieldName)
+std::string XML::createNewType(const std::string& aName, const std::vector<std::pair<std::string, std::string>>& aListOfFields) throw (UnknownDataType)
 {
 	std::string XMLOutput;
 	XMLCh tempStr[100];
@@ -416,53 +417,114 @@ std::string XML::createNewType(std::string aName, std::string aFieldName)
 	usertype->setAttribute(xercesc::XMLString::transcode("name"), xercesc::XMLString::transcode(aName.c_str()));
 	docElement->appendChild(usertype);
 
-	xercesc::XMLString::transcode("field", tempStr, 99);
-	xercesc::DOMElement* field = doc->createElement(tempStr);
-	usertype->appendChild(field);
+	for(std::pair<std::string, std::string> aField : aListOfFields)
+	{
 
-	xercesc::XMLString::transcode("sql", tempStr, 99);
-	xercesc::DOMElement* sql = doc->createElement(tempStr);
-	field->appendChild(sql);
+		xercesc::XMLString::transcode("field", tempStr, 99);
+		xercesc::DOMElement* field = doc->createElement(tempStr);
+		usertype->appendChild(field);
 
-	xercesc::XMLString::transcode("type", tempStr, 99);
-	xercesc::DOMElement* sqlType = doc->createElement(tempStr);
-	sql->appendChild(sqlType);
+		xercesc::XMLString::transcode("sql", tempStr, 99);
+		xercesc::DOMElement* sql = doc->createElement(tempStr);
+		field->appendChild(sql);
 
-	xercesc::XMLString::transcode("decimal_ps_", tempStr, 99);
-	xercesc::DOMText* sqlTypeFieldValue = doc->createTextNode(tempStr);
-	sqlType->appendChild(sqlTypeFieldValue);
+		xercesc::XMLString::transcode("type", tempStr, 99);
+		xercesc::DOMElement* sqlType = doc->createElement(tempStr);
+		sql->appendChild(sqlType);
 
-	xercesc::XMLString::transcode("l1", tempStr, 99);
-	xercesc::DOMElement* l1 = doc->createElement(tempStr);
-	sql->appendChild(l1);
+		xercesc::XMLString::transcode(aField.second.c_str(), tempStr, 99);
+		xercesc::DOMText* sqlTypeFieldValue = doc->createTextNode(tempStr);
+		sqlType->appendChild(sqlTypeFieldValue);
+	
+		if(aField.second == std::string("decimal_ps_"))
+		{
+			xercesc::XMLString::transcode("l1", tempStr, 99);
+			xercesc::DOMElement* l1 = doc->createElement(tempStr);
+			sql->appendChild(l1);
 
-	xercesc::XMLString::transcode("5", tempStr, 99);
-	xercesc::DOMText* l1FieldValue = doc->createTextNode(tempStr);
-	l1->appendChild(l1FieldValue);
+			xercesc::XMLString::transcode("5", tempStr, 99);
+			xercesc::DOMText* l1FieldValue = doc->createTextNode(tempStr);
+			l1->appendChild(l1FieldValue);
 
-	xercesc::XMLString::transcode("l2", tempStr, 99);
-	xercesc::DOMElement* l2 = doc->createElement(tempStr);
-	sql->appendChild(l2);
+			xercesc::XMLString::transcode("l2", tempStr, 99);
+			xercesc::DOMElement* l2 = doc->createElement(tempStr);
+			sql->appendChild(l2);
 
-	xercesc::XMLString::transcode("2", tempStr, 99);
-	xercesc::DOMText* l2FieldValue = doc->createTextNode(tempStr);
-	l2->appendChild(l2FieldValue);
+			xercesc::XMLString::transcode("2", tempStr, 99);
+			xercesc::DOMText* l2FieldValue = doc->createTextNode(tempStr);
+			l2->appendChild(l2FieldValue);
 
-	xercesc::XMLString::transcode("type", tempStr, 99);
-	xercesc::DOMElement* type = doc->createElement(tempStr);
-	field->appendChild(type);
+			xercesc::XMLString::transcode("type", tempStr, 99);
+			xercesc::DOMElement* type = doc->createElement(tempStr);
+			field->appendChild(type);
 
-	xercesc::XMLString::transcode("float", tempStr, 99);
-	xercesc::DOMText* typeFieldValue = doc->createTextNode(tempStr);
-	type->appendChild(typeFieldValue);
+			xercesc::XMLString::transcode("double", tempStr, 99);
+			xercesc::DOMText* typeFieldValue = doc->createTextNode(tempStr);
+			type->appendChild(typeFieldValue);
 
-	xercesc::XMLString::transcode("name", tempStr, 99);
-	xercesc::DOMElement* name = doc->createElement(tempStr);
-	field->appendChild(name);
 
-	xercesc::XMLString::transcode(aFieldName.c_str(), tempStr, 99);
-	xercesc::DOMText* nameFieldValue = doc->createTextNode(tempStr);
-	name->appendChild(nameFieldValue);
+		}
+		else if(aField.second == std::string("float_n_"))
+		{
+			xercesc::XMLString::transcode("l1", tempStr, 99);
+			xercesc::DOMElement* l1 = doc->createElement(tempStr);
+			sql->appendChild(l1);
+
+			xercesc::XMLString::transcode("5", tempStr, 99);
+			xercesc::DOMText* l1FieldValue = doc->createTextNode(tempStr);
+			l1->appendChild(l1FieldValue);
+
+			xercesc::XMLString::transcode("type", tempStr, 99);
+			xercesc::DOMElement* type = doc->createElement(tempStr);
+			field->appendChild(type);
+
+			xercesc::XMLString::transcode("float", tempStr, 99);
+			xercesc::DOMText* typeFieldValue = doc->createTextNode(tempStr);
+			type->appendChild(typeFieldValue);
+		}
+		else if(aField.second == std::string("char_n_"))
+		{
+			xercesc::XMLString::transcode("l1", tempStr, 99);
+			xercesc::DOMElement* l1 = doc->createElement(tempStr);
+			sql->appendChild(l1);
+
+			xercesc::XMLString::transcode("255", tempStr, 99);
+			xercesc::DOMText* l1FieldValue = doc->createTextNode(tempStr);
+			l1->appendChild(l1FieldValue);
+
+			xercesc::XMLString::transcode("type", tempStr, 99);
+			xercesc::DOMElement* type = doc->createElement(tempStr);
+			field->appendChild(type);
+
+			xercesc::XMLString::transcode("", tempStr, 99);
+			xercesc::DOMText* typeFieldValue = doc->createTextNode(tempStr);
+			type->appendChild(typeFieldValue);
+		}
+		else if(aField.second == std::string("int_"))
+		{
+			xercesc::XMLString::transcode("type", tempStr, 99);
+			xercesc::DOMElement* type = doc->createElement(tempStr);
+			field->appendChild(type);
+
+			xercesc::XMLString::transcode("int", tempStr, 99);
+			xercesc::DOMText* typeFieldValue = doc->createTextNode(tempStr);
+			type->appendChild(typeFieldValue);
+
+		}
+		else
+		{
+			throw UnknownDataType();
+		}
+
+		xercesc::XMLString::transcode("name", tempStr, 99);
+		xercesc::DOMElement* name = doc->createElement(tempStr);
+		field->appendChild(name);
+
+		xercesc::XMLString::transcode(aField.first.c_str(), tempStr, 99);
+		xercesc::DOMText* nameFieldValue = doc->createTextNode(tempStr);
+		name->appendChild(nameFieldValue);
+
+	}
 
 	XMLOutput = serializeDOM(usertype);
 	doc->release();
@@ -476,7 +538,7 @@ std::string XML::createNewUser()
 	return XMLOutput;
 }
 
-std::string XML::login(std::string username, std::string password)
+std::string XML::login(const std::string& username, const std::string& password)
 {
 	std::cout << "XML::login begin" << std::endl;
 	std::string XMLOutput;
@@ -516,7 +578,7 @@ std::string XML::login(std::string username, std::string password)
 	return XMLOutput;
 }
 
-std::string XML::analyzeLoginReply( std::string fileName)
+std::string XML::analyzeLoginReply(const std::string& reply)
 {
 	std::cout << "XML::analyzeLoginReply() begin" << std::endl;
 
@@ -535,8 +597,8 @@ std::string XML::analyzeLoginReply( std::string fileName)
 	//config->setParameter(xercesc::XMLUni::fgXercesSchema, doSchema);
 	//config->setParameter(xercesc::XMLUni::fgXercesHandleMultipleImports, true);
 	//config->setParameter(xercesc::XMLUni::fgXercesSchemaFullChecking, schemaFullChecking);	
-	std::cout << "filename : " << fileName << std::endl;
-	doc = parser->parseURI(fileName.c_str());
+	std::cout << "filename : " << reply << std::endl;
+	doc = parser->parseURI(reply.c_str());
 	if (doc == NULL)
 	{
 		throw InvalidXMLError(); 
@@ -592,7 +654,7 @@ std::string XML::analyzeLoginReply( std::string fileName)
 
 
 
-std::string XML::selectData(std::vector<std::string> fields, std::string startTime, std::string endTime)
+std::string XML::selectData(const std::vector<std::string>& fields, const std::string& startTime, const std::string& endTime)
 {
 	std::string XMLOutput;
 

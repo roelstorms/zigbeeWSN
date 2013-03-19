@@ -29,7 +29,7 @@ int Sql::callback(int argc, char **argv, char **azColName)
 	for(i=0; i<argc; i++)
 	{
 		map.insert(std::pair<std::string, std::string>(std::string(azColName[i]), std::string(argv[i])));
-		//printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+		printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
 	}
 	selectReturn.push_back(map);
 	printf("\n");
@@ -66,7 +66,16 @@ void Sql::addIpsumPacket(const std::string& url, const std::string& XML)
 
 std::vector<std::map<std::string, std::string>> Sql::retrieveIpsumPacket()
 {
-	std::string query("SELECT url, XML FROM ipsum_packets");
+	std::string query("SELECT *  FROM ipsum_packets");
 	std::vector<std::map<std::string, std::string>> ipsumPacket = executeQuery(query);
 	return ipsumPacket;
-}	
+}
+
+void  Sql::removeIpsumPacket(int id)
+{
+	std::string query("DELETE FROM ipsum_packets WHERE id = '");
+	query.append(std::to_string(id));
+	query.append("'");
+	executeQuery(query);
+
+}
