@@ -4,19 +4,24 @@
 #include <stdio.h>
 #include <string.h>
 #include "mongoose.h"
+#include "webservicerequest.h"
+#include <boost/thread/mutex.hpp>
+#include <queue>
+
 
 class Webservice
 {
 	private:
 	struct mg_context *ctx;
 	struct mg_callbacks callbacks;
-
-	// List of options. Last element must be NULL.
+	std::queue<WebserviceRequest> * webserviceRequestQueue;
+	boost::mutex * webserviceRequestMutex;
+		// List of options. Last element must be NULL.
 	
 
 
 	public:
-	Webservice();
+	Webservice(std::queue<WebserviceRequest> * aWebserviceRequestQueue, boost::mutex * aWebserviceRequestMutex);
 	~Webservice();
 	
 	static int beginRequestHandlerWrapper(struct mg_connection *conn);

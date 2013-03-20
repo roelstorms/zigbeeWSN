@@ -52,11 +52,16 @@ class XML
 	std::string createNewSensor(const std::string& sensorGroupIDValue, const std::string& nameValue, const std::string& dataNameValue, const std::string& descriptionValue, const std::string& inuseValue);
 
 	/*
-	 *	Creates XML that generates a new type on the ipsum server. You can specify the name of this new type and several different field. 
+	 *	Creates XML that generates a new type on the ipsum server. 
+	 *	You can specify the name of this new type and several different field. 
 	 *	Each field has a name and a type (for instance float_n or int_ or text (see ipsum documentation for the different types possible)
 	 *
 	 */
-	std::string createNewType(const std::string& aName, const std::vector<std::pair<std::string, std::string>>& aListOfFields) throw (UnknownDataType);		
+	std::string createNewType(const std::string& aName, const std::vector<std::pair<std::string, std::string>>& aListOfFields) throw (UnknownDataType);
+
+	/*
+	 *	NOT IMPLEMENTED YET
+	 */
 	std::string createNewUser();
 
 	std::string login(const std::string& username, const std::string& password);

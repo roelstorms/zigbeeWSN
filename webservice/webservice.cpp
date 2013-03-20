@@ -38,7 +38,7 @@ int Webservice::beginRequestHandler(struct mg_connection *conn)
 
 
 
-Webservice::Webservice()
+Webservice::Webservice(std::queue<WebserviceRequest> * aWebserviceRequestQueue, boost::mutex * aWebserviceRequestMutex) : webserviceRequestQueue(aWebserviceRequestQueue), webserviceRequestMutex(aWebserviceRequestMutex)
 {
 	const char *options[] = {"listening_ports", "8080", "error_log_file", "./webservice_error.txt", NULL};
 

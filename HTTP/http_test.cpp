@@ -5,8 +5,9 @@
 
 int main(int argc, char * argv[])
 {
-	Http socket(std::string("localhost:8080"));//http://ipsum.groept.be"));
-
+	//Http socket(std::string("localhost:8080"));//http://ipsum.groept.be"));
+	Http socket(std::string("http://ipsum.groept.be"));
+	
 	/*
 	std::vector<std::pair<std::string, std::string>> aListOfFields;
 	aListOfFields.push_back(std::pair<std::string, std::string>(std::string("temperature"), std::string("float_n_")));
@@ -47,8 +48,13 @@ int main(int argc, char * argv[])
 	std::cout << "data from ipsum: " << std::endl << socket.selectData(socket.calculateDestination(21, 31, 320, 2421), fieldNames) << std::endl;
 	*/
 
-
+	/*
 	std::cout << "reply from own webservice" << socket.sendPost(std::string("/lol"), std::string("POST DATA TEST LONG TEKST\r") ,  &Http::standardReplyWrapper) << std::endl;	
+	*/
+
+
+	std::cout << "entity: " <<  socket.getEntity(socket.calculateDestination(21, 31, 320, 2421)) << std::endl ; 	
+
 
 	//socket.login();
 //	socket.getEntity(socket.calculateDestination(21, 31, 320, 2041));

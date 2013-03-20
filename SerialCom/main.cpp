@@ -152,7 +152,7 @@ int main(int argc, char* argv[])
 	std::cout << "argc: " << argc << std::endl;
 	if(argc != 2)
 	{
-		std::cout << "also provide the port number" << std::endl;
+		std::cerr << "also provide the port number" << std::endl;
 		return 1;
 	}
 	

@@ -344,12 +344,8 @@ std::string Http::getEntity(std::string destinationBase64) throw (HttpError)
 	temp.append(url);
 	temp.append("a31dd4f1-9169-4475-b316-764e1e737653");
 	url.append(generateCode(temp));
-	sendGet(url, &Http::standardReplyWrapper);
-
-	std::string output;
-
-	return output;	
-
+	return sendGet(url, &Http::standardReplyWrapper);
+	
 
 }
 

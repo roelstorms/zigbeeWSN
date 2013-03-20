@@ -2,7 +2,10 @@
 
 int main(int argc, char** argv)
 {
-	Webservice webservice;
+	std::queue<WebserviceRequest> webserviceRequestQueue;
+	boost::mutex webserviceRequestMutex;
+
+	Webservice webservice(&webserviceRequestQueue, &webserviceRequestMutex);
 
 	// Wait until user hits "enter". Server is running in separate thread.
 	// Navigating to http://localhost:8080 will invoke begin_request_handler().
