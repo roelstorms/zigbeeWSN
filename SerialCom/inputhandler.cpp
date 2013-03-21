@@ -1,7 +1,7 @@
 #include "inputhandler.h"
 
 
-InputHandler::InputHandler(int fd, std::queue<DataIOPacket> * aDataIOPacketQueue,  boost::mutex * aDataIOPacketMutex, std::queue<DataPacket> * aDataPacketQueue, boost::mutex * aDataPacketMutex ) : fileDescriptor(fd), dataIOPacketQueue(aDataIOPacketQueue), dataIOPacketMutex(aDataIOPacketMutex), dataPacketQueue(aDataPacketQueue), dataPacketMutex(aDataPacketMutex)
+InputHandler::InputHandler(int fd, std::mutex * aConditionVariableMutex, std::condition_variable * aMainConditionVariable, std::queue<DataIOPacket> * aDataIOPacketQueue,  std::mutex * aDataIOPacketMutex, std::queue<DataPacket> * aDataPacketQueue, std::mutex * aDataPacketMutex ) : fileDescriptor(fd), conditionVariableMutex(aConditionVariableMutex), mainConditionVariable(aMainConditionVariable), dataIOPacketQueue(aDataIOPacketQueue), dataIOPacketMutex(aDataIOPacketMutex), dataPacketQueue(aDataPacketQueue), dataPacketMutex(aDataPacketMutex)
 {	
 	std::cout << "Inputhandler constructor" << std::endl;
 }
@@ -171,42 +171,27 @@ void InputHandler::operator() ()
 				case 0x90:
 					dataPacket = new DataPacket(packet);
 					std::cout << "packet of type 90 received" << std::endl;
-					try
 					{
-						dataPacketMutex->lock();
+						std::lock_guard<std::mutex> lg(*dataPacketMutex);
 						
+						dataPacketQueue->push(std::move(*dataPacket));
+						std::cout << "packet received in inputhandler: " << dataPacketQueue->front() << std::endl;
+						mainConditionVariable->notify_all();
 					}
-					catch(boost::thread_resource_error)
-					{
-						std::cerr << "dataPacketMutex could not be locked so the read in data packed wasn't stored in dataPacketQueue. \nPacked lost: " <<  std::endl;
-						std::cerr << *dataPacket;
-						continue;
-					}
-					
-					dataPacketQueue->push(std::move(*dataPacket));
-					std::cout << "packet received in inputhandler: " << dataPacketQueue->front() << std::endl;
-					dataPacketMutex->unlock();
-
 					break;
+
 				case 0x92:
 					dataIOPacket = DataIOPacket(packet);
 					std::cout << "packet of type 92 received" << std::endl;
-					try
 					{
-						dataIOPacketMutex->lock();
-						
+						std::lock_guard<std::mutex> lg(*dataIOPacketMutex);
+						dataIOPacketQueue->push(std::move(dataIOPacket));
+						std::cout << "packet received in inputhandler: " << dataIOPacketQueue->front() << std::endl;
+						mainConditionVariable->notify_all();
+
 					}
-					catch(boost::thread_resource_error)
-					{
-						std::cerr << "dataIOPacketMutex could not be locked so the read in data packed wasn't stored in dataIOPacketQueue. \nPacked lost: " <<  std::endl;
-						std::cerr << dataIOPacket;
-						continue;
-					}
-					
-					dataIOPacketQueue->push(std::move(dataIOPacket));
-					std::cout << "packet received in inputhandler: " << dataIOPacketQueue->front() << std::endl;
-					dataIOPacketMutex->unlock();
-				break;
+					break;
+
 				case 0x88:
 					std::cout << "ATCommandResponsePacket received, and thrown away" << std::endl;
 						//Processing needed here

@@ -1,6 +1,6 @@
 #include "SendPacket.h"
 
-SendPacket::SendPacket(int aConnectionDescriptor, std::queue<ATCommandPacket> * aATCommandPacketQueue, boost::mutex * aATCommandPacketMutex) : connectionDescriptor(aConnectionDescriptor), ATCommandPacketQueue(aATCommandPacketQueue), ATCommandPacketMutex(aATCommandPacketMutex)
+SendPacket::SendPacket(int aConnectionDescriptor, std::queue<ATCommandPacket> * aATCommandPacketQueue, std::mutex * aATCommandPacketMutex, std::condition_variable * aATCommandPacketCV) : connectionDescriptor(aConnectionDescriptor), ATCommandPacketQueue(aATCommandPacketQueue), ATCommandPacketMutex(aATCommandPacketMutex), ATCommandPacketCV(aATCommandPacketCV)
 {
 	std::cout << "SendPacket(int aConnectionDescriptor)" << std::endl;
 }
@@ -10,17 +10,9 @@ void SendPacket::operator() ()
 {
 	while(true)
 	{
-		try
-		{
-			ATCommandPacketMutex->lock();
-			
-		}
-		catch(boost::thread_resource_error)
-		{
-			std::cerr << "ATCommandPacketMutex could not be locked so the read in data packed wasn't stored in dataIOPacketQueue. \nPacked lost: " <<  std::endl;
-			continue;
-		}
-
+		std::unique_lock<std::mutex> lu(*ATCommandPacketMutex);
+		auto mySelf = this;
+		ATCommandPacketCV->wait(lu, [&mySelf]{return !mySelf->ATCommandPacketQueue->empty();});
 		while(!ATCommandPacketQueue->empty())
 		{
 			std::cout << "sending ATCommandPacket: " << ATCommandPacketQueue->front() << std::endl;
@@ -29,7 +21,6 @@ void SendPacket::operator() ()
 
 			ATCommandPacketQueue->pop();
 		}
-		ATCommandPacketMutex->unlock();
 	}
 
 }

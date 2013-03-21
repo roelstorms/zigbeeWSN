@@ -26,95 +26,76 @@
 #include "SendPacket.h"
 #include "datapacket.h"
 
-void dataIOPacketHandler(std::queue<DataIOPacket> * dataIOPacketQueue, boost::mutex * dataIOPacketMutex)
+void dataIOPacketHandler(std::queue<DataIOPacket> * dataIOPacketQueue, std::mutex * dataIOPacketMutex)
 {
-		try
-		{
-			dataIOPacketMutex->lock();
-		
-		}
-		catch(boost::thread_resource_error)
-		{
-			std::cerr << "Could not lock dataIOPacketMutex in main thread" << std::endl;
-			return;
-		}
+		std::lock_guard<std::mutex> lg(*dataIOPacketMutex);
+	
 		if(!dataIOPacketQueue->empty())
 		{
 			std::cout << "packet received in main: " << dataIOPacketQueue->front().readAnalog(0) << "V"  <<std::endl;
 			std::cout << "packet received in main: " << dataIOPacketQueue->front() << std::endl;
 			dataIOPacketQueue->pop();
 		}
-		dataIOPacketMutex->unlock();
 }
 
-void dataPacketHandler(std::queue<DataPacket> * dataPacketQueue, boost::mutex * dataPacketMutex, Http& socket)
+void dataPacketHandler(std::queue<DataPacket> * dataPacketQueue, std::mutex * dataPacketMutex, Http& socket)
 {
+
+	std::lock_guard<std::mutex> lg(*dataPacketMutex);
+	while(!dataPacketQueue->empty())
+	{
+		std::vector<std::pair<std::string, double>> ipsumInput;
+
+		DataPacket dataPacket = dataPacketQueue->front();
+		dataPacketQueue->pop();
+		std::cout << "packet received in main: " << dataPacket << std::endl;
+		auto data = dataPacket.getData();
+		std::string stringData(data.begin(), data.end());
+		int pos = stringData.find("T");
+		if (pos != std::string::npos)
+		{
+			std::cout << "Temperature = " << stringData.substr(pos + 1, 4) << std::endl;
+			ipsumInput.push_back(std::pair<std::string, double> (std::string("temperature"), boost::lexical_cast<double>(stringData.substr(pos + 1, 4))));
+		}
+		pos = stringData.find("H");
+		if (pos != std::string::npos)
+		{
+			std::cout << "Humidity = " << stringData.substr(pos + 1, 2) << std::endl;
+			ipsumInput.push_back(std::pair<std::string, double> (std::string("humidity"), boost::lexical_cast<double>(stringData.substr(pos + 1, 2))));
+		}
+		
+		pos = stringData.find("P");
+		if (pos != std::string::npos)
+		{
+			std::cout << "Pressure = " << stringData.substr(pos + 1, 5) << std::endl;
+			ipsumInput.push_back(std::pair<std::string, double> (std::string("pressure"), boost::lexical_cast<double>(stringData.substr(pos + 1, 5))));
+		}
+	
+		pos = stringData.find("C");
+		if (pos != std::string::npos)
+		{
+			std::cout << "CO2 = " << stringData.substr(pos + 1, 3) << std::endl;
+			ipsumInput.push_back(std::pair<std::string, double> (std::string("co2"), boost::lexical_cast<double>(stringData.substr(pos + 1, 3))));
+		}
+		
+		pos = stringData.find("B");
+		if (pos != std::string::npos)
+		{
+			std::cout << "Battery = " << stringData.substr(pos + 1, 2) << "%" << std::endl;
+			ipsumInput.push_back(std::pair<std::string, double> (std::string("battery"), boost::lexical_cast<double>(stringData.substr(pos + 1, 2))));
+		}
 
 		try
 		{
-			dataPacketMutex->lock();
-		
+			socket.uploadData(std::string("libeliumSensorType"), socket.calculateDestination(21, 31, 320, 2421), ipsumInput);
 		}
-		catch(boost::thread_resource_error)
+		catch(HttpError)
 		{
-			std::cerr << "Could not lock dataIOPacketMutex in main thread" << std::endl;
-			return;
+			std::cerr << "Connection to Ipsum failed" << std::endl;
 		}
-		while(!dataPacketQueue->empty())
-		{
-			std::vector<std::pair<std::string, double>> ipsumInput;
-
-			DataPacket dataPacket = dataPacketQueue->front();
-			dataPacketQueue->pop();
-			std::cout << "packet received in main: " << dataPacket << std::endl;
-			auto data = dataPacket.getData();
-			std::string stringData(data.begin(), data.end());
-			int pos = stringData.find("T");
-			if (pos != std::string::npos)
-			{
-				std::cout << "Temperature = " << stringData.substr(pos + 1, 4) << std::endl;
-				ipsumInput.push_back(std::pair<std::string, double> (std::string("temperature"), boost::lexical_cast<double>(stringData.substr(pos + 1, 4))));
-			}
-			pos = stringData.find("H");
-			if (pos != std::string::npos)
-			{
-				std::cout << "Humidity = " << stringData.substr(pos + 1, 2) << std::endl;
-				ipsumInput.push_back(std::pair<std::string, double> (std::string("humidity"), boost::lexical_cast<double>(stringData.substr(pos + 1, 2))));
-			}
-			
-			pos = stringData.find("P");
-			if (pos != std::string::npos)
-			{
-				std::cout << "Pressure = " << stringData.substr(pos + 1, 5) << std::endl;
-				ipsumInput.push_back(std::pair<std::string, double> (std::string("pressure"), boost::lexical_cast<double>(stringData.substr(pos + 1, 5))));
-			}
 		
-			pos = stringData.find("C");
-			if (pos != std::string::npos)
-			{
-				std::cout << "CO2 = " << stringData.substr(pos + 1, 3) << std::endl;
-				ipsumInput.push_back(std::pair<std::string, double> (std::string("co2"), boost::lexical_cast<double>(stringData.substr(pos + 1, 3))));
-			}
-			
-			pos = stringData.find("B");
-			if (pos != std::string::npos)
-			{
-				std::cout << "Battery = " << stringData.substr(pos + 1, 2) << "%" << std::endl;
-				ipsumInput.push_back(std::pair<std::string, double> (std::string("battery"), boost::lexical_cast<double>(stringData.substr(pos + 1, 2))));
-			}
-
-			try
-			{
-				socket.uploadData(std::string("libeliumSensorType"), socket.calculateDestination(21, 31, 320, 2421), ipsumInput);
-			}
-			catch(HttpError)
-			{
-				std::cerr << "Connection to Ipsum failed" << std::endl;
-			}
-			
-			std::cout << "datapacketQueuesize: " << (signed int) dataPacketQueue->size() << std::endl;
-		}
-		dataPacketMutex->unlock();
+		std::cout << "datapacketQueuesize: " << (signed int) dataPacketQueue->size() << std::endl;
+	}
 }
 
 
@@ -125,12 +106,13 @@ int main(int argc, char* argv[])
 	user = getuid();
 	if (user != 0)
 	{
-		std::cerr << "root privleges needed" << std::endl;
+		std::cerr << "root privileges needed" << std::endl;
 		return 1;
 	}
 	
 	Http socket("http://ipsum.groept.be");
 
+	/*
 	try
 	{
 		socket.ipsumInfo();
@@ -140,14 +122,19 @@ int main(int argc, char* argv[])
 		std::cerr << "Could not connect to Ipsum" << std::endl;
 		return 1;
 	}
+	*/
+
 	std::queue<DataIOPacket> dataIOPacketQueue;
-    	boost::mutex dataIOPacketMutex;
+    	std::mutex dataIOPacketMutex;
 	
 	std::queue<DataPacket> dataPacketQueue;
-    	boost::mutex dataPacketMutex;
+    	std::mutex dataPacketMutex;
 	
 	std::queue<ATCommandPacket> ATCommandPacketQueue;
-    	boost::mutex ATCommandPacketMutex;
+    	std::mutex ATCommandPacketMutex;
+
+	std::condition_variable mainConditionVariable, ATCommandPacketCV;
+	std::mutex conditionVariableMutex;
 
 	std::cout << "argc: " << argc << std::endl;
 	if(argc != 2)
@@ -159,10 +146,10 @@ int main(int argc, char* argv[])
 	Connection con;
      
 	int connectionDescriptor = con.openPort(atoi(argv[1]), 9600);
-	InputHandler inputHandler(connectionDescriptor, &dataIOPacketQueue, &dataIOPacketMutex, &dataPacketQueue, &dataPacketMutex);
+	InputHandler inputHandler(connectionDescriptor, &conditionVariableMutex, &mainConditionVariable, &dataIOPacketQueue, &dataIOPacketMutex, &dataPacketQueue, &dataPacketMutex);
 	boost::thread inputThread(boost::ref(inputHandler));
 
-	SendPacket sendPacket(connectionDescriptor, &ATCommandPacketQueue, &ATCommandPacketMutex);
+	SendPacket sendPacket(connectionDescriptor, &ATCommandPacketQueue, &ATCommandPacketMutex, &ATCommandPacketCV);
 	boost::thread sendPacketThread(boost::ref(sendPacket));
 	
 	//std::vector<unsigned char> ATCommand, parameter;
@@ -177,6 +164,8 @@ int main(int argc, char* argv[])
 	std::cout << "going into main while loop" << std::endl;
 	while(true)
 	{
+		std::unique_lock<std::mutex> uniqueLock(conditionVariableMutex);
+		mainConditionVariable.wait(uniqueLock, [&dataIOPacketQueue, &dataPacketQueue]{ return (!dataIOPacketQueue.empty() || !dataPacketQueue.empty()); });
 		dataIOPacketHandler(&dataIOPacketQueue, &dataIOPacketMutex);
 		dataPacketHandler(&dataPacketQueue, &dataPacketMutex, socket);
 		

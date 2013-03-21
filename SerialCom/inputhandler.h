@@ -14,6 +14,8 @@
 #include "../errors.h"
 #include <boost/thread/mutex.hpp>
 #include <queue>
+#include <mutex>
+#include <condition_variable>
 
 class InputHandler
 {
@@ -22,13 +24,14 @@ class InputHandler
 	int fileDescriptor;	
 	std::queue<DataIOPacket> * dataIOPacketQueue ;
 	std::queue<DataPacket> 	* dataPacketQueue;
-	boost::mutex * dataIOPacketMutex, * dataPacketMutex;
+	std::mutex * dataIOPacketMutex, * dataPacketMutex, * conditionVariableMutex;
+	std::condition_variable * mainConditionVariable;
 
 	// Copy constructor
 	InputHandler(const InputHandler& source);	 
 
 	public:
-	InputHandler(int fd, std::queue<DataIOPacket> * aDataIOPacketQueue, boost::mutex * aDataIOPacketMutex, std::queue<DataPacket> * aDataPacketQueue, boost::mutex * aDataPacketMutex );
+	InputHandler(int fd, std::mutex * aConditionVariableMutex, std::condition_variable * aMainConditionVariable, std::queue<DataIOPacket> * aDataIOPacketQueue, std::mutex * aDataIOPacketMutex, std::queue<DataPacket> * aDataPacketQueue, std::mutex * aDataPacketMutex );
 	~InputHandler();
 
 		
