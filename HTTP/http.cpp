@@ -430,7 +430,7 @@ std::string Http::createNewSensor(std::string sensorGroupIDValue, std::string na
 	std::string url;
 	std::string temp;
 	
-	// url format for entity: select/{token}/{destination}/{code}
+	// url format for addSensor:  addSensor/{token}/{code}
 	url.clear();
 	url.append("/addSensor/");
 	url.append(token);		
@@ -453,7 +453,7 @@ std::string Http::createNewType(std::string aName, std::vector<std::pair<std::st
 	std::string url;
 	std::string temp;
 	
-	// url format for entity: select/{token}/{destination}/{code}
+	// url format for addSensor:  addSensor/{token}/{code}
 	url.clear();
 	url.append("/addType/");
 	url.append(token);		
@@ -466,3 +466,31 @@ std::string Http::createNewType(std::string aName, std::vector<std::pair<std::st
 
 	return sendPost(url, XMLParser.createNewType(aName, aListOfFields), &Http::standardReplyWrapper);
 }
+
+std::string Http::createNewSensorGroup(const std::string& installationIDValue, const std::string& nameValue, const std::string& descriptionValue, const std::string& inuseValue)
+{
+	XML XMLParser;
+	
+	login();
+
+	std::string url;
+	std::string temp;
+	
+	// url format for entity: select/{token}/{destination}/{code}
+	url.clear();
+	url.append("/addGroup/");
+	url.append(token);		
+	url.append("/");
+	
+	temp.clear();
+	temp.append(url);
+	temp.append("a31dd4f1-9169-4475-b316-764e1e737653");
+	url.append(generateCode(temp));
+
+	return sendPost(url, XMLParser.createNewSensor(nstallationIDValue, nameValue, descriptionValue, inuseValue);
+, &Http::standardReplyWrapper);
+
+
+
+}
+

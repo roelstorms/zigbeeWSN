@@ -10,8 +10,10 @@
 class DataPacket : public Packet
 {
 	private:
-	std::vector<unsigned char> sourceAddress, networkAddress, data;
+	std::vector<unsigned char> sourceAddress, networkAddress;
 	unsigned char receiveOptions;
+	protected:
+	std::vector<unsigned char> data;
 	public:
 	DataPacket(std::vector<unsigned char> input);
 	

@@ -250,7 +250,7 @@ std::string XML::createNewSensorGroup(const std::string& installationIDValue, co
 
 	unsigned long int sec = time(NULL);
 	std::cout << "time: " << std::endl << std::string(std::to_string(sec)) << std::endl;
-	xercesc::XMLString::transcode("2013-02-28T14:48:29", tempStr, 99);
+	xercesc::XMLString::transcode(getCurrentTimestamp(), tempStr, 99);
 	xercesc::DOMText* startFieldValue = doc->createTextNode(tempStr);
 	start->appendChild(startFieldValue);
 

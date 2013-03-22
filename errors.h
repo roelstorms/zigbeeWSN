@@ -21,4 +21,5 @@ ERROR(SerialError, "Couldn't open serial port, check if the device is connected 
 ERROR(unknownPacketType, "this type of packet can not be decoded or does not exist, check the datasheet for more information. If the packet type doesn't exist there must have been an undetected transmission error")
 ERROR(UnknownDataType, "The datatype you chose for one of the fields is not recognized.")
 ERROR(WebserviceInvalidCommand, "Command specified by the URL has not been recognized")
+ERROR(DataNotAvailable, "Sensordata requested from this package is not available. Probably this node does not have such a sensor or hasn't transmitted that data.")
 #endif

@@ -22,6 +22,8 @@ class Sql
 	void addIpsumPacket(const std::string& url, const std::string& XML);
 	std::vector<std::map<std::string, std::string>> retrieveIpsumPacket();
 	void removeIpsumPacket(int id);
+
+	//void addNode(std::string zbAddress, std::string nodeIdentifier, std::string ipsumName);
 };
 
 #endif

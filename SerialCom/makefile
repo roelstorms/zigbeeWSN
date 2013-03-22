@@ -37,6 +37,8 @@ DataIOPacket.o: packet.o
 	g++ -c dataIOPacket.cpp -o ./obj/dataIOPacket.o -std=c++11 -g
 datapacket.o: packet.o
 	g++ -c datapacket.cpp -o ./obj/datapacket.o -std=c++11 -g
+libeliumiopacket.o: packet.o
+	g++ -c libeliumIOpacket.cpp -o ./obj/libeliumIOpacket.o -std=c++11 -g
 ATCommandTest: ATCommandPacket.o
 	g++ ./tests/ATCommandTest.cpp -o ./tests/ATCommandTest.out ./obj/packet.o ./obj/ATCommandPacket.o -std=c++11 -g
 clean:
