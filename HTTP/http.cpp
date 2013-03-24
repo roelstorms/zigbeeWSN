@@ -138,7 +138,10 @@ std::string Http::sendPost(std::string urlAddition, std::string data, size_t (*c
 	}
 	std::cout << "end of sendpost" << std::endl;
 	curl_easy_cleanup(curl);
-
+	if(httpError != 200)
+	{
+		throw HttpError();
+	}
 	return curlReply;
 
 }
