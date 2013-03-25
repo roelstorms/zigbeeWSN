@@ -77,5 +77,26 @@ void  Sql::removeIpsumPacket(int id)
 	query.append(std::to_string(id));
 	query.append("'");
 	executeQuery(query);
+}
+
+std::string Sql::makeNewNode()
+{
+	std::string nodeName;
+
+	std::string query("INSERT INTO nodes (zigbee64bitadress, temperature, humidity, pressure, co2, battery) VALUES('zigbee address', 'true', 'true', 'true', 'true', 'true')");
+	executeQuery(query);
+	query.clear();
+	query.append("SELECT id FROM nodes ORDER BY id DESC");
+	auto vector = executeQuery(query);
+	for(auto it = vector.begin(); it < vector.end(); ++it)
+	{
+		auto field = it->find("id");
+		std::cout << "fieldname: " << field->first << "fieldvalue: " << field->second << std::endl;
+	}
+	return vector.begin()->find("id")->second;
+
+	
+
 
 }
+
