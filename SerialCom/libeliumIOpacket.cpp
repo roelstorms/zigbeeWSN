@@ -1,6 +1,6 @@
 #include "libeliumIOpacket.h"
 
-LibeliumIOPacket::LibeliumIOPacket(std::vector<unsigned char> input) : DataPacket(input)
+LibeliumIOPacket::LibeliumIOPacket(std::vector<unsigned char> input) : DataPacket(input, ZB_LIBEL_IO)
 {
 	std::vector<bool> mask;
 	unsigned char maskChar = data.at(2);

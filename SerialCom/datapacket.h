@@ -4,10 +4,10 @@
 #include <string>
 #include <stdio.h>   /* Standard input/output definitions */
 #include <iostream>
-#include "packet.h"
+#include "ZBPacket.h"
 #include <iomanip>
 
-class DataPacket : public Packet
+class DataPacket : public ZBPacket
 {
 	private:
 	std::vector<unsigned char> sourceAddress, networkAddress;
@@ -15,7 +15,7 @@ class DataPacket : public Packet
 	protected:
 	std::vector<unsigned char> data;
 	public:
-	DataPacket(std::vector<unsigned char> input);
+	DataPacket(std::vector<unsigned char> input, PacketType aType);
 	
 	const std::vector<unsigned char>& getSourceAddress() const;
 	const std::vector<unsigned char>& getNetworkAddress() const;

@@ -1,12 +1,12 @@
-#include "SendPacket.h"
+#include "ZBSender.h"
 
-SendPacket::SendPacket(int aConnectionDescriptor, std::queue<ATCommandPacket> * aATCommandPacketQueue, std::mutex * aATCommandPacketMutex, std::condition_variable * aATCommandPacketCV) : connectionDescriptor(aConnectionDescriptor), ATCommandPacketQueue(aATCommandPacketQueue), ATCommandPacketMutex(aATCommandPacketMutex), ATCommandPacketCV(aATCommandPacketCV)
+ZBSender::ZBSender(int aConnectionDescriptor, std::queue<ATCommandPacket> * aATCommandPacketQueue, std::mutex * aATCommandPacketMutex, std::condition_variable * aATCommandPacketCV) : connectionDescriptor(aConnectionDescriptor), ATCommandPacketQueue(aATCommandPacketQueue), ATCommandPacketMutex(aATCommandPacketMutex), ATCommandPacketCV(aATCommandPacketCV)
 {
-	std::cout << "SendPacket(int aConnectionDescriptor)" << std::endl;
+	std::cout << "ZBSender(int aConnectionDescriptor)" << std::endl;
 }
 
 
-void SendPacket::operator() ()
+void ZBSender::operator() ()
 {
 	while(true)
 	{

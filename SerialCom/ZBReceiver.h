@@ -1,5 +1,5 @@
-#ifndef INPUTHANLDER_H
-#define INPUTHANLDER_H
+#ifndef ZBRECEIVER_H
+#define ZBRECEIVER_H
 
 #include <string>
 #include <boost/thread.hpp>
@@ -17,7 +17,7 @@
 #include <mutex>
 #include <condition_variable>
 
-class InputHandler
+class ZBReceiver
 {
 	private:
 	std::ofstream logFile;
@@ -28,11 +28,11 @@ class InputHandler
 	std::condition_variable * mainConditionVariable;
 
 	// Copy constructor
-	InputHandler(const InputHandler& source);	 
+	ZBReceiver(const ZBReceiver& source);	 
 
 	public:
-	InputHandler(int fd, std::mutex * aConditionVariableMutex, std::condition_variable * aMainConditionVariable, std::queue<DataIOPacket> * aDataIOPacketQueue, std::mutex * aDataIOPacketMutex, std::queue<DataPacket> * aDataPacketQueue, std::mutex * aDataPacketMutex );
-	~InputHandler();
+	ZBReceiver(int fd, std::mutex * aConditionVariableMutex, std::condition_variable * aMainConditionVariable, std::queue<DataIOPacket> * aDataIOPacketQueue, std::mutex * aDataIOPacketMutex, std::queue<DataPacket> * aDataPacketQueue, std::mutex * aDataPacketMutex );
+	~ZBReceiver();
 
 		
 	unsigned char readByte(int fd);

@@ -1,6 +1,6 @@
 #include "datapacket.h"
 
-DataPacket::DataPacket(std::vector<unsigned char> input) : Packet(input)
+DataPacket::DataPacket(std::vector<unsigned char> input, PacketType aType) : ZBPacket(input, aType)
 {
 	if(input.at(3) != 0x90)	std::cout << "Packet type identifier doesn't match with a data packet" << std::endl;
 	for(int i = 4; i < 12; ++i)

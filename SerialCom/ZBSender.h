@@ -1,5 +1,5 @@
-#ifndef SENDPACKET_H
-#define SENDPACKET_H
+#ifndef ZBSENDER_H
+#define ZBSENDER_H
 
 #include <boost/thread/mutex.hpp>
 #include <queue>
@@ -7,7 +7,7 @@
 #include <mutex>
 #include <condition_variable>
 
-class SendPacket
+class ZBSender
 {
 	private:
 	int connectionDescriptor;
@@ -15,7 +15,7 @@ class SendPacket
 	std::mutex * ATCommandPacketMutex;
 	std::condition_variable * ATCommandPacketCV;
 	public:
-	SendPacket(int aConnectionDescriptor, std::queue<ATCommandPacket> * aATCommandPacketQueue, std::mutex * aATCommandPacketMutex, std::condition_variable * aATCommandPacketCV);
+	ZBSender(int aConnectionDescriptor, std::queue<ATCommandPacket> * aATCommandPacketQueue, std::mutex * aATCommandPacketMutex, std::condition_variable * aATCommandPacketCV);
 	void operator () ();
 
 };

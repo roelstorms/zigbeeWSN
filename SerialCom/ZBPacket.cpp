@@ -1,4 +1,4 @@
-#include "packet.h"
+#include "ZBPacket.h"
 
 /*
 Packet::Packet(const Packet& aPacket)
@@ -12,7 +12,7 @@ Packet::Packet(const Packet& aPacket)
 }
 */
 
-Packet::Packet(std::vector<unsigned char> input) : encodedPacket(input)
+ZBPacket::ZBPacket(std::vector<unsigned char> input, PacketType aType) : Packet(aType), encodedPacket(input)
 {
 	if(input.front() != 0x7E)
 	{
@@ -49,17 +49,17 @@ Packet::Packet(std::vector<unsigned char> input) : encodedPacket(input)
 	checksum = input.back();
 }
 
-Packet::Packet(unsigned char aChecksum, unsigned char aType, unsigned char aSizeLSB, unsigned char aSizeMSB,std::vector<unsigned char> aEncodedPacket) : checksum(aChecksum), type(aType), sizeLSB(aSizeLSB), sizeMSB(aSizeMSB), encodedPacket(aEncodedPacket), validPacket(false)
+ZBPacket::ZBPacket(unsigned char aChecksum, unsigned char aType, unsigned char aSizeLSB, unsigned char aSizeMSB,std::vector<unsigned char> aEncodedPacket) : checksum(aChecksum), type(aType), sizeLSB(aSizeLSB), sizeMSB(aSizeMSB), encodedPacket(aEncodedPacket), validPacket(false)
 {
 	std::cout << "Packet constructor" << std::endl;
 }
 
-Packet::~Packet()
+ZBPacket::~ZBPacket()
 {
 	std::cout << "Packet destructor" << std::endl;
 }
 
-void Packet::wrap(std::vector<unsigned char> content)
+void ZBPacket::wrap(std::vector<unsigned char> content)
 {
 	encodedPacket.clear();
 	encodedPacket.push_back(0x7E);
@@ -79,63 +79,63 @@ void Packet::wrap(std::vector<unsigned char> content)
 	encodedPacket.push_back(checksum);
 }
 
-const unsigned char& Packet::getType() const
+const unsigned char& ZBPacket::getType() const
 {
 	return type;
 }
 
-const unsigned char& Packet::getChecksum() const
+const unsigned char& ZBPacket::getChecksum() const
 {
 	return checksum;
 }
 
-const unsigned char& Packet::getSizeLSB() const
+const unsigned char& ZBPacket::getSizeLSB() const
 {
 	return sizeLSB;
 }
 
-const unsigned char& Packet::getSizeMSB() const
+const unsigned char& ZBPacket::getSizeMSB() const
 {
 	return sizeMSB;
 }
 
-const std::vector<unsigned char>& Packet::getEncodedPacket() const
+const std::vector<unsigned char>& ZBPacket::getEncodedPacket() const
 {
 	return encodedPacket;
 }
 
-const bool& Packet::getValidPacket() const
+const bool& ZBPacket::getValidPacket() const
 {
 	return validPacket;
 }
 
 
-void Packet::setSizeLSB(unsigned char aSizeLSB)
+void ZBPacket::setSizeLSB(unsigned char aSizeLSB)
 {
 	sizeLSB = aSizeLSB;
 }
 
-void Packet::setSizeMSB(unsigned char aSizeMSB)
+void ZBPacket::setSizeMSB(unsigned char aSizeMSB)
 {
 	sizeMSB = aSizeMSB;
 }
 
-void Packet::setType(unsigned char aType)
+void ZBPacket::setType(unsigned char aType)
 {
 	type = aType;
 }
 
-void Packet::setChecksum(unsigned char aChecksum)
+void ZBPacket::setChecksum(unsigned char aChecksum)
 {
 	checksum = aChecksum;
 }
 
-void Packet::setValidPacket(bool aValidPacket)
+void ZBPacket::setValidPacket(bool aValidPacket)
 {
 	validPacket = aValidPacket;
 }
 
-void Packet::setEncodedPacket(std::vector<unsigned char> aEncodedPacket)
+void ZBPacket::setEncodedPacket(std::vector<unsigned char> aEncodedPacket)
 {
 	encodedPacket = aEncodedPacket;
 }

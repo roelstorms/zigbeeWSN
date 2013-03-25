@@ -1,5 +1,5 @@
-#ifndef PACKET_H
-#define PACKET_H
+#ifndef ZBPACKET_H
+#define ZBPACKET_H
 
 #include <string>
 #include <stdio.h>   /* Standard input/output definitions */
@@ -8,7 +8,7 @@
 #include <ostream>
 #include <iomanip>
 
-class Packet
+class ZBPacket
 {
 	private:
 	unsigned char type, checksum, sizeLSB, sizeMSB;
@@ -16,10 +16,10 @@ class Packet
 	bool validPacket;	
 	//Packet(const Packet& aPacket){}
 	public:
-	Packet(){ std::cout << "Packet() constructor" << std::endl; };
-	Packet(std::vector<unsigned char> input);
-	Packet(unsigned char aChecksum, unsigned char aType, unsigned char aSizeLSB, unsigned char aSizeMSB,std::vector<unsigned char> aEncodedPacket);
-	~Packet();
+	ZBPacket(){ std::cout << "Packet() constructor" << std::endl; };
+	ZBPacket(std::vector<unsigned char> input, PacketType aType);
+	ZBPacket(unsigned char aChecksum, unsigned char aType, unsigned char aSizeLSB, unsigned char aSizeMSB,std::vector<unsigned char> aEncodedPacket);
+	~ZBPacket();
 	
 	void wrap(std::vector<unsigned char> content); 
 
@@ -37,7 +37,7 @@ class Packet
 	void setValidPacket(bool aValidPacket);
 	void setEncodedPacket(std::vector<unsigned char> aEncodedPacket);
 
-	friend std::ostream &operator<<(std::ostream &out, Packet &packet)     //output
+	friend std::ostream &operator<<(std::ostream &out, ZBPacket &packet)     //output
 	{
 		std::vector<unsigned char> encodedPacket = packet.getEncodedPacket();
 		for(auto it = encodedPacket.begin(); it < encodedPacket.end(); ++it)
