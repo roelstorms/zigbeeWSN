@@ -33,7 +33,7 @@ ZBPacket::ZBPacket(std::vector<unsigned char> input, PacketType aType) : Packet(
 		std::cout << "input.size: " << input.size() << std::endl << "size: " << size << std::endl;
 		std::cout << "size does not match" << std::endl;
 	}	
-	type = input.front();
+	encodedType = input.front();
 	
 	unsigned char sum = 0;
 	for(int i = 0; i < input.size(); ++i)
@@ -49,7 +49,7 @@ ZBPacket::ZBPacket(std::vector<unsigned char> input, PacketType aType) : Packet(
 	checksum = input.back();
 }
 
-ZBPacket::ZBPacket(unsigned char aChecksum, unsigned char aType, unsigned char aSizeLSB, unsigned char aSizeMSB,std::vector<unsigned char> aEncodedPacket, PacketType packetType) : Packet(packetType), checksum(aChecksum), type(aType), sizeLSB(aSizeLSB), sizeMSB(aSizeMSB), encodedPacket(aEncodedPacket), validPacket(false)
+ZBPacket::ZBPacket(unsigned char aChecksum, unsigned char aType, unsigned char aSizeLSB, unsigned char aSizeMSB,std::vector<unsigned char> aEncodedPacket, PacketType packetType) : Packet(packetType), checksum(aChecksum), encodedType(aType), sizeLSB(aSizeLSB), sizeMSB(aSizeMSB), encodedPacket(aEncodedPacket), validPacket(false)
 {
 	std::cout << "Packet constructor" << std::endl;
 }
@@ -79,9 +79,9 @@ void ZBPacket::wrap(std::vector<unsigned char> content)
 	encodedPacket.push_back(checksum);
 }
 
-const unsigned char& ZBPacket::getType() const
+const unsigned char& ZBPacket::getEncodedType() const
 {
-	return type;
+	return encodedType;
 }
 
 const unsigned char& ZBPacket::getChecksum() const
@@ -122,7 +122,7 @@ void ZBPacket::setSizeMSB(unsigned char aSizeMSB)
 
 void ZBPacket::setType(unsigned char aType)
 {
-	type = aType;
+	encodedType = aType;
 }
 
 void ZBPacket::setChecksum(unsigned char aChecksum)

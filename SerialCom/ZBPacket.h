@@ -12,7 +12,7 @@
 class ZBPacket : public Packet
 {
 	private:
-	unsigned char type, checksum, sizeLSB, sizeMSB;
+	unsigned char encodedType, checksum, sizeLSB, sizeMSB;
 	std::vector<unsigned char> encodedPacket;
 	bool validPacket;	
 	//Packet(const Packet& aPacket){}
@@ -23,7 +23,7 @@ class ZBPacket : public Packet
 	
 	void wrap(std::vector<unsigned char> content); 
 
-	const unsigned char& getType() const;
+	const unsigned char& getEncodedType() const;
 	const unsigned char& getChecksum() const;
 	const unsigned char& getSizeLSB() const;
 	const unsigned char& getSizeMSB() const;

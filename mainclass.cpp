@@ -96,3 +96,9 @@ void MainClass::operator() ()
 	}
 	zbReceiverThread->join();
 }
+
+void libelIOHandler(Packet * packet)
+{
+	LibelIOPacket * libelIOPacket = dynamic_cast<LibelIOPacket *> (packet);
+	std::cout << "temperature: " << libelIOPacket->getTemperature() << std::endl;
+}

@@ -19,7 +19,7 @@ class Packet
 
 	public:
 		Packet(PacketType aType) throw (InvalidPacketType);
-		const PacketType& getType() const;
+		virtual const PacketType& getType() const;
 
 };
 

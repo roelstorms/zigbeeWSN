@@ -1,6 +1,6 @@
-#include "libeliumIOpacket.h"
+#include "libeliopacket.h"
 
-LibeliumIOPacket::LibeliumIOPacket(std::vector<unsigned char> input) : DataPacket(input, ZB_LIBEL_IO)
+LibelIOPacket::LibelIOPacket(std::vector<unsigned char> input) : DataPacket(input, ZB_LIBEL_IO)
 {
 	std::vector<bool> mask;
 	unsigned char maskChar = data.at(2);
@@ -73,7 +73,7 @@ LibeliumIOPacket::LibeliumIOPacket(std::vector<unsigned char> input) : DataPacke
 
 }
 
-unsigned char LibeliumIOPacket::getNodeIdentifier() const
+unsigned char LibelIOPacket::getNodeIdentifier() const
 {
 	return nodeIdentifier;
 }

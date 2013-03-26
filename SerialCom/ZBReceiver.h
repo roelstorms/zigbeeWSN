@@ -10,7 +10,7 @@
 #include "../HTTP/http.h"
 #include "../XML/XML.h"
 #include "../packetqueue.h"
-#include "libeliumIOpacket.h"
+#include "libeliopacket.h"
 //#include "dataIOPacket.h"
 #include "datapacket.h"
 #include "../errors.h"

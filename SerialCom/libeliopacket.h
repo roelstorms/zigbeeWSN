@@ -1,5 +1,5 @@
-#ifndef LIBELIUMIOPACKET_H
-#define LIBELIUMIOPACKET_H
+#ifndef LIBELIOPACKET_H
+#define LIBELIOPACKET_H
 
 #define CREATESENSORGETTER(name, sensortype) float name() const throw(DataNotAvailable)\
 {\
@@ -28,13 +28,13 @@ enum SensorType
 	PLUVIO, VANE, ANEMO, CO2, BAT, PRES, HUM, TEMP 
 };
 
-class LibeliumIOPacket : public DataPacket
+class LibelIOPacket : public DataPacket
 {
 	private:
 		unsigned char nodeIdentifier;
 		std::map<SensorType, float> sensorData;
 	public:
-		LibeliumIOPacket(std::vector<unsigned char> input);
+		LibelIOPacket(std::vector<unsigned char> input);
 		unsigned char getNodeIdentifier() const;
 	 	
 		CREATESENSORGETTER(getTemperature, TEMP)		//Macro to generate setters for all the sensor types	

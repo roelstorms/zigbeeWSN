@@ -14,7 +14,7 @@
 #include <boost/thread.hpp>
 #include "./SerialCom/ZBReceiver.h"
 #include "./SerialCom/connection.h"
-#include "./SerialCom/libeliumIOpacket.h"
+#include "./SerialCom/libeliopacket.h"
 #include "./HTTP/http.h"
 #include "packetqueue.h"
 #include <thread>
@@ -38,6 +38,8 @@ class MainClass
 	MainClass(int argc, char * argv[]);
 	~MainClass();
 	void operator () ();
+
+	void libelIOHandler(Packet * packet);
 
 };
 
