@@ -9,7 +9,9 @@
 
 #include "../HTTP/http.h"
 #include "../XML/XML.h"
-#include "dataIOPacket.h"
+#include "../packetqueue.h"
+#include "libeliumIOpacket.h"
+//#include "dataIOPacket.h"
 #include "datapacket.h"
 #include "../errors.h"
 #include <boost/thread/mutex.hpp>
@@ -21,17 +23,16 @@ class ZBReceiver
 {
 	private:
 	std::ofstream logFile;
-	int fileDescriptor;	
-	std::queue<DataIOPacket> * dataIOPacketQueue ;
-	std::queue<DataPacket> 	* dataPacketQueue;
-	std::mutex * dataIOPacketMutex, * dataPacketMutex, * conditionVariableMutex;
+	int fileDescriptor;
+	PacketQueue * zbReceiveQueue;	
+	std::mutex  * conditionVariableMutex;
 	std::condition_variable * mainConditionVariable;
 
 	// Copy constructor
 	ZBReceiver(const ZBReceiver& source);	 
 
 	public:
-	ZBReceiver(int fd, std::mutex * aConditionVariableMutex, std::condition_variable * aMainConditionVariable, std::queue<DataIOPacket> * aDataIOPacketQueue, std::mutex * aDataIOPacketMutex, std::queue<DataPacket> * aDataPacketQueue, std::mutex * aDataPacketMutex );
+	ZBReceiver(int fd, std::mutex * aConditionVariableMutex, std::condition_variable * aMainConditionVariable, PacketQueue * aZBReceiveQueue);
 	~ZBReceiver();
 
 		

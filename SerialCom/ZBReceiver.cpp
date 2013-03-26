@@ -1,7 +1,7 @@
 #include "ZBReceiver.h"
 
 
-ZBReceiver::ZBReceiver(int fd, std::mutex * aConditionVariableMutex, std::condition_variable * aMainConditionVariable, std::queue<DataIOPacket> * aDataIOPacketQueue,  std::mutex * aDataIOPacketMutex, std::queue<DataPacket> * aDataPacketQueue, std::mutex * aDataPacketMutex ) : fileDescriptor(fd), conditionVariableMutex(aConditionVariableMutex), mainConditionVariable(aMainConditionVariable), dataIOPacketQueue(aDataIOPacketQueue), dataIOPacketMutex(aDataIOPacketMutex), dataPacketQueue(aDataPacketQueue), dataPacketMutex(aDataPacketMutex)
+ZBReceiver::ZBReceiver(int fd, std::mutex * aConditionVariableMutex, std::condition_variable * aMainConditionVariable, PacketQueue * aZBReceiveQueue) : fileDescriptor(fd), conditionVariableMutex(aConditionVariableMutex), mainConditionVariable(aMainConditionVariable), zbReceiveQueue(aZBReceiveQueue)
 {	
 	std::cout << "ZBReceiver constructor" << std::endl;
 }
@@ -42,58 +42,56 @@ void ZBReceiver::operator() ()
 {
 	unsigned char input = 0x0;
 	int count = 0;
-	std::vector<unsigned char> packet;	
+	std::vector<unsigned char> packetVector;	
 	while(true)
     	{
 		input = readByte(fileDescriptor);
 		if(input == 0x7E)
 		{
-			packet.push_back(input);
+			packetVector.push_back(input);
 			
 			input = readByte(fileDescriptor);
 			int packetSize = input * 255;
-			packet.push_back(input);
+			packetVector.push_back(input);
 
 			input = readByte(fileDescriptor);
 			packetSize += input;
-			packet.push_back(input);
+			packetVector.push_back(input);
 	
 			printf("pSize: %d\n", packetSize);
 			for(int position = 0; position <= packetSize; ++position)
 			{
 				input = readByte(fileDescriptor);
-				packet.push_back(input);
+				packetVector.push_back(input);
 				fflush(stdout);
 			}
-			unsigned char packetType = packet.at(3);	
+			unsigned char packetType = packetVector.at(3);	
 			std::cout << "packet type: " << std::uppercase << std::setw(2) << std::setfill('0') << std::hex  << (int) packetType << std::endl;
 			
-			DataIOPacket dataIOPacket;
-			DataPacket * dataPacket;
+			Packet * packet;
 			switch(packetType)
 			{
 				case 0x90:
-					dataPacket = new DataPacket(packet);
-					std::cout << "packet of type 90 received" << std::endl;
+					switch(packetVector.at(15))	//It is a ZB data packet, all our libelium packets are of this type, so now to figure out what libelium packet we'e got
 					{
-						std::lock_guard<std::mutex> lg(*dataPacketMutex);
-						
-						dataPacketQueue->push(std::move(*dataPacket));
-						std::cout << "packet received in inputhandler: " << dataPacketQueue->front() << std::endl;
-						mainConditionVariable->notify_all();
+						case 0x02:
+							packet = dynamic_cast<Packet*> (new LibeliumIOPacket(packetVector));
+							zbReceiveQueue->addPacket(packet);
+							{
+							std::lock_guard<std::mutex> lg(*conditionVariableMutex);
+							mainConditionVariable->notify_all();
+							}
+						break;
+
+						default:
+						throw UnknownPacketType();
+							
 					}
+
 					break;
 
 				case 0x92:
-					dataIOPacket = DataIOPacket(packet);
-					std::cout << "packet of type 92 received" << std::endl;
-					{
-						std::lock_guard<std::mutex> lg(*dataIOPacketMutex);
-						dataIOPacketQueue->push(std::move(dataIOPacket));
-						std::cout << "packet received in inputhandler: " << dataIOPacketQueue->front() << std::endl;
-						mainConditionVariable->notify_all();
-
-					}
+					//packet = dynamic_cast<Packet*> (new DataIOPacket(packetVector));
 					break;
 
 				case 0x88:
@@ -101,10 +99,11 @@ void ZBReceiver::operator() ()
 						//Processing needed here
 				break;
 				default :
-				throw unknownPacketType();
+				throw UnknownPacketType();
 
 			}
-			packet.clear();
+
+			packetVector.clear();
 		//	std::cout << "analog data on pin 1: " << std::to_string(APIPacket.readAnalog(0)) << std::endl;
 		}
     	}

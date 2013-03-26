@@ -4,10 +4,10 @@
 #include <string>
 #include <stdio.h>   /* Standard input/output definitions */
 #include <iostream>
-#include "packet.h"
+#include "ZBPacket.h"
 #include <iomanip>
 
-class DataIOPacket : public Packet
+class DataIOPacket : public ZBPacket 
 {
 	private:
 	unsigned char receiveOptions, numberOfSamples;
@@ -17,7 +17,6 @@ class DataIOPacket : public Packet
 	std::vector <unsigned char> sourceAddress, networkAddress, digitalSamples, analogSamples;
 	//DataIOPacket(const Packet& aPacket){}
 	public:
-	DataIOPacket();
 	DataIOPacket(std::vector<unsigned char>);
 	//DataIOPacket(unsigned char aChecksum, unsigned char aType, unsigned char aSizeLSB, unsigned char aSizeMSB,std::vector<unsigned char> aEncodedPacket, unsigned char aFrameID, unsigned char aCommandStatus, std::vector <unsigned char>aATCommand, std::vector<unsigned char> aData);
 	~DataIOPacket();

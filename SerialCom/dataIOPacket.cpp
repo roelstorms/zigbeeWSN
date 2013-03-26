@@ -1,9 +1,5 @@
 #include "dataIOPacket.h"
 
-DataIOPacket::DataIOPacket()
-{
-	std::cout << "DataIO constructor()" << std::endl;
-}
 
 /*
 DataIOPacket::DataIOPacket(const Packet& aPacket) : Packet(aPacket)
@@ -12,7 +8,7 @@ DataIOPacket::DataIOPacket(const Packet& aPacket) : Packet(aPacket)
 }
 */
 
-DataIOPacket::DataIOPacket(std::vector<unsigned char> input) : Packet(input)
+DataIOPacket::DataIOPacket(std::vector<unsigned char> input) : ZBPacket(input, ZB_IO)
 {
 	std::cout << std::endl << "DataIOPacket(std::vector<unsigned char> input)" << std::endl;
 	for(auto it = input.begin(); it < input.end(); ++it)

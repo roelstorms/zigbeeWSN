@@ -18,7 +18,7 @@ APIRemoteATResponseTest: APIFrames.o
 unwrap: APIFrames.o
 	g++ ./tests/APIFramesTest_unwrap.cpp -o ./tests/APIFramesTest_unwrap.out ./obj/APIFrames.o ./obj/connection.o ./obj/userinput.o ./obj/inputhandler.o -lboost_thread -std=c++11
 ZBReceiver.o:
-	g++ -c ZBReceiver.cpp -o ./obj/inputhandler.o -std=c++11 -g
+	g++ -c ZBReceiver.cpp -o ./obj/ZBReceiver.o -std=c++11 -g
 ZBSender.o:
 	g++ -c ZBSender.cpp -o ./obj/ZBSender.o -std=c++11 -g
 connection.o: inputhandler.o userinput.o
@@ -31,15 +31,15 @@ ZBPacket.o:
 	g++ -c ZBPacket.cpp -o ./obj/ZBPacket.o -std=c++11 -g
 
 
-ATCommandResponsePacket.o: packet.o
+ATCommandResponsePacket.o: 
 	g++ -c ATCommandResponsePacket.cpp -o ./obj/ATCommandResponsePacket.o -std=c++11 -g
-ATCommandPacket.o: packet.o
+ATCommandPacket.o: 
 	g++ -c ATCommandPacket.cpp -o ./obj/ATCommandPacket.o -std=c++11 -g
-DataIOPacket.o: packet.o
+DataIOPacket.o: 
 	g++ -c dataIOPacket.cpp -o ./obj/dataIOPacket.o -std=c++11 -g
-datapacket.o: packet.o
+datapacket.o: 
 	g++ -c datapacket.cpp -o ./obj/datapacket.o -std=c++11 -g
-libeliumiopacket.o: packet.o
+libeliumiopacket.o: 
 	g++ -c libeliumIOpacket.cpp -o ./obj/libeliumIOpacket.o -std=c++11 -g
 ATCommandTest: ATCommandPacket.o
 	g++ ./tests/ATCommandTest.cpp -o ./tests/ATCommandTest.out ./obj/packet.o ./obj/ATCommandPacket.o -std=c++11 -g

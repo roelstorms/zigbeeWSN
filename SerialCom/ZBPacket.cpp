@@ -49,7 +49,7 @@ ZBPacket::ZBPacket(std::vector<unsigned char> input, PacketType aType) : Packet(
 	checksum = input.back();
 }
 
-ZBPacket::ZBPacket(unsigned char aChecksum, unsigned char aType, unsigned char aSizeLSB, unsigned char aSizeMSB,std::vector<unsigned char> aEncodedPacket) : checksum(aChecksum), type(aType), sizeLSB(aSizeLSB), sizeMSB(aSizeMSB), encodedPacket(aEncodedPacket), validPacket(false)
+ZBPacket::ZBPacket(unsigned char aChecksum, unsigned char aType, unsigned char aSizeLSB, unsigned char aSizeMSB,std::vector<unsigned char> aEncodedPacket, PacketType packetType) : Packet(packetType), checksum(aChecksum), type(aType), sizeLSB(aSizeLSB), sizeMSB(aSizeMSB), encodedPacket(aEncodedPacket), validPacket(false)
 {
 	std::cout << "Packet constructor" << std::endl;
 }

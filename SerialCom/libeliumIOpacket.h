@@ -21,6 +21,7 @@
 #include <iomanip>
 #include <map>
 #include "../errors.h"
+#include "../packet.h"
 
 enum SensorType
 {

@@ -7,8 +7,9 @@
 #include <vector>
 #include <ostream>
 #include <iomanip>
+#include "../packet.h"
 
-class ZBPacket
+class ZBPacket : public Packet
 {
 	private:
 	unsigned char type, checksum, sizeLSB, sizeMSB;
@@ -16,9 +17,8 @@ class ZBPacket
 	bool validPacket;	
 	//Packet(const Packet& aPacket){}
 	public:
-	ZBPacket(){ std::cout << "Packet() constructor" << std::endl; };
 	ZBPacket(std::vector<unsigned char> input, PacketType aType);
-	ZBPacket(unsigned char aChecksum, unsigned char aType, unsigned char aSizeLSB, unsigned char aSizeMSB,std::vector<unsigned char> aEncodedPacket);
+	ZBPacket(unsigned char aChecksum, unsigned char aType, unsigned char aSizeLSB, unsigned char aSizeMSB,std::vector<unsigned char> aEncodedPacket, PacketType packetType);
 	~ZBPacket();
 	
 	void wrap(std::vector<unsigned char> content); 

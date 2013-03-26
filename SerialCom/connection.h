@@ -13,8 +13,8 @@
 #include <string>
 #include <sstream>
 #include <boost/thread.hpp>
-#include "userinput.h"
-#include "inputhandler.h"
+
+
 #include "../errors.h"
 
 class Connection
