@@ -19,8 +19,9 @@ int Webservice::beginRequestHandler(struct mg_connection *conn)
 	// Prepare the message we're going to send
 	post_data_len = mg_read(conn, post_data, sizeof(post_data));
 
-	int content_length = snprintf(content, sizeof(content),	"Dag Bjornie, dit is onze nieuwste webservice!!\n %s\n %s\n",request_info->uri, post_data);
+	int content_length = snprintf(content, sizeof(content),	"<error>false</error>",request_info->uri, post_data);
 	printf("%s: %d\n", post_data, content_length);
+	
 	// Send HTTP reply to the client
 	mg_printf(conn,
 			"HTTP/1.1 200 OK\r\n"
@@ -38,7 +39,7 @@ int Webservice::beginRequestHandler(struct mg_connection *conn)
 
 
 
-Webservice::Webservice(std::queue<WebserviceRequest> * aWebserviceRequestQueue, boost::mutex * aWebserviceRequestMutex) : webserviceRequestQueue(aWebserviceRequestQueue), webserviceRequestMutex(aWebserviceRequestMutex)
+Webservice::Webservice(PacketQueue * aWSQueue, std::condition_variable * aWSConditionVariable, std::mutex * aWSConditionVariableMutex) : wsQueue(aWSQueue), wsConditionVariable(aWSConditionVariable), wsConditionVariableMutex(aWSConditionVariableMutex)
 {
 	const char *options[] = {"listening_ports", "8080", "error_log_file", "./webservice_error.txt", NULL};
 

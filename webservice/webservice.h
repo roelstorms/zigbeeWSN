@@ -4,24 +4,24 @@
 #include <stdio.h>
 #include <string.h>
 #include "mongoose.h"
-#include "webservicerequest.h"
-#include <boost/thread/mutex.hpp>
-#include <queue>
-
+#include "wspacket.h"
+#include "../packetqueue.h"
+#include <mutex>
+#include <condition_variable>
 
 class Webservice
 {
 	private:
 	struct mg_context *ctx;
 	struct mg_callbacks callbacks;
-	std::queue<WebserviceRequest> * webserviceRequestQueue;
-	boost::mutex * webserviceRequestMutex;
+	std::condition_variable * wsConditionVariable;
+	std::mutex * wsConditionVariableMutex;
 		// List of options. Last element must be NULL.
-	
+	PacketQueue * wsQueue;
 
 
 	public:
-	Webservice(std::queue<WebserviceRequest> * aWebserviceRequestQueue, boost::mutex * aWebserviceRequestMutex);
+	Webservice(PacketQueue * aWSQueue, std::condition_variable * aWSConditionVariable, std::mutex * aWSConditionVariableMutex);
 	~Webservice();
 	
 	static int beginRequestHandlerWrapper(struct mg_connection *conn);
