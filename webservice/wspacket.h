@@ -1,22 +1,22 @@
-#ifndef WEBSERVICEREQUEST_H
-#define WEBSERVICEREQUEST_H
+#ifndef WSPACKET_H
+#define WSPACKET_H
 #include <string>
 #include "../errors.h"
-
+#include "../packet.h"
 
 enum RequestType
 {
 	CHANGE_FREQUENCY
 };
 
-class WebserviceRequest
+class WSPacket : public Packet
 {
 	private:
 		RequestType requestType;
 		std::string data;
 	public:
-		WebserviceRequest(std::string aURI, std::string aData) throw (WebserviceInvalidCommand);
-		~WebserviceRequest();
+		WSPacket(std::string aURI, std::string aData) throw (WebserviceInvalidCommand);
+		~WSPacket();
 		const RequestType& getRequestType() const;
 		const std::string& getRequestData() const;
 };

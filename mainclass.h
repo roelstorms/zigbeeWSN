@@ -17,6 +17,7 @@
 #include "./SerialCom/libeliopacket.h"
 #include "./HTTP/http.h"
 #include "packetqueue.h"
+#include "./webservice/webservice.h"
 #include <thread>
 
 class MainClass
@@ -24,7 +25,7 @@ class MainClass
 	private:
 	Http * socket;
 	
-	PacketQueue * zbSendQueue;
+	PacketQueue * zbSendQueue, * wsQueue;
 	std::queue<Packet *> * localZBSendQueue;
 
 	std::condition_variable * mainConditionVariable;
@@ -33,7 +34,6 @@ class MainClass
 	Connection * con;
 
 	boost::thread * zbReceiverThread;
-	int connectionDescriptor;
 	public:
 	MainClass(int argc, char * argv[]);
 	~MainClass();

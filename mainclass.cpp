@@ -31,8 +31,9 @@ MainClass::MainClass(int argc, char * argv[])
 	}
 	
 	con = new Connection(); 
-	connectionDescriptor = con->openPort(atoi(argv[1]), 9600);
+	int connectionDescriptor = con->openPort(atoi(argv[1]), 9600);
 
+	wsQueue = new PacketQueue();
 	zbSendQueue = new PacketQueue();
 	localZBSendQueue = new std::queue<Packet *>;
 	mainConditionVariable = new std::condition_variable;
@@ -42,6 +43,7 @@ MainClass::MainClass(int argc, char * argv[])
 	ZBReceiver zbReceiver(connectionDescriptor, conditionVariableMutex, mainConditionVariable, zbSendQueue);
 	zbReceiverThread = new boost::thread(boost::ref(zbReceiver));
 
+	Webservice webService (wsQueue, mainConditionVariable, conditionVariableMutex);
 
 }
 
@@ -53,6 +55,7 @@ MainClass::~MainClass()
 	delete localZBSendQueue;
 	delete mainConditionVariable;
 	delete conditionVariableMutex;
+	delete wsQueue;
 }
 
 void MainClass::operator() ()
