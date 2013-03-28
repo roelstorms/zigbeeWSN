@@ -22,11 +22,8 @@
 #include <map>
 #include "../errors.h"
 #include "../packet.h"
+#include "../enums.h"
 
-enum SensorType
-{
-	PLUVIO, VANE, ANEMO, CO2, BAT, PRES, HUM, TEMP 
-};
 
 class LibelIOPacket : public DataPacket
 {

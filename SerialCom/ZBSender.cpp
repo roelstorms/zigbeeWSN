@@ -1,8 +1,8 @@
 #include "ZBSender.h"
 
-ZBSender::ZBSender(int aConnectionDescriptor, std::queue<ATCommandPacket> * aATCommandPacketQueue, std::mutex * aATCommandPacketMutex, std::condition_variable * aATCommandPacketCV) : connectionDescriptor(aConnectionDescriptor), ATCommandPacketQueue(aATCommandPacketQueue), ATCommandPacketMutex(aATCommandPacketMutex), ATCommandPacketCV(aATCommandPacketCV)
+ZBSender::ZBSender(int fd, std::mutex * zbSenderConditionVariableMutex, std::condition_variable * zbSenderConditionVariable, PacketQueue * zbSendQueue) : fileDescriptor(fd), zbSenderConditionVariableMutex(zbSenderConditionVariableMutex), zbSenderConditionVariable(zbSenderConditionVariable), zbSendQueue(zbSendQueue)
 {
-	std::cout << "ZBSender(int aConnectionDescriptor)" << std::endl;
+	std::cout << "ZBSender constructor" << std::endl;
 }
 
 
@@ -10,16 +10,17 @@ void ZBSender::operator() ()
 {
 	while(true)
 	{
-		std::unique_lock<std::mutex> lu(*ATCommandPacketMutex);
-		auto mySelf = this;
-		ATCommandPacketCV->wait(lu, [&mySelf]{return !mySelf->ATCommandPacketQueue->empty();});
-		while(!ATCommandPacketQueue->empty())
-		{
-			std::cout << "sending ATCommandPacket: " << ATCommandPacketQueue->front() << std::endl;
-			write(connectionDescriptor, (void*) ATCommandPacketQueue->front().getEncodedPacket().data(), ATCommandPacketQueue->front().getEncodedPacket().size());
-			fsync(connectionDescriptor);
+		std::unique_lock<std::mutex> lu(*zbSenderConditionVariableMutex);
+		zbSenderConditionVariable->wait(lu, [this]{return !zbSendQueue->empty();});
+		ZBPacket * packet;
 
-			ATCommandPacketQueue->pop();
+		while(!zbSendQueue->empty())
+		{
+			packet = dynamic_cast<ZBPacket *> (zbSendQueue->getPacket());
+			std::cout << "sending : " << *packet << std::endl;
+			write(fileDescriptor, (void*) packet->getEncodedPacket().data(),  packet->getEncodedPacket().size());
+			fsync(fileDescriptor);
+
 		}
 	}
 

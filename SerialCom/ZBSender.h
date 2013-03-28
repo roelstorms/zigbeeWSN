@@ -3,21 +3,20 @@
 
 #include <boost/thread/mutex.hpp>
 #include <queue>
-#include "ATCommandPacket.h"
+#include "../packetqueue.h"
 #include <mutex>
 #include <condition_variable>
 
 class ZBSender
 {
 	private:
-	int connectionDescriptor;
-	std::queue<ATCommandPacket> * ATCommandPacketQueue;	
-	std::mutex * ATCommandPacketMutex;
-	std::condition_variable * ATCommandPacketCV;
+	int fileDescriptor;
+	PacketQueue * zbSendQueue;	
+	std::mutex  * zbSenderConditionVariableMutex;
+	std::condition_variable * zbSenderConditionVariable;
 	public:
-	ZBSender(int aConnectionDescriptor, std::queue<ATCommandPacket> * aATCommandPacketQueue, std::mutex * aATCommandPacketMutex, std::condition_variable * aATCommandPacketCV);
+	ZBSender(int fd, std::mutex * zbSenderConditionVariableMutex, std::condition_variable * zbSenderConditionVariable, PacketQueue * zbSendQueue);
 	void operator () ();
-
 };
 
 #endif

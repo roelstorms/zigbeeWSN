@@ -13,29 +13,35 @@
 #include <sstream>
 #include <boost/thread.hpp>
 #include "./SerialCom/ZBReceiver.h"
+#include "./SerialCom/ZBSender.h"
 #include "./SerialCom/connection.h"
 #include "./SerialCom/libeliopacket.h"
 #include "./HTTP/http.h"
 #include "packetqueue.h"
 #include "./webservice/webservice.h"
 #include <thread>
+#include "./HTTP/ipsum.h"
+
 
 class MainClass
 {
 	private:
 	Http * socket;
 	
-	PacketQueue * zbSendQueue, * wsQueue;
-	std::queue<Packet *> * localZBSendQueue, * localWSQueue;
+	PacketQueue * zbReceiveQueue, * zbSenderQueue, * wsQueue, * ipsumSendQueue, * ipsumReceiveQueue;
+	std::queue<Packet *> * localZBReceiveQueue, * localWSQueue, * localIpsumSendQueue, * localIpsumReceiveQueue;
 
-	std::condition_variable * mainConditionVariable;
-	std::mutex * conditionVariableMutex;
+	std::condition_variable * mainConditionVariable, * ipsumConditionVariable, * zbSenderConditionVariable;
+	std::mutex * conditionVariableMutex, * ipsumConditionVariableMutex, * zbSenderConditionVariableMutex;
 
 	Connection * con;
 
-	boost::thread * zbReceiverThread, * wsThread;
+	boost::thread * zbReceiverThread, * zbSenderThread, * ipsumThread;
 	ZBReceiver * zbReceiver;
+	ZBSender * zbSender;
 	Webservice * webService;
+	Ipsum * ipsum;
+
 	public:
 	MainClass(int argc, char * argv[]);
 	~MainClass();

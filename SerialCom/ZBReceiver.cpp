@@ -74,12 +74,15 @@ void ZBReceiver::operator() ()
 				case 0x90:
 					switch(packetVector.at(15))	//It is a ZB data packet, all our libelium packets are of this type, so now to figure out what libelium packet we'e got
 					{
+						std::cout << "found libel packet" << std::endl;
 						case 0x02:
+							std::cout << "found libelIOpacket" << std::endl;
 							packet = dynamic_cast<Packet*> (new LibelIOPacket(packetVector));
 							zbReceiveQueue->addPacket(packet);
 							{
-							std::lock_guard<std::mutex> lg(*conditionVariableMutex);
-							mainConditionVariable->notify_all();
+								std::lock_guard<std::mutex> lg(*conditionVariableMutex);
+								mainConditionVariable->notify_all();
+								std::cout << "main notified" << std::endl;
 							}
 						break;
 

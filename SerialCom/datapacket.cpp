@@ -2,6 +2,7 @@
 
 DataPacket::DataPacket(std::vector<unsigned char> input, PacketType aType) : ZBPacket(input, aType)
 {
+	std::cout << "DataPacket constructor" << std::endl;
 	if(input.at(3) != 0x90)	std::cout << "Packet type identifier doesn't match with a data packet" << std::endl;
 	for(int i = 4; i < 12; ++i)
 	{
@@ -20,7 +21,7 @@ DataPacket::DataPacket(std::vector<unsigned char> input, PacketType aType) : ZBP
 	{
 		data.push_back(input.at(i));
 	}
-
+	std::cout << "end of DataPacket constructor" << std::endl;
 }
 
 

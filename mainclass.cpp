@@ -34,33 +34,66 @@ MainClass::MainClass(int argc, char * argv[])
 	int connectionDescriptor = con->openPort(atoi(argv[1]), 9600);
 
 	wsQueue = new PacketQueue();
-	zbSendQueue = new PacketQueue();
-	localZBSendQueue = new std::queue<Packet *>;
+	zbReceiveQueue = new PacketQueue();
+	localZBReceiveQueue = new std::queue<Packet *>;
 	localWSQueue = new std::queue<Packet *>;
 
 	mainConditionVariable = new std::condition_variable;
 	conditionVariableMutex = new std::mutex;
 
+	zbSenderQueue = new PacketQueue();
+	zbSenderConditionVariableMutex = new std::mutex;
+	zbSenderConditionVariable = new std::condition_variable;
 
-	zbReceiver = new ZBReceiver(connectionDescriptor, conditionVariableMutex, mainConditionVariable, zbSendQueue);
+	zbSender = new ZBSender(connectionDescriptor, zbSenderConditionVariableMutex, zbSenderConditionVariable, zbSenderQueue);
+	zbSenderThread = new boost::thread(boost::ref(*zbSender));
+
+	zbReceiver = new ZBReceiver(connectionDescriptor, conditionVariableMutex, mainConditionVariable, zbReceiveQueue);
 	zbReceiverThread = new boost::thread(boost::ref(*zbReceiver));
 
 	webService = new Webservice (wsQueue, mainConditionVariable, conditionVariableMutex);
-	//wsThread = new boost::thread(boost::ref(webService));
+
+	ipsumSendQueue = new PacketQueue();
+	ipsumReceiveQueue = new PacketQueue();
+	ipsumConditionVariable = new std::condition_variable;
+	ipsumConditionVariableMutex = new std::mutex;
+	localIpsumSendQueue = new std::queue<Packet *>;
+	localIpsumReceiveQueue = new std::queue<Packet *>;
+
+	ipsum = new Ipsum(ipsumSendQueue, ipsumReceiveQueue, conditionVariableMutex, mainConditionVariable, ipsumConditionVariableMutex, ipsumConditionVariable);
 }
 
 MainClass::~MainClass()
 {
 	delete socket;
 	delete con;
-	delete zbSendQueue;
-	delete localZBSendQueue;
+	
 	delete mainConditionVariable;
 	delete conditionVariableMutex;
+
+	delete zbSenderQueue;
+	delete zbSenderConditionVariableMutex;
+	delete zbSenderConditionVariable;
+	delete zbSender;
+	delete zbSenderThread;
+
+	delete zbReceiveQueue;
+	delete localZBReceiveQueue;
+	delete zbReceiver;
+
+
+	
 	delete wsQueue;
 	delete localWSQueue;
-	delete zbReceiver;
 	delete webService;
+
+	delete ipsumSendQueue;
+	delete ipsumReceiveQueue;
+	delete ipsumConditionVariable;
+	delete ipsumConditionVariableMutex;
+	delete localIpsumSendQueue;
+	delete localIpsumReceiveQueue;
+	delete ipsum;
 //	delete wsThread;
 }
 
@@ -72,28 +105,36 @@ void MainClass::operator() ()
 	{
 		{	// Scope of unique_lock
 			std::unique_lock<std::mutex> uniqueLock(*conditionVariableMutex);
-			mainConditionVariable->wait(uniqueLock, [this]{ return ((!zbSendQueue->empty()) || (!wsQueue->empty())); });
-			std::cout << "mainconditionvariable notified" << std::endl;
-			while(!zbSendQueue->empty())
+			mainConditionVariable->wait(uniqueLock, [this]{ return ((!zbReceiveQueue->empty()) || (!wsQueue->empty() || (!ipsumReceiveQueue->empty()))); });
+			std::cout << "mainconditionvariable notification received" << std::endl;
+			while(!zbReceiveQueue->empty())
+
 			{
-				localZBSendQueue->push(zbSendQueue->getPacket());
+				localZBReceiveQueue->push(zbReceiveQueue->getPacket());
 			}
 			
 			while(!wsQueue->empty())
 			{
 				localWSQueue->push(wsQueue->getPacket());
 			}
+			
+			while(!ipsumReceiveQueue->empty())
+			{
+				localIpsumReceiveQueue->push(ipsumReceiveQueue->getPacket());
+			}
 		}
 		// Shared queue is no longer locked, now ready to process the packets
-		Packet * zbPacket,  *wsPacket;
-		while(!localZBSendQueue->empty())
+		Packet * packet;
+		while(!localZBReceiveQueue->empty())
 		{
-			zbPacket = localZBSendQueue->front();
-			localZBSendQueue->pop();
-			switch(zbPacket->getType())
+			packet = localZBReceiveQueue->front();
+			localZBReceiveQueue->pop();
+			switch(packet->getType())
 			{
 				case ZB_LIBEL_IO:
 				std::cout << "ZB_LIBEL_IO received in main" << std::endl;
+				
+				std::cout << "temperature: "  << (dynamic_cast<LibelIOPacket *> (packet))->getTemperature() << std::endl;
 				break;
 				case ZB_LIBEL_CHANGEFREQ_REPLY:
 
@@ -111,9 +152,9 @@ void MainClass::operator() ()
 		
 		while(!localWSQueue->empty())
 		{
-			wsPacket = localWSQueue->front();
+			packet = localWSQueue->front();
 			localWSQueue->pop();
-			switch(wsPacket->getType())
+			switch(packet->getType())
 			{
 				case WS_COMMAND:
 
@@ -124,6 +165,23 @@ void MainClass::operator() ()
 				std::cerr << "wsQueue had a packet with an incorrect type" << std::endl;
 			}
 		}
+
+		while(!localIpsumReceiveQueue->empty())
+		{
+			packet = localIpsumReceiveQueue->front();
+			localIpsumReceiveQueue->pop();
+			switch(packet->getType())
+			{
+				case WS_COMMAND:
+
+				std::cout << "WS_COMMAND received in main" << std::endl;
+				break;
+				default:	//unknown type
+
+				std::cerr << "wsQueue had a packet with an incorrect type" << std::endl;
+			}
+		}
+
 
 	}
 	zbReceiverThread->join();

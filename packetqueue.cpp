@@ -7,8 +7,10 @@ PacketQueue::PacketQueue()
 
 void PacketQueue::addPacket(Packet * aPacket) throw (InvalidPacketType)
 {
+	std::cout << "adding packet to queue" << std::endl;
 	std::lock_guard<std::recursive_mutex> lg(mutex);
 	queue.push(aPacket);
+	std::cout << "packet added" << std::endl;
 
 }
 
