@@ -1,17 +1,23 @@
 #ifndef IPSUMUPLOADPACKET_H
 #define IPSUMUPLOADPACKET_H
-#include "../mainclass.h"
+
 #include <vector>
 #include "ipsumpacket.h"
-
+#include "../enums.h"
 class IpsumUploadPacket : public IpsumPacket
 {
 	private:
-	int installationID, sensorGroup;
-	std::vector<std::pair<SensorType, float>> data;
+	int installationID, sensorGroupID;
+	std::vector<std::tuple<SensorType, int, float>> data;
 	public:
-	IpsumUploadPacket(int installationID, int sensorGroup, std::vector<std::pair<SensorType, float>> data);
 
+	// Parameters: data is a tuple of sensor type, sensorID as used in ipsum and a float with the data
+	IpsumUploadPacket(int installationID, int sensorGroupID, std::vector<std::tuple<SensorType, float>> data);
+
+	int getInstallationID() const;
+	int getSensorGroupID() const;
+
+	const std::vector<std::tuple<SensorType, int, float>>& getData() const;
 };
 
 #endif

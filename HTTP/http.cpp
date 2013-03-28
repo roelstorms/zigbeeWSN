@@ -233,7 +233,34 @@ std::string Http::toBase64(std::string input)
 }
 
 
+void uploadData(IpsumUploadPacket * packet)
+{
+	std::string url;
+	std::string temp;
+	std::cout << "Http::uploadData" << std::endl;
 
+	login();
+
+	auto data = packet->getData();
+	for(auto it = data.begin; it < data.end(); ++it)
+	{
+		url.clear();
+		url.append("/upload");
+		url.append("/");
+		url.append(calculateDestination(21, packet->getInstallationID(), packet->getSensorGroupID(), std::get<1>(data));
+		url.append("/");
+		temp.clear();
+		temp.append(url);
+		temp.append("a31dd4f1-9169-4475-b316-764e1e737653");
+		url.append(generateCode(temp));
+
+
+	}
+	
+	url.clear();
+	url.append("/upload");
+
+}
 
 void Http::uploadData(std::string aSensorType, std::string destinationBase64, std::vector<std::pair<std::string, double>> input) throw (HttpError)
 {

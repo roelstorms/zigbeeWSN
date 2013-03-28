@@ -34,7 +34,7 @@ void Ipsum::operator()()
 		switch(ipsumPacket->getType())
 		{
 			case IPSUM_UPLOAD:
-			
+				uploadDataHandler(dynamic_cast<IpsumUploadPacket *> (ipsumPacket));
 			break;
 
 			default:
@@ -43,4 +43,10 @@ void Ipsum::operator()()
 		
 		}	
 	}
+}
+
+
+void uploadDataHandler(IpsumUploadPacket * packet)
+{
+
 }

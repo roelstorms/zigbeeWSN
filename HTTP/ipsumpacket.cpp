@@ -4,3 +4,4 @@ IpsumPacket::IpsumPacket(PacketType type) : Packet(type)
 {
 
 }
+
