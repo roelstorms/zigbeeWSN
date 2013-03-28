@@ -469,7 +469,7 @@ std::string Http::createNewType(std::string aName, std::vector<std::pair<std::st
 
 	return sendPost(url, XMLParser.createNewType(aName, aListOfFields), &Http::standardReplyWrapper);
 }
-
+/*
 std::string Http::createNewSensorGroup(const std::string& installationIDValue, const std::string& nameValue, const std::string& descriptionValue, const std::string& inuseValue)
 {
 	XML XMLParser;
@@ -496,4 +496,4 @@ std::string Http::createNewSensorGroup(const std::string& installationIDValue, c
 
 
 }
-
+*/

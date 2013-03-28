@@ -2,7 +2,8 @@
 
 WSPacket::WSPacket(std::string aURI, std::string aData) throw(WebserviceInvalidCommand) : Packet(WS_COMMAND), data(aData)
 {
-	if(aURI.find("changeFrequency") != std::string::npos)
+	/*
+	   if(aURI.find("changeFrequency") != std::string::npos)
 	{
 		requestType = CHANGE_FREQUENCY;
 	}
@@ -10,7 +11,7 @@ WSPacket::WSPacket(std::string aURI, std::string aData) throw(WebserviceInvalidC
 	{
 		throw WebserviceInvalidCommand();
 	}
-
+	*/
 }
 
 WSPacket::~WSPacket()

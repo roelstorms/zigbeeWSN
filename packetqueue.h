@@ -6,13 +6,13 @@
 #include <queue>
 #include <condition_variable>
 #include "SerialCom/dataIOPacket.h"
-
+#include "packet.h"
 #include "errors.h"
 
 class PacketQueue
 {
 	private:
-		std::mutex mutex;
+		std::recursive_mutex mutex;
 		std::queue<Packet *> queue;	
 	
 		PacketQueue(PacketQueue&);
@@ -24,7 +24,8 @@ class PacketQueue
 		void addPacket(Packet * aPacket) throw (InvalidPacketType);
 		bool empty() ;
 		Packet * getPacket(); //Gives you back the first packet in the queue and destroys it
-
+		std::recursive_mutex& getMutex();
+		
 
 };
 

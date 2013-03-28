@@ -19,6 +19,12 @@ int Webservice::beginRequestHandler(struct mg_connection *conn)
 	// Prepare the message we're going to send
 	post_data_len = mg_read(conn, post_data, sizeof(post_data));
 
+	Packet * packet = dynamic_cast<Packet *> (new WSPacket(std::string(request_info->uri), std::string(post_data)));
+	wsQueue->addPacket(packet);
+
+	std::lock_guard<std::mutex> lg(*mainConditionVariableMutex);
+	mainConditionVariable->notify_all();
+
 	int content_length = snprintf(content, sizeof(content),	"<error>false</error>",request_info->uri, post_data);
 	printf("%s: %d\n", post_data, content_length);
 	
@@ -39,16 +45,17 @@ int Webservice::beginRequestHandler(struct mg_connection *conn)
 
 
 
-Webservice::Webservice(PacketQueue * aWSQueue, std::condition_variable * aWSConditionVariable, std::mutex * aWSConditionVariableMutex) : wsQueue(aWSQueue), wsConditionVariable(aWSConditionVariable), wsConditionVariableMutex(aWSConditionVariableMutex)
+Webservice::Webservice(PacketQueue * aWSQueue, std::condition_variable * aMainConditionVariable, std::mutex * aMainConditionVariableMutex) : wsQueue(aWSQueue), mainConditionVariable(aMainConditionVariable), mainConditionVariableMutex(aMainConditionVariableMutex)
 {
 	const char *options[] = {"listening_ports", "8080", "error_log_file", "./webservice_error.txt", NULL};
-
+	std::cout << "begin of Webservice constructor" << std::endl;
 	// Prepare callbacks structure. We have only one callback, the rest are NULL.
 	memset(&callbacks, 0, sizeof(callbacks));
 	callbacks.begin_request = &Webservice::beginRequestHandlerWrapper;
 
 	// Start the web server.
 	ctx = mg_start(&callbacks, (void*) this, options);
+	std::cout << "end of Webservice constructor" << std::endl;
 }
 
 Webservice::~Webservice()
@@ -56,4 +63,9 @@ Webservice::~Webservice()
 	// Stop the server.
 	mg_stop(ctx);
 
+}
+
+void Webservice::operator() ()
+{
+	
 }

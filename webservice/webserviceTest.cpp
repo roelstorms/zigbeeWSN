@@ -2,8 +2,8 @@
 
 int main(int argc, char** argv)
 {
-	std::queue<WebserviceRequest> webserviceRequestQueue;
-	boost::mutex webserviceRequestMutex;
+	std::queue<WSPacket> webserviceRequestQueue;
+	std::mutex webserviceRequestMutex;
 
 	Webservice webservice(&webserviceRequestQueue, &webserviceRequestMutex);
 

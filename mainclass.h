@@ -26,14 +26,16 @@ class MainClass
 	Http * socket;
 	
 	PacketQueue * zbSendQueue, * wsQueue;
-	std::queue<Packet *> * localZBSendQueue;
+	std::queue<Packet *> * localZBSendQueue, * localWSQueue;
 
 	std::condition_variable * mainConditionVariable;
 	std::mutex * conditionVariableMutex;
 
 	Connection * con;
 
-	boost::thread * zbReceiverThread;
+	boost::thread * zbReceiverThread, * wsThread;
+	ZBReceiver * zbReceiver;
+	Webservice * webService;
 	public:
 	MainClass(int argc, char * argv[]);
 	~MainClass();
