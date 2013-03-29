@@ -48,7 +48,7 @@ class MainClass
 	void operator () ();
 
 	void libelIOHandler(Packet * packet);
-
+	void webserviceHandler(Packet * packet);
 };
 
 #endif

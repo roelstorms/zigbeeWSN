@@ -4,6 +4,8 @@
 #include <vector>
 #include "ipsumpacket.h"
 #include "../enums.h"
+#include <tuple>
+
 class IpsumUploadPacket : public IpsumPacket
 {
 	private:
@@ -12,7 +14,7 @@ class IpsumUploadPacket : public IpsumPacket
 	public:
 
 	// Parameters: data is a tuple of sensor type, sensorID as used in ipsum and a float with the data
-	IpsumUploadPacket(int installationID, int sensorGroupID, std::vector<std::tuple<SensorType, float>> data);
+	IpsumUploadPacket(int installationID, int sensorGroupID, std::vector<std::tuple<SensorType, int, float>> data);
 
 	int getInstallationID() const;
 	int getSensorGroupID() const;

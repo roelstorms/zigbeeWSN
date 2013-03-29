@@ -17,7 +17,7 @@
 #include <iterator>
 #include <unistd.h>
 #include <boost/lexical_cast.hpp>
-
+#include "ipsumuploadpacket.h"
 #include "../XML/XML.h"
 #include "../errors.h"
 
@@ -32,8 +32,13 @@ class Http
 		boost::posix_time::ptime tokenExpireTime;
 		std::string curlReply;
 		int httpError;
+		XML xmlParser();
+		std::string PK;
 	public: 
 		Http(std::string urlBase);
+
+		Http(std::string urlBase, std::string PK);
+
 		~Http();
 
 		size_t read_data( void *ptr, size_t size, size_t nmemb);	//Currently not used nor implemented correctly (to send data you just pass a pointer to the data to Curl

@@ -188,8 +188,27 @@ void MainClass::operator() ()
 	wsThread->join();
 }
 
-void libelIOHandler(Packet * packet)
+void MainClass::libelIOHandler(Packet * packet)
 {
 	LibelIOPacket * libelIOPacket = dynamic_cast<LibelIOPacket *> (packet);
 	std::cout << "temperature: " << libelIOPacket->getTemperature() << std::endl;
+}
+
+void MainClass::webserviceHandler(Packet * packet)
+{
+	WSPacket * wsPacket = dynamic_cast<WSPacket *> (packet);
+	switch(wsPacket->getType())
+	{
+		case CHANGE_FREQUENCY:
+			break;
+		case ADD_NODE:
+			break;
+		case ADD_SENSOR:
+		     	break;
+		case REQUEST_DATA:
+		     	break:
+		default:
+		     std::cerr << "unrecognized packet" << std::endl;
+
+	}
 }

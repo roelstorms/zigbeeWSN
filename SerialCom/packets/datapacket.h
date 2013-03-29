@@ -16,8 +16,9 @@ class DataPacket : public ZBPacket
 	std::vector<unsigned char> data;
 	public:
 	DataPacket(std::vector<unsigned char> input, PacketType aType);
-	
-	const std::vector<unsigned char>& getSourceAddress() const;
+	DataPacket(std::string zigbeeAddress64bit);
+
+	const std::vector<unsigned char>& getAddress() const;
 	const std::vector<unsigned char>& getNetworkAddress() const;
 	const std::vector<unsigned char>& getData() const;
 	const unsigned char& getReceiveOptions() const;

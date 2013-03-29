@@ -20,9 +20,9 @@
 #include "datapacket.h"
 #include <iomanip>
 #include <map>
-#include "../errors.h"
-#include "../packet.h"
-#include "../enums.h"
+#include "../../errors.h"
+#include "../../packet.h"
+#include "../../enums.h"
 
 
 class LibelIOPacket : public DataPacket
@@ -48,3 +48,5 @@ class LibelIOPacket : public DataPacket
 };
 
 #endif
+
+

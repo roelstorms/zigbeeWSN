@@ -25,7 +25,7 @@ DataPacket::DataPacket(std::vector<unsigned char> input, PacketType aType) : ZBP
 }
 
 
-const std::vector<unsigned char>& DataPacket::getSourceAddress() const
+const std::vector<unsigned char>& DataPacket::getAddress() const
 {
 	return sourceAddress;
 }

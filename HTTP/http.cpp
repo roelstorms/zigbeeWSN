@@ -8,6 +8,14 @@ Http::Http(std::string urlBase): urlBase(urlBase)
 	httpError = -1;
 }
 
+Http::Http(std::string urlBase, std::string PK): urlBase(urlBase), PK(PK)
+{
+	std::cout << "Http constructor" << std::endl;
+	curl_global_init(CURL_GLOBAL_ALL);
+	token = std::string();
+	httpError = -1;
+}
+
 Http::~Http()
 {
 	curl_global_cleanup();
@@ -240,21 +248,52 @@ void uploadData(IpsumUploadPacket * packet)
 	std::cout << "Http::uploadData" << std::endl;
 
 	login();
-
+	std::string timeStamp = xmlParser.getTimeInSeconds();
 	auto data = packet->getData();
 	for(auto it = data.begin; it < data.end(); ++it)
 	{
 		url.clear();
 		url.append("/upload");
 		url.append("/");
-		url.append(calculateDestination(21, packet->getInstallationID(), packet->getSensorGroupID(), std::get<1>(data));
+		url.append(calculateDestination(21, packet->getInstallationID(), packet->getSensorGroupID(), std::get<1>(*it));
 		url.append("/");
 		temp.clear();
 		temp.append(url);
-		temp.append("a31dd4f1-9169-4475-b316-764e1e737653");
+		temp.append(PK);
 		url.append(generateCode(temp));
-
-
+		std::string sensorType;
+		
+		switch(std::get<0>(*it))
+		{
+			case TEMP:
+				sensorType = "zigbeeTemp";
+			break;
+			case HUM:
+				sensorType = "zigbeeHum";
+			break;
+			case PRES:
+				sensorType = "zigbeePres";
+			break;
+			case BAT:
+				sensorType = "zigbeeBat";
+			break;
+			case CO2:
+				sensorType = "zigbeeCO2";
+			break;
+			case ANEMO:
+				sensorType = "zigbeeAnemo";
+			break;
+			case VANE:
+				sensorType = "zigbeeVane";
+			break;
+			case PLUVIO:
+				sensorType = "zigbeePluvio";
+			break;
+			default:
+				std::cerr << "unknown sensor type in Http::uploadData()" << std::endl;
+		}
+		
+		sendPost(url, xmlParser.uploadData(std::get<0>(*it), sensorType, std::get<2>(*it), timeStamp); 
 	}
 	
 	url.clear();

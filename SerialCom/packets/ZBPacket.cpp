@@ -86,17 +86,19 @@ const unsigned char& ZBPacket::getEncodedType() const
 
 const unsigned char& ZBPacket::getChecksum() const
 {
-	return checksum;
+
+
+	return encodedPacket.at(encodedPacket.size()-1);
 }
 
 const unsigned char& ZBPacket::getSizeLSB() const
 {
-	return sizeLSB;
+	return encodedPacket.at(2);
 }
 
 const unsigned char& ZBPacket::getSizeMSB() const
 {
-	return sizeMSB;
+	return encodedPacket.at(1);
 }
 
 const std::vector<unsigned char>& ZBPacket::getEncodedPacket() const
@@ -112,17 +114,17 @@ const bool& ZBPacket::getValidPacket() const
 
 void ZBPacket::setSizeLSB(unsigned char aSizeLSB)
 {
-	sizeLSB = aSizeLSB;
+	encodedPacket.at(2) = aSizeLSB;	
 }
 
 void ZBPacket::setSizeMSB(unsigned char aSizeMSB)
 {
-	sizeMSB = aSizeMSB;
+	encodedPacket.at(1) = aSizeMSB;	
 }
 
 void ZBPacket::setType(unsigned char aType)
 {
-	encodedType = aType;
+	encodedPacket.at(3) = aType;
 }
 
 void ZBPacket::setChecksum(unsigned char aChecksum)

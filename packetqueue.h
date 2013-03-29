@@ -5,7 +5,7 @@
 #include "packet.h"
 #include <queue>
 #include <condition_variable>
-#include "SerialCom/dataIOPacket.h"
+#include "SerialCom/packets/dataIOPacket.h"
 #include "packet.h"
 #include "errors.h"
 

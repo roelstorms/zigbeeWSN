@@ -7,7 +7,7 @@
 #include <vector>
 #include <ostream>
 #include <iomanip>
-#include "../packet.h"
+#include "../../packet.h"
 
 class ZBPacket : public Packet
 {

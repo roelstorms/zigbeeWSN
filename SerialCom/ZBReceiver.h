@@ -10,9 +10,7 @@
 #include "../HTTP/http.h"
 #include "../XML/XML.h"
 #include "../packetqueue.h"
-#include "libeliopacket.h"
-//#include "dataIOPacket.h"
-#include "datapacket.h"
+#include "packets/libeliopacket.h"
 #include "../errors.h"
 #include <boost/thread/mutex.hpp>
 #include <queue>

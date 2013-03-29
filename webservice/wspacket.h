@@ -6,7 +6,7 @@
 
 enum RequestType
 {
-	CHANGE_FREQUENCY
+	CHANGE_FREQUENCY, ADD_NODE, ADD_SENSOR, REQUEST_DATA
 };
 
 class WSPacket : public Packet

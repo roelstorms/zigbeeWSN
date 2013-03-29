@@ -30,6 +30,7 @@
 #include <boost/archive/iterators/remove_whitespace.hpp>
 
 #include "../errors.h"
+#include "../enums.h"
 
 class XML
 {
@@ -46,7 +47,7 @@ class XML
 	~XML();
 
 	std::string uploadData(const std::string& type, const std::vector<std::pair<std::string, double>>& input);
-
+	std::string uploadData(const std::string& type, const std::string& fieldName, float data, std::string timeStamp); 
 	std::string createNewInstallation(const std::string& nameValue, const std::string& descriptionValue, const std::string& inuseValue);
 	std::string createNewSensorGroup(const std::string& installationIDValue, const std::string& nameValue, const std::string& descriptionValue, const std::string& inuseValue); 
 	std::string createNewSensor(const std::string& sensorGroupIDValue, const std::string& nameValue, const std::string& dataNameValue, const std::string& descriptionValue, const std::string& inuseValue);
@@ -95,6 +96,8 @@ class XML
 	 *	Does the same as getTimestamp but for the current time
 	 */
 	std::string getCurrentTimestamp();
+
+	std::string getTimeInSeconds();
 };
 
 #endif

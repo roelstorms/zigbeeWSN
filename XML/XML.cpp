@@ -105,11 +105,9 @@ std::string XML::uploadData(const std::string& type, const std::vector<std::pair
 	xercesc::DOMElement* utimestamp = doc->createElement(tempStr);
 	upload->appendChild(utimestamp);  
 
-
-	unsigned long int sec = time(NULL);
-	std::cout << "time: " << std::endl << std::string(std::to_string(sec)) << std::endl;
-
-	xercesc::XMLString::transcode(std::to_string(sec).c_str(), tempStr, 99);
+	
+	
+	xercesc::XMLString::transcode(getTimeInSeconds().c_str(), tempStr, 99);
 	xercesc::DOMText* timestampValue = doc->createTextNode(tempStr);
 	utimestamp->appendChild(timestampValue);
 
@@ -153,6 +151,75 @@ std::string XML::uploadData(const std::string& type, const std::vector<std::pair
 	// Other terminations and cleanup.
 	return XMLOutput;
 }
+
+std::string XML::uploadData(const std::string& type, const std::string& fieldName, float data, std::string timeStamp)
+{
+	XMLCh tempStr[100];
+
+	std::string XMLOutput;
+
+	std::cout << "begin of upload" << std::endl;
+
+	xercesc::XMLString::transcode("upload", tempStr, 99);
+	xercesc::DOMDocument* doc = impl->createDocument(0, tempStr, 0);
+	xercesc::DOMElement* upload = doc->getDocumentElement();
+
+
+	xercesc::XMLString::transcode("utimestamp", tempStr, 99);
+	xercesc::DOMElement* utimestamp = doc->createElement(tempStr);
+	upload->appendChild(utimestamp);  
+
+
+	unsigned long int sec = time(NULL);
+	std::cout << "time: " << std::endl << std::string(std::to_string(sec)) << std::endl;
+
+	xercesc::XMLString::transcode(timeStamp.c_str(), tempStr, 99);
+	xercesc::DOMText* timestampValue = doc->createTextNode(tempStr);
+	utimestamp->appendChild(timestampValue);
+
+
+
+	xercesc::XMLString::transcode("items", tempStr, 99);
+	xercesc::DOMElement* items = doc->createElement(tempStr);
+	upload->appendChild(items);
+
+	xercesc::XMLString::transcode(type.c_str(), tempStr, 99);
+	xercesc::DOMElement* myType = doc->createElement(tempStr);
+	items->appendChild(myType);
+
+	
+
+		xercesc::XMLString::transcode(fieldName.c_str(), tempStr, 99);
+		xercesc::DOMNode* field = doc->createElement(tempStr);
+		myType->appendChild(field);
+
+		std::ostringstream stream;		// Can use boost to convert double to string more elegantly
+		stream << data;
+		std::string fieldValue = stream.str();
+
+		xercesc::XMLString::transcode(fieldValue.c_str(), tempStr, 99);
+		xercesc::DOMText* fieldvalue = doc->createTextNode(tempStr);
+		field->appendChild(fieldvalue);
+
+		
+
+	xercesc::XMLString::transcode("utimestamp", tempStr, 99);
+	xercesc::DOMNode* fieldTimestamp = doc->createElement(tempStr);
+	myType->appendChild(fieldTimestamp);
+
+	xercesc::XMLString::transcode("0", tempStr, 99);
+	xercesc::DOMText* fieldTimestampValue = doc->createTextNode(tempStr);
+	fieldTimestamp->appendChild(fieldTimestampValue);
+
+	XMLOutput = serializeDOM(upload);
+
+	doc->release();
+	std::cout << "XMLouput:" << std::endl << XMLOutput << std::endl;	
+	// Other terminations and cleanup.
+	return XMLOutput;
+
+}	
+
 
 std::string XML::createNewInstallation(const std::string& nameValue, const std::string& descriptionValue, const std::string& inuseValue)
 {
@@ -741,4 +808,10 @@ std::string XML::getCurrentTimestamp()
 	std::cout << "boost time" << boost::posix_time::to_iso_extended_string(t) << std::endl;	
 
 	return boost::posix_time::to_iso_extended_string(t);
+}
+
+std::string XML::getTimeInSeconds()
+{
+	unsigned long int sec = time(NULL);
+	return std::string(std::to_string(sec));
 }
