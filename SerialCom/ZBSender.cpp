@@ -5,7 +5,6 @@ ZBSender::ZBSender(int fd, std::mutex * zbSenderConditionVariableMutex, std::con
 	std::cout << "ZBSender constructor" << std::endl;
 }
 
-
 void ZBSender::operator() ()
 {
 	while(true)

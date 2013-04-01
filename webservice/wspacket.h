@@ -3,6 +3,7 @@
 #include <string>
 #include "../errors.h"
 #include "../packet.h"
+#include <iostream>
 
 enum RequestType
 {

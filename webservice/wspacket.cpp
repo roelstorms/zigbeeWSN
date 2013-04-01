@@ -2,21 +2,25 @@
 
 WSPacket::WSPacket(std::string aURI, std::string aData) throw(WebserviceInvalidCommand) : Packet(WS_COMMAND), data(aData)
 {
-	
+	std::cout << "WSPacket constructor" << std::endl;	
 	if(aURI.find("changeFrequency") != std::string::npos)
 	{
+		std::cout << "request type set to CHANGE_FREQUENCY" << std::endl;
 		requestType = CHANGE_FREQUENCY;
 	}
 	else if(aURI.find("addNode"))
 	{
+		std::cout << "request type set to ADD_NODE" << std::endl;
 		requestType = ADD_NODE;
 	}
 	else if(aURI.find("addSensor"))
 	{
+		std::cout << "request type set to ADD_SENSOR" << std::endl;
 		requestType = ADD_SENSOR;
 	}
 	else if(aURI.find("requestData"))
 	{
+		std::cout << "request type set to ADD_SENSOR" << std::endl;
 		requestType = ADD_SENSOR;
 	}
 	else

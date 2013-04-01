@@ -15,7 +15,7 @@
 #include "./SerialCom/ZBReceiver.h"
 #include "./SerialCom/ZBSender.h"
 #include "./SerialCom/connection.h"
-#include "./SerialCom/libeliopacket.h"
+#include "./SerialCom/packets/libeliopacket.h"
 #include "./HTTP/http.h"
 #include "packetqueue.h"
 #include "./webservice/webservice.h"

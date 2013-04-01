@@ -46,7 +46,7 @@ void Ipsum::operator()()
 }
 
 
-void uploadDataHandler(IpsumUploadPacket * packet)
+void Ipsum::uploadDataHandler(IpsumUploadPacket * packet)
 {
 
 }

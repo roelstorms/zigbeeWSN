@@ -6,6 +6,7 @@ ZBReceiver::ZBReceiver(int fd, std::mutex * aConditionVariableMutex, std::condit
 	std::cout << "ZBReceiver constructor" << std::endl;
 }
 
+
 ZBReceiver::~ZBReceiver()
 {
 	std::cout << "ZBReceiver destructor" << std::endl;
@@ -13,7 +14,6 @@ ZBReceiver::~ZBReceiver()
 
 unsigned char ZBReceiver::readByte(int fd)
 {
-
 	int input = 0x0;
 	while(read(fd, &input, 1) <= 0)
 	{
@@ -41,7 +41,6 @@ unsigned char ZBReceiver::readByte(int fd)
 void ZBReceiver::operator() ()
 {
 	unsigned char input = 0x0;
-	int count = 0;
 	std::vector<unsigned char> packetVector;	
 	while(true)
     	{
@@ -75,7 +74,7 @@ void ZBReceiver::operator() ()
 					switch(packetVector.at(15))	//It is a ZB data packet, all our libelium packets are of this type, so now to figure out what libelium packet we'e got
 					{
 						std::cout << "found libel packet" << std::endl;
-						case 0x02:
+						case 0xA:
 							std::cout << "found libelIOpacket" << std::endl;
 							packet = dynamic_cast<Packet*> (new LibelIOPacket(packetVector));
 							zbReceiveQueue->addPacket(packet);
@@ -88,9 +87,8 @@ void ZBReceiver::operator() ()
 
 						default:
 						throw UnknownPacketType();
-							
+				
 					}
-
 					break;
 
 				case 0x92:

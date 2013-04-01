@@ -11,12 +11,16 @@ class ZBSender
 {
 	private:
 	int fileDescriptor;
-	PacketQueue * zbSendQueue;	
 	std::mutex  * zbSenderConditionVariableMutex;
 	std::condition_variable * zbSenderConditionVariable;
+	PacketQueue * zbSendQueue;	
+
+
 	public:
 	ZBSender(int fd, std::mutex * zbSenderConditionVariableMutex, std::condition_variable * zbSenderConditionVariable, PacketQueue * zbSendQueue);
 	void operator () ();
+
+
 };
 
 #endif

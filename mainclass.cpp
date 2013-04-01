@@ -11,7 +11,7 @@ MainClass::MainClass(int argc, char * argv[])
 	
 	socket = new Http("http://ipsum.groept.be");
 
-	
+/*	
 	try
 	{
 		socket->ipsumInfo();
@@ -21,7 +21,7 @@ MainClass::MainClass(int argc, char * argv[])
 		std::cerr << "Could not connect to Ipsum" << std::endl;
 		//return 1;
 	}
-
+*/
 	
 	std::cout << "argc: " << argc << std::endl;
 	if(argc != 2)
@@ -159,6 +159,7 @@ void MainClass::operator() ()
 				case WS_COMMAND:
 
 				std::cout << "WS_COMMAND received in main" << std::endl;
+				webserviceHandler(packet);
 				break;
 				default:	//unknown type
 
@@ -172,20 +173,19 @@ void MainClass::operator() ()
 			localIpsumReceiveQueue->pop();
 			switch(packet->getType())
 			{
-				case WS_COMMAND:
+				//case IPSUM_UPLOAD:
 
-				std::cout << "WS_COMMAND received in main" << std::endl;
-				break;
+				//std::cout << "IPUM_UPLOAD received in main" << std::endl;
+				//break;
 				default:	//unknown type
 
-				std::cerr << "wsQueue had a packet with an incorrect type" << std::endl;
+				std::cerr << "ipsum queue had a packet with an incorrect type" << std::endl;
 			}
 		}
 
 
 	}
 	zbReceiverThread->join();
-	wsThread->join();
 }
 
 void MainClass::libelIOHandler(Packet * packet)
@@ -197,7 +197,7 @@ void MainClass::libelIOHandler(Packet * packet)
 void MainClass::webserviceHandler(Packet * packet)
 {
 	WSPacket * wsPacket = dynamic_cast<WSPacket *> (packet);
-	switch(wsPacket->getType())
+	switch(wsPacket->getRequestType())
 	{
 		case CHANGE_FREQUENCY:
 			break;
@@ -206,7 +206,7 @@ void MainClass::webserviceHandler(Packet * packet)
 		case ADD_SENSOR:
 		     	break;
 		case REQUEST_DATA:
-		     	break:
+		     	break;
 		default:
 		     std::cerr << "unrecognized packet" << std::endl;
 

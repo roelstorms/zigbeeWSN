@@ -19,6 +19,7 @@ class ZBPacket : public Packet
 	public:
 	ZBPacket(std::vector<unsigned char> input, PacketType aType);
 	ZBPacket(unsigned char aChecksum, unsigned char aType, unsigned char aSizeLSB, unsigned char aSizeMSB,std::vector<unsigned char> aEncodedPacket, PacketType packetType);
+	ZBPacket(PacketType packetType);
 	~ZBPacket();
 	
 	void wrap(std::vector<unsigned char> content); 
@@ -39,6 +40,7 @@ class ZBPacket : public Packet
 
 	friend std::ostream &operator<<(std::ostream &out, ZBPacket &packet)     //output
 	{
+		
 		std::vector<unsigned char> encodedPacket = packet.getEncodedPacket();
 		for(auto it = encodedPacket.begin(); it < encodedPacket.end(); ++it)
 		{

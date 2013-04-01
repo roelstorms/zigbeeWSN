@@ -23,18 +23,18 @@ class ZBReceiver
 	private:
 	std::ofstream logFile;
 	int fileDescriptor;
-	PacketQueue * zbReceiveQueue;	
 	std::mutex  * conditionVariableMutex;
 	std::condition_variable * mainConditionVariable;
-
+	PacketQueue * zbReceiveQueue;	
 	// Copy constructor
 	ZBReceiver(const ZBReceiver& source);	 
 
 	public:
 	ZBReceiver(int fd, std::mutex * aConditionVariableMutex, std::condition_variable * aMainConditionVariable, PacketQueue * aZBReceiveQueue);
 	~ZBReceiver();
+	
 
-		
+
 	unsigned char readByte(int fd);
 	void operator () ();
 	

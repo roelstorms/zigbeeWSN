@@ -1,5 +1,5 @@
-#ifndef DATAPACKET_H 
-#define DATAPACKET_H 
+#ifndef RECEIVEPACKET_H 
+#define RECEIVEPACKET_H 
  
 #include <string>
 #include <stdio.h>   /* Standard input/output definitions */
@@ -7,21 +7,22 @@
 #include "ZBPacket.h"
 #include <iomanip>
 
-class DataPacket : public ZBPacket
+class ReceivePacket : public ZBPacket
 {
 	private:
-	std::vector<unsigned char> sourceAddress, networkAddress;
+	std::vector<unsigned char> address, networkAddress;
 	unsigned char receiveOptions;
 	protected:
 	std::vector<unsigned char> data;
 	public:
-	DataPacket(std::vector<unsigned char> input, PacketType aType);
-	DataPacket(std::string zigbeeAddress64bit);
+	ReceivePacket(std::vector<unsigned char> input, PacketType aType);
 
 	const std::vector<unsigned char>& getAddress() const;
 	const std::vector<unsigned char>& getNetworkAddress() const;
 	const std::vector<unsigned char>& getData() const;
 	const unsigned char& getReceiveOptions() const;
+
+	void unescapeData();
 };
 
 #endif

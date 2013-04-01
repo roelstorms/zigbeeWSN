@@ -1,22 +1,18 @@
-# this is a example of Makefile
 
-ZBReceiver.o:
-	g++ -c ZBReceiver.cpp -o ./obj/ZBReceiver.o -std=c++11 -g
-ZBSender.o:
-	g++ -c ZBSender.cpp -o ./obj/ZBSender.o -std=c++11 -g
-connection.o: 
-	g++ -c connection.cpp -o ./obj/connection.o -lboost_thread -std=c++11 -g
+CC = g++
+CFlAGS = -Wall -Werror -std=c++11 -g
+#SOURCES = ZBReceiver.cpp
+#DEPENDENCIES = $(SOURCES:.cpp=.h)
+#OBJECTS = $(SOURCES:.cpp=.o)
+OBJECTS = ZBReceiver.o ZBSender.o ./packets/libeliopacket.o ./packets/receivepacket.o ./packets/dataIOPacket.o connection.o\
+	./packets/libeladdnodepacket.o ./packets/transmitrequestpacket.o 
+RM = /bin/rm -f
 
-	
-ZBPacket.o:
-	g++ -c ./packets/ZBPacket.cpp -o ./packets/obj/ZBPacket.o -std=c++11 -g
-DataIOPacket.o: 
-	g++ -c ./packets/dataIOPacket.cpp -o ./packets/obj/dataIOPacket.o -std=c++11 -g
-datapacket.o: 
-	g++ -c ./packets/datapacket.cpp -o ./packets/obj/datapacket.o -std=c++11 -g
-libeliopacket.o: 
-	g++ -c ./packets/libeliopacket.cpp -o ./packets/obj/libeliopacket.o -std=c++11 -g
-libeladdnodepacket.o: 
-	g++ -c ./packets/libeladdnodepacket.cpp -o ./packets/obj/libeladdnodepacket.o -std=c++11 -g
+all : $(OBJECTS)
+
+$(OBJECTS): %.o:  %.cpp %.h
+	$(CC) -c $(CFlAGS) $< -o $@
+
+
 clean:
-	rm ./obj/inputhandler.o ./obj/connection.o ./obj/userinput.o ./obj/APIFrames.o -g
+	$(RM) $(OBJECTS)

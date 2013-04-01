@@ -54,6 +54,11 @@ ZBPacket::ZBPacket(unsigned char aChecksum, unsigned char aType, unsigned char a
 	std::cout << "Packet constructor" << std::endl;
 }
 
+ZBPacket::ZBPacket(PacketType packetType) Packet(packetType)
+{
+
+}
+
 ZBPacket::~ZBPacket()
 {
 	std::cout << "Packet destructor" << std::endl;

@@ -11,7 +11,7 @@
 #include <string>
 #include <stdio.h>   /* Standard input/output definitions */
 #include <iostream>
-#include "datapacket.h"
+#include "transmitrequestpacket.h"
 #include <iomanip>
 #include <map>
 #include "../../errors.h"
@@ -19,12 +19,13 @@
 #include "../../enums.h"
 
 
-class LibelAddNodePacket : public DataPacket
+class LibelAddNodePacket : public TransmitRequestPacket 
 {
 	private:
 		unsigned char nodeIdentifier;
 	public:
-		LibelAddNodePacket(std::vector<unsigned char> input);
+		//LibelAddNodePacket(std::vector<unsigned char> input);
+		LibelAddNodePacket(std::vector<unsigned char> zigbeeAddress64bit);
 		unsigned char getNodeIdentifier() const;
 	 	
 

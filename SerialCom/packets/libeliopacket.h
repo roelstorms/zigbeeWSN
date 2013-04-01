@@ -17,7 +17,7 @@
 #include <string>
 #include <stdio.h>   /* Standard input/output definitions */
 #include <iostream>
-#include "datapacket.h"
+#include "receivepacket.h"
 #include <iomanip>
 #include <map>
 #include "../../errors.h"
@@ -25,7 +25,7 @@
 #include "../../enums.h"
 
 
-class LibelIOPacket : public DataPacket
+class LibelIOPacket : public ReceivePacket 
 {
 	private:
 		unsigned char nodeIdentifier;

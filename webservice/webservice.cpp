@@ -21,7 +21,7 @@ int Webservice::beginRequestHandler(struct mg_connection *conn)
 
 	Packet * packet = dynamic_cast<Packet *> (new WSPacket(std::string(request_info->uri), std::string(post_data)));
 	wsQueue->addPacket(packet);
-
+	std::cout << "adding ws packet to wsqueue" << std::endl;
 	std::lock_guard<std::mutex> lg(*mainConditionVariableMutex);
 	mainConditionVariable->notify_all();
 
