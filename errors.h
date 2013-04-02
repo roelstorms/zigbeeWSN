@@ -8,7 +8,7 @@ public: \
 	const char* what() const noexcept \
 	{ \
 		return message; \
-	} \
+	}; \
 };
 
 #include <exception>

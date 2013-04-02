@@ -5,13 +5,14 @@
 #include "../../errors.h"
 #include <sstream>
 
-class TransmitRequestPacket : ZBPacket
+class TransmitRequestPacket : OutgoingPacket 
 {
 
 	private:
-
+		
 	public:
-		TransmitRequestPacket(std::vector<unsigned char> zigbeeAddress64Bit, PacketType ZB_LIBEL_ADDNODE);
+		TransmitRequestPacket(std::vector<unsigned char> zigbeeAddress64bit, PacketType packetType);
+		TransmitRequestPacket(std::vector<unsigned char> zigbeeAddress64Bit, std::vector<unsigned char> zigbeeAddress16Bit, unsigned char receiveOptions, PacketType packetType );
 };
 
 #endif

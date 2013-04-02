@@ -12,32 +12,24 @@
 class ZBPacket : public Packet
 {
 	private:
-	unsigned char encodedType, checksum, sizeLSB, sizeMSB;
-	std::vector<unsigned char> encodedPacket;
-	bool validPacket;	
+
 	//Packet(const Packet& aPacket){}
-	public:
-	ZBPacket(std::vector<unsigned char> input, PacketType aType);
-	ZBPacket(unsigned char aChecksum, unsigned char aType, unsigned char aSizeLSB, unsigned char aSizeMSB,std::vector<unsigned char> aEncodedPacket, PacketType packetType);
+	protected:
+	bool validPacket;
 	ZBPacket(PacketType packetType);
+	std::vector<unsigned char> encodedPacket;
+	public:
+	ZBPacket(std::vector<unsigned char> input, PacketType packetType);
 	~ZBPacket();
 	
-	void wrap(std::vector<unsigned char> content); 
-
-	const unsigned char& getEncodedType() const;
-	const unsigned char& getChecksum() const;
-	const unsigned char& getSizeLSB() const;
-	const unsigned char& getSizeMSB() const;
+	unsigned char getChecksum() const;
+	unsigned char getSizeLSB() const;
+	unsigned char getSizeMSB() const;
 	const std::vector<unsigned char>& getEncodedPacket() const;
-	const bool& getValidPacket() const;
+	bool getValidPacket() const;
+	std::vector<unsigned char> getFrameData() const;
+	unsigned char getFrameType() const;
 	
-	void setSizeLSB(unsigned char aSizeLSB);
-	void setSizeMSB(unsigned char aSizeMSB);
-	void setType(unsigned char aType);
-	void setChecksum(unsigned char aChecksum);
-	void setValidPacket(bool aValidPacket);
-	void setEncodedPacket(std::vector<unsigned char> aEncodedPacket);
-
 	friend std::ostream &operator<<(std::ostream &out, ZBPacket &packet)     //output
 	{
 		

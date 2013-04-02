@@ -19,8 +19,10 @@ class Packet
 
 	public:
 		Packet(PacketType aType) throw (InvalidPacketType);
-		virtual const PacketType& getType() const;
+		const PacketType& getType() const;
 
+		// Purpose of this function is to make packets bind virtually as needed by the dynamic cast to put packets in a queueu.
+		virtual void bindVirtually();
 };
 
 #endif

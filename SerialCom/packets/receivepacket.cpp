@@ -1,6 +1,6 @@
 #include "receivepacket.h"
 
-ReceivePacket::ReceivePacket(std::vector<unsigned char> input, PacketType aType) : ZBPacket(input, aType)
+ReceivePacket::ReceivePacket(std::vector<unsigned char> input, PacketType aType) : IncomingPacket(input, aType)
 {
 	std::cout << "DataPacket constructor" << std::endl;
 	if(input.at(3) != 0x90)	std::cout << "Packet type identifier doesn't match with a data packet" << std::endl;

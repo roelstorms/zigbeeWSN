@@ -7,7 +7,7 @@
 #include "ZBPacket.h"
 #include <iomanip>
 
-class ReceivePacket : public ZBPacket
+class ReceivePacket : public IncomingPacket 
 {
 	private:
 	std::vector<unsigned char> address, networkAddress;
