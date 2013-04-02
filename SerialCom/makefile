@@ -14,7 +14,7 @@ RM = /bin/rm -f
 all : $(OBJECTS)
 
 packet_test.out :
-	$(CC) $(LFLAGS) packet_test.cpp -o ./tests/packet_test.out ./packets/ZBPacket.o ../packet.o ../testclass.h
+	$(CC) $(LFLAGS) packet_test.cpp -o ./tests/packet_test.out ./packets/ZBPacket.o ../packet.o ./packets/outgoingpacket.o ../testclass.h
 
 $(OBJECTS): %.o:  %.cpp %.h
 	$(CC) -c $(CFlAGS) $< -o $@

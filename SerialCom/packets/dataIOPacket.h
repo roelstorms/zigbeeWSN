@@ -4,10 +4,10 @@
 #include <string>
 #include <stdio.h>   /* Standard input/output definitions */
 #include <iostream>
-#include "ZBPacket.h"
+#include "incomingpacket.h"
 #include <iomanip>
 
-class DataIOPacket : public ZBPacket 
+class DataIOPacket : public IncomingPacket 
 {
 	private:
 	unsigned char receiveOptions, numberOfSamples;

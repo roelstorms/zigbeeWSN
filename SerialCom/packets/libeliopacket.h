@@ -33,7 +33,8 @@ class LibelIOPacket : public ReceivePacket
 	public:
 		LibelIOPacket(std::vector<unsigned char> input);
 		unsigned char getNodeIdentifier() const;
-	 	
+	 	virtual void bindVirtually(){};
+
 		CREATESENSORGETTER(getTemperature, TEMP)		//Macro to generate setters for all the sensor types	
 		CREATESENSORGETTER(getHumidity, HUM)	
 		CREATESENSORGETTER(getPressure, PRES)	

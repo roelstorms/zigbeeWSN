@@ -1,12 +1,15 @@
 #ifndef INCOMINGPACKET_H
 #define INCOMINGPACKET_H
+#include "ZBPacket.h"
 
 class IncomingPacket : public ZBPacket
 {
 	private:
 
 	public:
-		IncompingPacket(std::vector<unsigned char> input, PacketType packetType);
+	void bindVirtually(){};
+
+	IncomingPacket(std::vector<unsigned char> input);
 
 };
 

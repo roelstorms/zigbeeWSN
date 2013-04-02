@@ -129,31 +129,25 @@ void MainClass::operator() ()
 		{
 			packet = localZBReceiveQueue->front();
 			localZBReceiveQueue->pop();
-			switch(packet->getType())
+			if(typeid(packet) ==  typeid(LibelIOPacket *))
 			{
-				case ZB_LIBEL_IO:
-				std::cout << "ZB_LIBEL_IO received in main" << std::endl;
+								std::cout << "ZB_LIBEL_IO received in main" << std::endl;
 				
 				std::cout << "temperature: "  << (dynamic_cast<LibelIOPacket *> (packet))->getTemperature() << std::endl;
-				break;
-				case ZB_LIBEL_CHANGEFREQ_REPLY:
-
-				std::cout << "ZB_LIBEL_CHANGEFREQ_REPLY received in main" << std::endl;
-				break;
-				case ZB_LIBEL_ADDNODE_REPLY:
-
-				std::cout << "ZB_LIBEL_ADDNODE_REPLY received in main" << std::endl;
-				break;
-				default:	//unknown type
-
-				std::cerr << "zbSendQueue had a packet with an incorrect type" << std::endl;
 			}
+			else if(typeid(packet) ==  typeid(LibelAddNodePacket *))
+			{
+				std::cout << "ZB_LIBEL_ADDNODE_REPLY received in main" << std::endl;
+
+			}
+			
 		}
 		
 		while(!localWSQueue->empty())
 		{
 			packet = localWSQueue->front();
 			localWSQueue->pop();
+			/*
 			switch(packet->getType())
 			{
 				case WS_COMMAND:
@@ -164,14 +158,14 @@ void MainClass::operator() ()
 				default:	//unknown type
 
 				std::cerr << "wsQueue had a packet with an incorrect type" << std::endl;
-			}
+			}*/
 		}
 
 		while(!localIpsumReceiveQueue->empty())
 		{
 			packet = localIpsumReceiveQueue->front();
 			localIpsumReceiveQueue->pop();
-			switch(packet->getType())
+			/*switch(packet->getType())
 			{
 				//case IPSUM_UPLOAD:
 
@@ -180,7 +174,7 @@ void MainClass::operator() ()
 				default:	//unknown type
 
 				std::cerr << "ipsum queue had a packet with an incorrect type" << std::endl;
-			}
+			}*/
 		}
 
 

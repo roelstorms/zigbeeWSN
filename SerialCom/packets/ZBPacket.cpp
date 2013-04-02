@@ -54,7 +54,7 @@ ZBPacket::ZBPacket( std::vector<unsigned char> data, PacketType packetType) : Pa
 }
 */
 
-ZBPacket::ZBPacket(PacketType packetType) : Packet(packetType)
+ZBPacket::ZBPacket() : Packet()
 {
 
 }
@@ -97,7 +97,7 @@ bool ZBPacket::getValidPacket() const
 
 std::vector<unsigned char> ZBPacket::getFrameData() const
 {
-	std::vector<unsigned char> data = std::vector<unsigned char>(encodedPacket.begin() + 4, encodedPacket.end() - 1);
+	std::vector<unsigned char> data = std::vector<unsigned char>(encodedPacket.begin() + 3, encodedPacket.end() - 1);
 	return data;
 }
 

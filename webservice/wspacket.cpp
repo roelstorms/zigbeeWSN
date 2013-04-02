@@ -1,6 +1,6 @@
 #include "wspacket.h"
 
-WSPacket::WSPacket(std::string aURI, std::string aData) throw(WebserviceInvalidCommand) : Packet(WS_COMMAND), data(aData)
+WSPacket::WSPacket(std::string aURI, std::string aData) throw(WebserviceInvalidCommand) : Packet(), data(aData)
 {
 	std::cout << "WSPacket constructor" << std::endl;	
 	if(aURI.find("changeFrequency") != std::string::npos)

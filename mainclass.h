@@ -16,12 +16,15 @@
 #include "./SerialCom/ZBSender.h"
 #include "./SerialCom/connection.h"
 #include "./SerialCom/packets/libeliopacket.h"
+#include "./SerialCom/packets/libeladdnodepacket.h"
+
 #include "./HTTP/http.h"
 #include "packetqueue.h"
 #include "./webservice/webservice.h"
 #include <thread>
 #include "./HTTP/ipsum.h"
 
+#include <typeinfo>
 
 class MainClass
 {

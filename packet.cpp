@@ -1,10 +1,7 @@
 #include "packet.h"
 
-Packet::Packet(PacketType aType) throw (InvalidPacketType): type(aType)
+Packet::Packet() throw (InvalidPacketType) 
 {
+
 }
 
-const PacketType& Packet::getType() const
-{
-	return type;
-}

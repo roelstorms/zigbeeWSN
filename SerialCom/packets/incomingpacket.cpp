@@ -1,6 +1,6 @@
-#include "incompingpacket.h"
+#include "incomingpacket.h"
 
-IncomingPacket::IncomingPacket(std::vector<unsigned char> input, PacketType packetType) : ZBPacket(packetType)
+IncomingPacket::IncomingPacket(std::vector<unsigned char> input) : ZBPacket()
 {
 	if(input.front() != 0x7E)
 	{

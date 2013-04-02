@@ -16,12 +16,13 @@ class ZBPacket : public Packet
 	//Packet(const Packet& aPacket){}
 	protected:
 	bool validPacket;
-	ZBPacket(PacketType packetType);
+	ZBPacket();
 	std::vector<unsigned char> encodedPacket;
 	public:
-	ZBPacket(std::vector<unsigned char> input, PacketType packetType);
+	//ZBPacket(std::vector<unsigned char> input);
 	~ZBPacket();
-	
+	void bindVirtually(){};
+
 	unsigned char getChecksum() const;
 	unsigned char getSizeLSB() const;
 	unsigned char getSizeMSB() const;

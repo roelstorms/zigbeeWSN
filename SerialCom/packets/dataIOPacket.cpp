@@ -8,7 +8,7 @@ DataIOPacket::DataIOPacket(const Packet& aPacket) : Packet(aPacket)
 }
 */
 
-DataIOPacket::DataIOPacket(std::vector<unsigned char> input) : ZBPacket(input, ZB_IO)
+DataIOPacket::DataIOPacket(std::vector<unsigned char> input) : IncomingPacket(input)
 {
 	std::cout << std::endl << "DataIOPacket(std::vector<unsigned char> input)" << std::endl;
 	for(auto it = input.begin(); it < input.end(); ++it)

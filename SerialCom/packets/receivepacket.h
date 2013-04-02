@@ -4,7 +4,7 @@
 #include <string>
 #include <stdio.h>   /* Standard input/output definitions */
 #include <iostream>
-#include "ZBPacket.h"
+#include "incomingpacket.h"
 #include <iomanip>
 
 class ReceivePacket : public IncomingPacket 
@@ -15,7 +15,8 @@ class ReceivePacket : public IncomingPacket
 	protected:
 	std::vector<unsigned char> data;
 	public:
-	ReceivePacket(std::vector<unsigned char> input, PacketType aType);
+	ReceivePacket(std::vector<unsigned char> input);
+	void bindVirtually(){};
 
 	const std::vector<unsigned char>& getAddress() const;
 	const std::vector<unsigned char>& getNetworkAddress() const;

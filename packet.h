@@ -12,17 +12,15 @@ enum PacketType
 class Packet
 {
 	private:
-		PacketType type;
 		Packet(Packet&);
 		Packet(const Packet&);
 		Packet& operator=(const Packet&);
 
 	public:
-		Packet(PacketType aType) throw (InvalidPacketType);
-		const PacketType& getType() const;
+		Packet() throw (InvalidPacketType);
 
 		// Purpose of this function is to make packets bind virtually as needed by the dynamic cast to put packets in a queueu.
-		virtual void bindVirtually();
+		virtual void bindVirtually(){};
 };
 
 #endif

@@ -1,7 +1,7 @@
 
 #include "libeliopacket.h"
 
-LibelIOPacket::LibelIOPacket(std::vector<unsigned char> input) : ReceivePacket(input, ZB_LIBEL_IO)
+LibelIOPacket::LibelIOPacket(std::vector<unsigned char> input) : ReceivePacket(input)
 {
 	std::vector<bool> mask;
 	std::cout << "LibelIOPacket constructor" << std::endl;

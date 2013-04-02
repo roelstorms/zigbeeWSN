@@ -1,12 +1,14 @@
 #ifndef OUTGOINGPACKET_H
 #define OUTGOINGPACKET_H
+#include "ZBPacket.h"
 
 class OutgoingPacket : public ZBPacket
 {
 	private:
 
 	public:
-		OutgoingPacket(std::vector<unsigned char> data, PacketType packetType );
+		OutgoingPacket();
+		OutgoingPacket(std::vector<unsigned char> data );
 
 };
 
