@@ -6,6 +6,7 @@
 	auto it = sensorData.find(sensortype); \
 	if(it == sensorData.end())\
 	{\
+		std::cout << "sensortype of unfound data: " << sensortype << std::endl;\
 		throw DataNotAvailable(); \
 	}\
 	return it->second;\
@@ -21,18 +22,16 @@
 #include <iomanip>
 #include <map>
 #include "../../errors.h"
-#include "../../packet.h"
+#include "receivepacket.h"
 #include "../../enums.h"
 
 
 class LibelIOPacket : public ReceivePacket 
 {
 	private:
-		unsigned char nodeIdentifier;
 		std::map<SensorType, float> sensorData;
 	public:
 		LibelIOPacket(std::vector<unsigned char> input);
-		unsigned char getNodeIdentifier() const;
 	 	virtual void bindVirtually(){};
 
 		CREATESENSORGETTER(getTemperature, TEMP)		//Macro to generate setters for all the sensor types	

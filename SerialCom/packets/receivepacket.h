@@ -13,7 +13,7 @@ class ReceivePacket : public IncomingPacket
 	std::vector<unsigned char> address, networkAddress;
 	unsigned char receiveOptions;
 	protected:
-	std::vector<unsigned char> data;
+	std::vector<unsigned char> receivedData;
 	public:
 	ReceivePacket(std::vector<unsigned char> input);
 	void bindVirtually(){};

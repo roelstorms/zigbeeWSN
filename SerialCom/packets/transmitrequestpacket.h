@@ -5,14 +5,18 @@
 #include "../../errors.h"
 #include <sstream>
 
-class TransmitRequestPacket : OutgoingPacket 
+class TransmitRequestPacket : public  OutgoingPacket 
 {
 
 	private:
-		
+		std::vector<unsigned char> frameData;
 	public:
 		TransmitRequestPacket(std::vector<unsigned char> zigbeeAddress64bit);
-		TransmitRequestPacket(std::vector<unsigned char> zigbeeAddress64Bit, std::vector<unsigned char> zigbeeAddress16Bit, unsigned char receiveOptions );
+		TransmitRequestPacket(std::vector<unsigned char> zigbeeAddress64bit, std::vector<unsigned char> zigbeeAddress16bit, unsigned char receiveOptions );
+		
+		void addFrameData(std::vector<unsigned char> zigbeeAddress64bit, std::vector<unsigned char> zigbeeAddress16bit, unsigned char receiveOptions );
+		void addRFData(std::vector<unsigned char> rfData);
+		std::vector<unsigned char> getRFData();
 };
 
 #endif

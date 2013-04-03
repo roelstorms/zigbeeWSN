@@ -1,10 +1,6 @@
 
 
 
-
-
-
-
 #ifndef LIBELADDNODEPACKET_H
 #define LIBELADDNODEPACKET_H
 
@@ -22,12 +18,9 @@
 class LibelAddNodePacket : public TransmitRequestPacket 
 {
 	private:
-		unsigned char nodeIdentifier;
 	public:
 		//LibelAddNodePacket(std::vector<unsigned char> input);
-		LibelAddNodePacket(std::vector<unsigned char> zigbeeAddress64bit);
-		unsigned char getNodeIdentifier() const;
-	 	
+		LibelAddNodePacket(std::vector<unsigned char> zigbeeAddress64bit, std::vector<SensorType> sensors);	 	
 
 };
 

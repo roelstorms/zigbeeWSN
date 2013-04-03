@@ -1,10 +1,11 @@
 #include "incomingpacket.h"
 
-IncomingPacket::IncomingPacket(std::vector<unsigned char> input) : ZBPacket()
+IncomingPacket::IncomingPacket(std::vector<unsigned char> input) throw (CorruptedPacket) : ZBPacket()
 {
 	if(input.front() != 0x7E)
 	{
 		std::cout << "error: invalid packet" << std::endl;
+		throw CorruptedPacket();
 	}
 	encodedPacket = input;
 
@@ -28,10 +29,12 @@ IncomingPacket::IncomingPacket(std::vector<unsigned char> input) : ZBPacket()
 	{
 		std::cout << "input.size: " << input.size() << std::endl << "size: " << size << std::endl;
 		std::cout << "size does not match" << std::endl;
+		throw CorruptedPacket();
 	}
 	else if(sum != 0xFF)
 	{
 		std::cerr << "checksum is wrong, corrupted packed" << std::endl;
+		throw CorruptedPacket();
 	}
 	else
 	{

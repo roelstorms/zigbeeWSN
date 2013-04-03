@@ -9,6 +9,7 @@ class OutgoingPacket : public ZBPacket
 	public:
 		OutgoingPacket();
 		OutgoingPacket(std::vector<unsigned char> data );
+		void setData(std::vector<unsigned char> data);
 
 };
 
