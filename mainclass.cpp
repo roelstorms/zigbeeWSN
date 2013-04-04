@@ -61,6 +61,8 @@ MainClass::MainClass(int argc, char * argv[])
 	localIpsumReceiveQueue = new std::queue<Packet *>;
 
 	ipsum = new Ipsum(ipsumSendQueue, ipsumReceiveQueue, conditionVariableMutex, mainConditionVariable, ipsumConditionVariableMutex, ipsumConditionVariable);
+
+	packetsWaitingForResponse = new std::queue<std::pair<Packet*, time_t>>;
 }
 
 MainClass::~MainClass()
@@ -95,6 +97,7 @@ MainClass::~MainClass()
 	delete localIpsumReceiveQueue;
 	delete ipsum;
 //	delete wsThread;
+	delete packetsWaitingForResponse; 
 }
 
 void MainClass::operator() ()
@@ -131,50 +134,35 @@ void MainClass::operator() ()
 			localZBReceiveQueue->pop();
 			if(typeid(packet) ==  typeid(LibelIOPacket *))
 			{
-								std::cout << "ZB_LIBEL_IO received in main" << std::endl;
-				
-				std::cout << "temperature: "  << (dynamic_cast<LibelIOPacket *> (packet))->getTemperature() << std::endl;
+				std::cout << "ZB_LIBEL_IO received in main" << std::endl;
+				libelIOHandler(packet);
 			}
-			else if(typeid(packet) ==  typeid(LibelAddNodePacket *))
-			{
-				std::cout << "ZB_LIBEL_ADDNODE_REPLY received in main" << std::endl;
-
-			}
-			
+						
 		}
 		
 		while(!localWSQueue->empty())
 		{
 			packet = localWSQueue->front();
 			localWSQueue->pop();
-			/*
-			switch(packet->getType())
+			if(typeid(packet) ==  typeid(WSPacket *))
 			{
-				case WS_COMMAND:
-
-				std::cout << "WS_COMMAND received in main" << std::endl;
-				webserviceHandler(packet);
-				break;
-				default:	//unknown type
-
-				std::cerr << "wsQueue had a packet with an incorrect type" << std::endl;
-			}*/
+				std::cout << "WS_PACKET received in main" << std::endl;
+				webserviceHandler(packet*);	
+			}
 		}
 
 		while(!localIpsumReceiveQueue->empty())
 		{
 			packet = localIpsumReceiveQueue->front();
 			localIpsumReceiveQueue->pop();
-			/*switch(packet->getType())
+			/*
+			if(typeid(packet) ==  typeid(IpsumPacket *))
 			{
-				//case IPSUM_UPLOAD:
-
-				//std::cout << "IPUM_UPLOAD received in main" << std::endl;
-				//break;
-				default:	//unknown type
-
-				std::cerr << "ipsum queue had a packet with an incorrect type" << std::endl;
-			}*/
+				std::cout << "Ipsum_PACKET received in main" << std::endl;
+				
+				std::cout << "post data: "  << (dynamic_cast<WSPacket *> (packet))->getRequestData() << std::endl;
+			}
+			*/
 		}
 
 
@@ -194,15 +182,40 @@ void MainClass::webserviceHandler(Packet * packet)
 	switch(wsPacket->getRequestType())
 	{
 		case CHANGE_FREQUENCY:
+			changeFrequencyRequest(wsPacket);
 			break;
 		case ADD_NODE:
 			break;
 		case ADD_SENSOR:
 		     	break;
 		case REQUEST_DATA:
+			requestIOHandler(wsPacket);
 		     	break;
 		default:
 		     std::cerr << "unrecognized packet" << std::endl;
 
 	}
+}
+
+void MainClass::changeFrequencyHandler(Packet * packet)
+{
+	
+
+}
+
+void MainClass::addNodeHandler(Packet * packet)
+{
+	
+
+}
+
+void MainClass::addSensorHandler(Packet * packet)
+{
+
+}
+
+void MainClass::requestIOHandler(Packet * packet)
+{
+	
+
 }

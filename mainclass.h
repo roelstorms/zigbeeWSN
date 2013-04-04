@@ -23,7 +23,7 @@
 #include "./webservice/webservice.h"
 #include <thread>
 #include "./HTTP/ipsum.h"
-
+#include <ctime>
 #include <typeinfo>
 
 class MainClass
@@ -45,6 +45,7 @@ class MainClass
 	Webservice * webService;
 	Ipsum * ipsum;
 
+	std::queue<std::pair<Packet *, time_t >> * packetsWaitingForResponse;
 	public:
 	MainClass(int argc, char * argv[]);
 	~MainClass();
@@ -52,6 +53,10 @@ class MainClass
 
 	void libelIOHandler(Packet * packet);
 	void webserviceHandler(Packet * packet);
+	void changeFrequencyHandler(Packet * packet);
+	void addNodeHandler(Packet * packet);
+	void addSensorHandler(Packet * packet);
+	void RequestIOHandler(Packet * packet);
 };
 
 #endif

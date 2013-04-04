@@ -71,7 +71,7 @@ void ZBReceiver::operator() ()
 			switch(packetType)
 			{
 				case 0x90:
-					switch(packetVector.at(15))	//It is a ZB data packet, all our libelium packets are of this type, so now to figure out what libelium packet we'e got
+					switch(packetVector.at(15))	//It is a ZB data packet, all our libelium packets are of this type, so now to figure out what libelium packet we 've got
 					{
 						std::cout << "found libel packet" << std::endl;
 						case 0xA:
@@ -85,6 +85,7 @@ void ZBReceiver::operator() ()
 							}
 						break;
 
+						
 						default:
 						throw UnknownPacketType();
 				

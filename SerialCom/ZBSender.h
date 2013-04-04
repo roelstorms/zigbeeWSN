@@ -6,6 +6,11 @@
 #include "../packetqueue.h"
 #include <mutex>
 #include <condition_variable>
+#include "packets/libelchangefreqpacket.h"
+#include "packets/libelchangenodefreqpacket.h"
+#include "packets/libeladdnodepacket.h"
+#include "packets/libelrequestiopacket.h"
+#include <typeinfo>
 
 class ZBSender
 {

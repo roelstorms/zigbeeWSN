@@ -28,7 +28,8 @@ int Sql::callback(int argc, char **argv, char **azColName)
 	std::map<std::string, std::string> map;
 	for(i=0; i<argc; i++)
 	{
-		map.insert(std::pair<std::string, std::string>(std::string(azColName[i]), std::string(argv[i])));
+		map.insert(std::pair<std::string, std::string>(std::string(azColName[i]), std::string(argv[i] ? argv[i] : "NULL")));
+		
 		printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
 	}
 	selectReturn.push_back(map);
@@ -79,24 +80,89 @@ void  Sql::removeIpsumPacket(int id)
 	executeQuery(query);
 }
 
-std::string Sql::makeNewNode()
+std::string Sql::makeNewNode(int nodeID, std::string zigbee64bitAddress)
 {
-	std::string nodeName;
 
-	std::string query("INSERT INTO nodes (zigbee64bitadress, temperature, humidity, pressure, co2, battery) VALUES('zigbee address', 'true', 'true', 'true', 'true', 'true')");
+	std::string query("INSERT INTO nodes (nodeID, zigbee64bitaddress) VALUES(");
+	query.append(nodeID + ", '" + zigbee64bitAddress);	
+	query.append("')");
+	std::cout << "query :" << query << std::endl;
 	executeQuery(query);
 	query.clear();
-	query.append("SELECT id FROM nodes ORDER BY id DESC");
+	query.append("SELECT * FROM nodes");
 	auto vector = executeQuery(query);
 	for(auto it = vector.begin(); it < vector.end(); ++it)
 	{
-		auto field = it->find("id");
-		std::cout << "fieldname: " << field->first << "fieldvalue: " << field->second << std::endl;
+		auto field = it->find("nodeID");
+		if(field != it->end())
+		{
+			std::cout << "fieldname: " << field->first << "fieldvalue: " << field->second << std::endl;
+		}
+		field = it->find("zigbee64bitaddress");
+		if(field != it->end())
+		{
+			std::cout << "fieldname: " << field->first << "fieldvalue: " << field->second << std::endl;
+		}
 	}
-	return vector.begin()->find("id")->second;
-
-	
-
+	std::string t("t");
+	return vector.begin()->find("nodeID")->second;
 
 }
+
+	
+std::string Sql::changeSensorInNode(int nodeID, SensorType name, int sensorID)	
+{
+	std::string sensorName;
+	switch(name)
+	{
+		case TEMP:
+			sensorName = "temperatureID";
+		break;	
+		case HUM:
+			sensorName = "humidityID";
+		break;	
+		case PRES:
+			sensorName = "pressureID";
+		break;	
+		case BAT:
+			sensorName = "batteryID";
+		break;	
+		case CO2:
+			sensorName = "co2ID";
+		break;	
+		case ANEMO:
+			sensorName = "anemoID";
+		break;	
+		case VANE:
+			sensorName = "vaneID";
+		break;	
+		case PLUVIO:
+			sensorName = "pluvioID";
+		break;	
+
+	}
+	std::string query("UPDATE nodes SET " + sensorName + "=" + std::to_string(sensorID) + " WHERE nodeID=" + std::to_string(nodeID));
+	executeQuery(query);
+	return query;	
+}
+
+
+std::string Sql::getNodeAddress(int nodeID)
+{
+	std::string query("SELECT zigbee64bitaddress from  nodes WHERE nodeID = " + std::to_string(nodeID));
+	auto data = executeQuery(query);
+	for(auto it = data.begin(); it < data.end(); ++it)
+	{
+		auto field = it->find("zigbee64bitaddress");
+		if(field != it->end())
+		{
+			return field->second;		
+		}
+		
+	}
+	return "Null";
+
+}
+
+
 

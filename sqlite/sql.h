@@ -7,6 +7,7 @@
 #include <map>
 #include <utility>
 #include <vector>
+#include "../enums.h"
 
 class Sql
 {
@@ -18,12 +19,20 @@ class Sql
 	~Sql();
 	static int callbackWrapper(void *thisPointer, int argc, char **argv, char **azColName);
 	int callback(int argc, char **argv, char **azColName);
-	std::vector<std::map<std::string, std::string>> executeQuery(std::string aQuery);		
+	std::vector<std::map<std::string, std::string>> executeQuery(std::string aQuery);
+
+	
+
 	void addIpsumPacket(const std::string& url, const std::string& XML);
 	std::vector<std::map<std::string, std::string>> retrieveIpsumPacket();
 	void removeIpsumPacket(int id);
-	std::string makeNewNode();	//Table nodes: ID (
-	//void addNode(std::string zbAddress, std::string nodeIdentifier, std::string ipsumName);
+
+	
+	//Table nodes: 	nodeID (int), zigbee64bitaddress(text), zigbee16bitaddress(text), temperatureID(int), humidityID(int), pressureID(int),
+	//		batteryID (int), co2ID(int), anemoID(int), pluvioID(int)
+	std::string makeNewNode(int nodeID, std::string zigbee64bitAddress);
+	std::string changeSensorInNode(int nodeID, SensorType name, int sensorID);
+	std::string getNodeAddress(int nodeID);	
 };
 
 #endif
