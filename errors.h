@@ -26,4 +26,5 @@ ERROR(DataNotAvailable, "Sensordata requested from this package is not available
 ERROR(InvalidPacketType, "Invalid packet type, the stored packet type does not exist.")
 ERROR(NoRoot, "Run the program using sudo")
 ERROR(CorruptedPacket, "Packet used to construct an object of type Incoming Packet is invalid (length, checksum, nog startbyte)");
+ERROR(SqlError, "An unexpected error happend in connection with the sql database.");
 #endif

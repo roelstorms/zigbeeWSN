@@ -1,5 +1,6 @@
 #include "sql.h"
 
+
 Sql::Sql(std::string dbName)
 {
 	int rc;
@@ -26,6 +27,7 @@ int Sql::callback(int argc, char **argv, char **azColName)
 {
 	int i;
 	std::map<std::string, std::string> map;
+	std::cout << "Sql::callback with argc: " << argc << std::endl;
 	for(i=0; i<argc; i++)
 	{
 		map.insert(std::pair<std::string, std::string>(std::string(azColName[i]), std::string(argv[i] ? argv[i] : "NULL")));
@@ -50,8 +52,10 @@ std::vector<std::map<std::string, std::string>> Sql::executeQuery(std::string aQ
 	
 		sqlite3_free(zErrMsg);
 	}
-	std::string output("");	
-	return selectReturn;
+	std::string output("");
+	auto returnValue = selectReturn;
+	selectReturn.clear();	
+	return returnValue;
 
 }
 
@@ -110,7 +114,7 @@ std::string Sql::makeNewNode(int nodeID, std::string zigbee64bitAddress)
 }
 
 	
-std::string Sql::changeSensorInNode(int nodeID, SensorType name, int sensorID)	
+std::string Sql::updateSensorsInNode(int nodeID, SensorType name, int sensorID)	
 {
 	std::string sensorName;
 	switch(name)
@@ -161,6 +165,66 @@ std::string Sql::getNodeAddress(int nodeID)
 		
 	}
 	return "Null";
+
+}
+
+#define CHECKSENSOR(name, sensortype)\
+	 field = it->find(#name);\
+	if(field != it->end())\
+	{\
+		if(field->second != std::string("-1"))\
+		{\
+			bool badCast = false;\
+			int sensorID;\
+			try\
+			{\
+				sensorID = boost::lexical_cast<int>(field->second);\
+			}\
+			catch(boost::bad_lexical_cast)\
+			{\
+				badCast = true;\
+				std::cerr << "Nodes table contained a non number as SensorID, this sensor has been ignored" << std::endl;\
+			}\
+			if(!badCast)\
+			{\
+				sensors.insert(std::pair<SensorType,int>(sensortype, sensorID));\
+			}\
+		}\
+	}
+
+std::map<SensorType, int> Sql::getSensorsFromNode(int nodeID)
+{
+	std::string query("SELECT temperatureID, humidityID, pressureID, batteryID, co2ID, anemoID, vaneID, pluvioID  from  nodes WHERE nodeID = " + std::to_string(nodeID));
+	auto data = executeQuery(query);
+	std::cout << "data.size() " << data.size() << std::endl;
+	if (data.size() != 1)
+	{
+		throw SqlError();
+	}
+
+	std::map<SensorType, int> sensors;
+	auto it = data.begin();
+	std::map<std::string, std::string>::iterator  field;
+	CHECKSENSOR(temperatureID, TEMP)
+	CHECKSENSOR(humidityID, HUM)
+	CHECKSENSOR(pressureID, PRES)
+	CHECKSENSOR(batteryID, BAT)
+	CHECKSENSOR(co2ID, CO2)
+	CHECKSENSOR(anemoID, ANEMO)
+	CHECKSENSOR(vaneID, VANE)
+	CHECKSENSOR(pluvioID, PLUVIO)
+	/*	
+	field = it->find("temperatureID");
+	if(field != it->end())
+	{
+		if(field->second != std::string("-1"))
+		{	
+			sensors.insert(std::pair<SensorType,int>(TEMP, boost::lexical_cast<int>(field->second)));
+		}	
+	}
+	*/	
+
+	return sensors;
 
 }
 

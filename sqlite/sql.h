@@ -8,6 +8,10 @@
 #include <utility>
 #include <vector>
 #include "../enums.h"
+#include "../errors.h"
+#define BOOST_DISABLE_ASSERTS 	// If you do not define this then the boost assert macro will be included and its name collides with my TestClass::assert function 
+#include <boost/lexical_cast.hpp>
+#include <typeinfo>
 
 class Sql
 {
@@ -31,8 +35,9 @@ class Sql
 	//Table nodes: 	nodeID (int), zigbee64bitaddress(text), zigbee16bitaddress(text), temperatureID(int), humidityID(int), pressureID(int),
 	//		batteryID (int), co2ID(int), anemoID(int), pluvioID(int)
 	std::string makeNewNode(int nodeID, std::string zigbee64bitAddress);
-	std::string changeSensorInNode(int nodeID, SensorType name, int sensorID);
+	std::string updateSensorsInNode(int nodeID, SensorType name, int sensorID);
 	std::string getNodeAddress(int nodeID);	
+	std::map<SensorType, int> getSensorsFromNode(int nodeID);
 };
 
 #endif
