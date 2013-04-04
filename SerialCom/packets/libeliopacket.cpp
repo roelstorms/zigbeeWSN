@@ -6,8 +6,13 @@ LibelIOPacket::LibelIOPacket(std::vector<unsigned char> input) : ReceivePacket(i
 	std::vector<bool> mask;
 	std::cout << "LibelIOPacket constructor" << std::endl;
 	std::cout << "data length: " << receivedData.size() << std::endl;
+	if(receivedData.at(0) != 0X0A)
+	{
+		std::cerr << "Tried to put a packed into a LibelIOPacket that was of the wrong type (see application ID != 0X0A)" << std::endl;	
+	}
+
 	// Bits in the mask have this meaning: 15,14,13,12,11,10,9,8,PLUVIO, ANEMO, CO2, BAT, PRES, HUMID, TEMP
-	unsigned int maskChar = receivedData.at(0) * 256 + receivedData.at(1);
+	unsigned int maskChar = receivedData.at(1) * 256 + receivedData.at(2);
 	std::cout << "maskchar: " << maskChar << std::endl;
 	for(int i = 0; i < 16; ++i)
 	{	
@@ -22,7 +27,7 @@ LibelIOPacket::LibelIOPacket(std::vector<unsigned char> input) : ReceivePacket(i
 	}
 #endif
 	std::cout << std::endl << std::endl; 
-	int count = 2;
+	int count = 3;
 	float value;
 	if(mask.at(0) == 1)
 	{

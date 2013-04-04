@@ -3,7 +3,8 @@
 LibelChangeFreqPacket::LibelChangeFreqPacket(std::vector<unsigned char> destinationZB64bitAddress, std::vector<std::pair<SensorType, int>> newFrequencies) : TransmitRequestPacket(destinationZB64bitAddress)
 {
 	std::vector<unsigned char> rfData;
-	int mask;	
+	int mask;
+	rfData.push_back(0x07);		// Libelium application ID, 07 means CH_SENS_FREQ_REQ	
 	for(auto it = newFrequencies.begin(); it < newFrequencies.end(); ++it)
 	{
 		switch((*it).first)

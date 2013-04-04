@@ -1,10 +1,10 @@
-#include "libeladdnodepacket.h"
+#include "libelrequestiopacket.h"
 
-LibelAddNodePacket::LibelAddNodePacket(std::vector<unsigned char> zigbeeAddress64bit, std::vector<SensorType> sensors) : TransmitRequestPacket(zigbeeAddress64bit)
+LibelRequestIOPacket::LibelRequestIOPacket(std::vector<unsigned char> zigbeeAddress64bit, std::vector<SensorType> sensors) : TransmitRequestPacket(zigbeeAddress64bit)
 {
 	std::vector<unsigned char> rfData;
 	int mask;
-	rfData.push_back(0x01);		// Libelium application ID's, O1 is for ADD_NODE_REQ
+	rfData.push_back(0x09);		// Libelium application ID's, O9 is for IO_REQUEST
 	for( auto it = sensors.begin(); it < sensors.end(); ++it)
 	{
 		switch(*it)
@@ -39,5 +39,5 @@ LibelAddNodePacket::LibelAddNodePacket(std::vector<unsigned char> zigbeeAddress6
 	rfData.push_back(mask % 256);
 	
 	addRFData(rfData);
-}
 
+}
