@@ -11,7 +11,7 @@ MainClass::MainClass(int argc, char * argv[])
 	
 	socket = new Http("http://ipsum.groept.be");
 
-/*	
+	
 	try
 	{
 		socket->ipsumInfo();
@@ -21,7 +21,7 @@ MainClass::MainClass(int argc, char * argv[])
 		std::cerr << "Could not connect to Ipsum" << std::endl;
 		//return 1;
 	}
-*/
+
 	
 	std::cout << "argc: " << argc << std::endl;
 	if(argc != 2)
@@ -102,7 +102,6 @@ MainClass::~MainClass()
 
 void MainClass::operator() ()
 {
-
 	std::cout << "going into main while loop" << std::endl;
 	while(true)
 	{
@@ -111,19 +110,22 @@ void MainClass::operator() ()
 			mainConditionVariable->wait(uniqueLock, [this]{ return ((!zbReceiveQueue->empty()) || (!wsQueue->empty() || (!ipsumReceiveQueue->empty()))); });
 			std::cout << "mainconditionvariable notification received" << std::endl;
 			while(!zbReceiveQueue->empty())
-
 			{
 				localZBReceiveQueue->push(zbReceiveQueue->getPacket());
+				std::cout << "adding ZBPacket to local ZBReceiverQueue" << std::endl;
 			}
 			
 			while(!wsQueue->empty())
 			{
+				std::cout << "type of ws packet from wsQueue: " << typeid(wsQueue->getPacket()).name() << std::endl;
+				std::cout << "adding WSPacket to local WSQueue" << std::endl;
 				localWSQueue->push(wsQueue->getPacket());
 			}
 			
 			while(!ipsumReceiveQueue->empty())
 			{
 				localIpsumReceiveQueue->push(ipsumReceiveQueue->getPacket());
+				std::cout << "adding IpsumPacket to local IpsumReceiveQueue" << std::endl;
 			}
 		}
 		// Shared queue is no longer locked, now ready to process the packets
@@ -132,6 +134,7 @@ void MainClass::operator() ()
 		{
 			packet = localZBReceiveQueue->front();
 			localZBReceiveQueue->pop();
+			std::cout << "popped ZBPacket from local ZBQueue, type:" << typeid(packet).name() << std::endl;
 			if(typeid(packet) ==  typeid(LibelIOPacket *))
 			{
 				std::cout << "ZB_LIBEL_IO received in main" << std::endl;
@@ -144,10 +147,11 @@ void MainClass::operator() ()
 		{
 			packet = localWSQueue->front();
 			localWSQueue->pop();
+			std::cout << "popped WSPacket from local WSQueue, type:" << typeid(packet).name() << std::endl;
 			if(typeid(packet) ==  typeid(WSPacket *))
 			{
 				std::cout << "WS_PACKET received in main" << std::endl;
-				webserviceHandler(packet*);	
+				webserviceHandler(packet);	
 			}
 		}
 
@@ -182,7 +186,7 @@ void MainClass::webserviceHandler(Packet * packet)
 	switch(wsPacket->getRequestType())
 	{
 		case CHANGE_FREQUENCY:
-			changeFrequencyRequest(wsPacket);
+			changeFrequencyHandler(wsPacket);
 			break;
 		case ADD_NODE:
 			break;
@@ -197,25 +201,104 @@ void MainClass::webserviceHandler(Packet * packet)
 	}
 }
 
-void MainClass::changeFrequencyHandler(Packet * packet)
+void MainClass::requestIOHandler(WSPacket * wsPacket)
+{
+		
+
+}
+
+void MainClass::changeFrequencyHandler(WSPacket * wsPacket)
+{
+	wsPacket->getRequestData();
+	findFieldInXML("sensor", "frequency");
+
+	//LibelChangeNodeFreqPacket libelChangeNodeFreqPacket(destination64bitAddress, newFrequency):
+	//zbSenderQueue->addPacket();	
+
+}
+
+void MainClass::addNodeHandler(WSPacket * wsPacket)
 {
 	
 
 }
 
-void MainClass::addNodeHandler(Packet * packet)
+void MainClass::addSensorHandler(WSPacket * wsPacket)
 {
+
+}
+
+std::string MainClass::findFieldInXML(std::string fieldName, std::string data)
+{
+
+	std::string token;
+
+	XMLCh tempStr[100];
+	char * temp;
+
+	xercesc::DOMImplementation* impl = xercesc::DOMImplementation::getImplementation();
+	xercesc::DOMLSParser *parser = ((xercesc::DOMImplementationLS*)impl)->createLSParser(xercesc::DOMImplementationLS::MODE_SYNCHRONOUS, 0);
+	xercesc::DOMDocument *doc;
+
+
+
+	xercesc::Wrapper4InputSource source(new xercesc::MemBufInputSource((const XMLByte*) (data.c_str()), data.size(), "100"));
+
+	//std::cout << "filename : " << reply << std::endl;
+	doc = parser->parse(&source);
 	
-
-}
-
-void MainClass::addSensorHandler(Packet * packet)
-{
-
-}
-
-void MainClass::requestIOHandler(Packet * packet)
-{
 	
+	if (doc == NULL)
+	{
+		throw InvalidXMLError(); 
+	}
+	
+	xercesc::DOMElement * docElement = doc->getDocumentElement();	
+	std::cout << "docElement count: " << docElement->getChildElementCount () << std::endl;
+	//for(int i = 0; i < docElement->getChildElementCount(); ++i)
+	xercesc::DOMElement * nextElement;
+	nextElement = docElement->getFirstElementChild();
+	while(nextElement != NULL)
+	{
+		//std::cout << "element name: " <<  xercesc::XMLString::transcode(nextElement->getTagName()) << std::endl;
+		XMLCh * tokentemp = xercesc::XMLString::transcode("token");
+		XMLCh * errortemp = xercesc::XMLString::transcode("error");
 
+		if(xercesc::XMLString::compareIString(nextElement->getTagName(), tokentemp) == 0)
+		{
+			//std::cout << "nextelement has children" << std::endl << xercesc::XMLString::transcode(nextElement->getTextContent()) << std::endl;
+			temp = xercesc::XMLString::transcode(nextElement->getTextContent());
+			token = std::string(temp);
+			xercesc::XMLString::release(&temp);
+
+		}
+		else if(xercesc::XMLString::compareIString(nextElement->getTagName(), errortemp) == 0)
+		{
+			temp = xercesc::XMLString::transcode(nextElement->getTextContent());
+			if(std::string(temp) == std::string("True"))
+			{
+				std::cout << "Error occured in receiving the token" << std::endl;
+				token = nullptr;
+				throw IpsumError();	
+			}
+			xercesc::XMLString::release(&temp);
+		}
+		xercesc::XMLString::release(&tokentemp);
+		xercesc::XMLString::release(&errortemp);
+
+		nextElement = nextElement->getNextElementSibling();
+	}	
+
+
+	std::cout << "token: " << token << std::endl;
+
+
+	doc->release();
+//	parser->release();
+
+	std::cout << "XML::analyzeLoginReply() end token: "  <<std::endl;
+	return token;
+
+	//return fieldValue;
 }
+

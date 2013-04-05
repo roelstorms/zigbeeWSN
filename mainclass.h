@@ -26,6 +26,10 @@
 #include <ctime>
 #include <typeinfo>
 
+#include <xercesc/dom/DOM.hpp>
+#include <xercesc/framework/MemBufInputSource.hpp>
+#include <xercesc/framework/Wrapper4InputSource.hpp>
+
 class MainClass
 {
 	private:
@@ -46,6 +50,12 @@ class MainClass
 	Ipsum * ipsum;
 
 	std::queue<std::pair<Packet *, time_t >> * packetsWaitingForResponse;
+	
+	void requestIOHandler(WSPacket * wsPacket);
+	void changeFrequencyHandler(WSPacket * wsPacket);
+	void addNodeHandler(WSPacket * wsPacket);
+	void addSensorHandler(WSPacket * wsPacket);
+	void RequestIOHandler(WSPacket * wsPacket);
 	public:
 	MainClass(int argc, char * argv[]);
 	~MainClass();
@@ -53,10 +63,8 @@ class MainClass
 
 	void libelIOHandler(Packet * packet);
 	void webserviceHandler(Packet * packet);
-	void changeFrequencyHandler(Packet * packet);
-	void addNodeHandler(Packet * packet);
-	void addSensorHandler(Packet * packet);
-	void RequestIOHandler(Packet * packet);
+	std::string findFieldInXML(std::string fieldName, std::string data);
+
 };
 
 #endif

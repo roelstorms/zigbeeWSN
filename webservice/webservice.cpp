@@ -18,15 +18,26 @@ int Webservice::beginRequestHandler(struct mg_connection *conn)
 
 	// Prepare the message we're going to send
 	post_data_len = mg_read(conn, post_data, sizeof(post_data));
-
-	Packet * packet = dynamic_cast<Packet *> (new WSPacket(std::string(request_info->uri), std::string(post_data)));
+	std::cout << std::endl << "url: "<< request_info->uri << std::endl;
+	Packet * packet; 
+	try
+	{
+		packet= /*dynamic_cast<Packet *>*/ (new WSPacket(std::string(request_info->uri), std::string(post_data)));
+		std::cout << "type of WSPacket* in webservice.cpp: " << typeid(packet).name() << std::endl;
+	}
+	catch (WebserviceInvalidCommand)
+	{
+		std::cerr << "invalid command was sent to the webservice" << std::endl;
+		return 1;	
+	}
+	
 	wsQueue->addPacket(packet);
 	std::cout << "adding ws packet to wsqueue" << std::endl;
 	std::lock_guard<std::mutex> lg(*mainConditionVariableMutex);
 	mainConditionVariable->notify_all();
 
 	int content_length = snprintf(content, sizeof(content),	"<error>false</error>",request_info->uri, post_data);
-	printf("%s: %d\n", post_data, content_length);
+		printf("%s: %d\n", post_data, content_length);
 	
 	// Send HTTP reply to the client
 	mg_printf(conn,

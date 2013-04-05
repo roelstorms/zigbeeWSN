@@ -3,18 +3,9 @@
 
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>
-#include <xercesc/dom/DOMImplementation.hpp>
-#include <xercesc/dom/DOMImplementationRegistry.hpp>
-#include <xercesc/dom/DOMElement.hpp>
-#include <xercesc/dom/DOMDocument.hpp>
-#include <xercesc/dom/DOMRange.hpp>
-#include <xercesc/dom/DOMLSSerializer.hpp>
-#include <xercesc/dom/DOMLSSerializerFilter.hpp>
-#include <xercesc/dom/DOMLSOutput.hpp>
-#include <xercesc/dom/DOMErrorHandler.hpp>
-#include <xercesc/dom/DOMLSParser.hpp>
+#include <xercesc/dom/DOM.hpp>
 #include <xercesc/framework/StdOutFormatTarget.hpp>
-#include <xercesc/dom/DOMText.hpp>
+
 #include <string>
 #include <iostream>
 

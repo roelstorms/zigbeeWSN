@@ -20,6 +20,9 @@ class WSPacket : public Packet
 		~WSPacket();
 		const RequestType& getRequestType() const;
 		const std::string& getRequestData() const;
+
+		virtual void bindVirtually(){};
+
 };
 
 #endif
