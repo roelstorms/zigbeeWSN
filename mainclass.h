@@ -26,6 +26,7 @@
 #include <ctime>
 #include <typeinfo>
 
+#include "sqlite/sql.h"
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/framework/MemBufInputSource.hpp>
 #include <xercesc/framework/Wrapper4InputSource.hpp>
@@ -42,6 +43,7 @@ class MainClass
 	std::mutex * conditionVariableMutex, * ipsumConditionVariableMutex, * zbSenderConditionVariableMutex;
 
 	Connection * con;
+	Sql * db;
 
 	boost::thread * zbReceiverThread, * zbSenderThread, * ipsumThread;
 	ZBReceiver * zbReceiver;

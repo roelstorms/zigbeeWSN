@@ -1,13 +1,15 @@
 #include "ipsum.h"
 
-Ipsum::Ipsum(PacketQueue * ipsumSendQueue, PacketQueue * ipsumReceiveQueue, std::mutex * mainConditionVariableMutex, std::condition_variable * mainConditionVariable, std::mutex * ipsumConditionVariableMutex, std::condition_variable * ipsumConditionVariable) : ipsumSendQueue(ipsumSendQueue), ipsumReceiveQueue(ipsumReceiveQueue), mainConditionVariableMutex(mainConditionVariableMutex), mainConditionVariable(mainConditionVariable), ipsumConditionVariableMutex(ipsumConditionVariableMutex), ipsumConditionVariable(ipsumConditionVariable)
+Ipsum::Ipsum(PacketQueue * ipsumSendQueue, PacketQueue * ipsumReceiveQueue, std::mutex * mainConditionVariableMutex, std::condition_variable * mainConditionVariable, std::mutex * ipsumConditionVariableMutex, std::condition_variable * ipsumConditionVariable) : ipsumSendQueue(ipsumSendQueue), ipsumReceiveQueue(ipsumReceiveQueue), mainConditionVariableMutex(mainConditionVariableMutex), ipsumConditionVariableMutex(ipsumConditionVariableMutex), mainConditionVariable(mainConditionVariable), ipsumConditionVariable(ipsumConditionVariable)
 {
 	std::cout << "ipsum constructor" << std::endl;
 	localIpsumSendQueue = new std::queue<Packet*>;
+	http = new Http("http://ipsum.groept.be");
 }
 
 Ipsum::~Ipsum()
 {
+	delete http;
 	delete localIpsumSendQueue;
 }
 
@@ -31,7 +33,7 @@ void Ipsum::operator()()
 		ipsumPacket = localIpsumSendQueue->front();
 		localIpsumSendQueue->pop();
 		
-		switch(ipsumPacket->getType())
+		switch(ipsumPacket->getPacketType())
 		{
 			case IPSUM_UPLOAD:
 				uploadDataHandler(dynamic_cast<IpsumUploadPacket *> (ipsumPacket));
@@ -48,5 +50,5 @@ void Ipsum::operator()()
 
 void Ipsum::uploadDataHandler(IpsumUploadPacket * packet)
 {
-
+	http->uploadData(packet);
 }

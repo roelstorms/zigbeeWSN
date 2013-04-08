@@ -16,6 +16,8 @@ class IpsumUploadPacket : public IpsumPacket
 	// Parameters: data is a tuple of sensor type, sensorID as used in ipsum and a float with the data
 	IpsumUploadPacket(int installationID, int sensorGroupID, std::vector<std::tuple<SensorType, int, float>> data);
 
+	virtual PacketType getPacketType(){ return IPSUM_UPLOAD;};
+	
 	int getInstallationID() const;
 	int getSensorGroupID() const;
 

@@ -21,7 +21,7 @@ class WSPacket : public Packet
 		const RequestType& getRequestType() const;
 		const std::string& getRequestData() const;
 
-		virtual void bindVirtually(){};
+		PacketType getPacketType(){ return WS_COMMAND; };
 
 };
 

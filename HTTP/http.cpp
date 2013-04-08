@@ -241,7 +241,7 @@ std::string Http::toBase64(std::string input)
 }
 
 
-void uploadData(IpsumUploadPacket * packet)
+void Http::uploadData(IpsumUploadPacket * packet)
 {
 	std::string url;
 	std::string temp;
@@ -250,55 +250,58 @@ void uploadData(IpsumUploadPacket * packet)
 	login();
 	std::string timeStamp = xmlParser.getTimeInSeconds();
 	auto data = packet->getData();
-	for(auto it = data.begin; it < data.end(); ++it)
+	for(auto it = data.begin(); it < data.end(); ++it)
 	{
 		url.clear();
 		url.append("/upload");
 		url.append("/");
-		url.append(calculateDestination(21, packet->getInstallationID(), packet->getSensorGroupID(), std::get<1>(*it));
+		url.append(calculateDestination(21, packet->getInstallationID(), packet->getSensorGroupID(), std::get<1>(*it)));
 		url.append("/");
 		temp.clear();
 		temp.append(url);
 		temp.append(PK);
 		url.append(generateCode(temp));
 		std::string sensorType;
-		
+		std::string fieldName;	
 		switch(std::get<0>(*it))
 		{
 			case TEMP:
 				sensorType = "zigbeeTemp";
+				fieldName = "temperature";
 			break;
 			case HUM:
 				sensorType = "zigbeeHum";
+				fieldName = "humidity";
 			break;
 			case PRES:
 				sensorType = "zigbeePres";
+				fieldName = "pressure";
 			break;
 			case BAT:
 				sensorType = "zigbeeBat";
+				fieldName = "battery";
 			break;
 			case CO2:
 				sensorType = "zigbeeCO2";
+				fieldName = "CO2";
 			break;
 			case ANEMO:
 				sensorType = "zigbeeAnemo";
+				fieldName = "anemo";
 			break;
 			case VANE:
 				sensorType = "zigbeeVane";
+				fieldName = "vane";
 			break;
 			case PLUVIO:
 				sensorType = "zigbeePluvio";
+				fieldName = "pluvio";
 			break;
-			default:
-				std::cerr << "unknown sensor type in Http::uploadData()" << std::endl;
 		}
 		
-		sendPost(url, xmlParser.uploadData(std::get<0>(*it), sensorType, std::get<2>(*it), timeStamp); 
+		sendPost(url, xmlParser.uploadData(sensorType, fieldName, std::get<2>(*it), timeStamp), &Http::standardReplyWrapper); 
 	}
 	
-	url.clear();
-	url.append("/upload");
-
 }
 
 void Http::uploadData(std::string aSensorType, std::string destinationBase64, std::vector<std::pair<std::string, double>> input) throw (HttpError)

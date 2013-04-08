@@ -91,4 +91,5 @@ class XML
 	std::string getTimeInSeconds();
 };
 
+
 #endif

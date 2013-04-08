@@ -7,7 +7,8 @@ int main(int argc, char * argv[])
 {
 	//Http socket(std::string("localhost:8080"));//http://ipsum.groept.be"));
 	Http socket(std::string("http://192.168.1.9:8080"));
-	
+
+
 	/*
 	std::vector<std::pair<std::string, std::string>> aListOfFields;
 	aListOfFields.push_back(std::pair<std::string, std::string>(std::string("temperature"), std::string("float_n_")));

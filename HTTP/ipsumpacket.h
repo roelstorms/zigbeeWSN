@@ -7,7 +7,7 @@ class IpsumPacket : public Packet
 	private:
 
 	public:
-	IpsumPacket(PacketType type);
+	IpsumPacket();
 
 
 };

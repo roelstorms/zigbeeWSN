@@ -13,13 +13,12 @@
 class Ipsum
 {
 	private:
+	PacketQueue * ipsumSendQueue, * ipsumReceiveQueue;
 	std::mutex * mainConditionVariableMutex, * ipsumConditionVariableMutex;
 	std::condition_variable * mainConditionVariable, * ipsumConditionVariable;
-	PacketQueue * ipsumSendQueue, * ipsumReceiveQueue;
 	std::queue<Packet *> * localIpsumSendQueue;
 
-	Http http();
-
+	Http * http;
 	Ipsum(const Ipsum&);
 	public:
 	Ipsum(PacketQueue * ipsumSendQueue, PacketQueue * ipsumReceiveQueue, std::mutex * mainConditionVariableMutex, std::condition_variable * mainConditionVariable, std::mutex * ipsumConditionVariableMutex, std::condition_variable * ipsumConditionVariable);

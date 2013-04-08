@@ -105,5 +105,7 @@ LibelIOPacket::LibelIOPacket(std::vector<unsigned char> input) : ReceivePacket(i
 }
 
 
-
-
+const std::map<SensorType, float>& LibelIOPacket::getSensorData() const
+{
+	return sensorData;
+}

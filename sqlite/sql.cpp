@@ -84,11 +84,11 @@ void  Sql::removeIpsumPacket(int id)
 	executeQuery(query);
 }
 
-std::string Sql::makeNewNode(int nodeID, std::string zigbee64bitAddress)
+std::string Sql::makeNewNode(int installationID, int nodeID, std::string zigbee64bitAddress)
 {
 
-	std::string query("INSERT INTO nodes (nodeID, zigbee64bitaddress) VALUES(");
-	query.append(nodeID + ", '" + zigbee64bitAddress);	
+	std::string query("INSERT INTO nodes (installationID, nodeID, zigbee64bitaddress) VALUES(");
+	query.append(std::to_string(installationID) + ", " + std::to_string(nodeID) + ", '" + zigbee64bitAddress);	
 	query.append("')");
 	std::cout << "query :" << query << std::endl;
 	executeQuery(query);
@@ -108,7 +108,6 @@ std::string Sql::makeNewNode(int nodeID, std::string zigbee64bitAddress)
 			std::cout << "fieldname: " << field->first << "fieldvalue: " << field->second << std::endl;
 		}
 	}
-	std::string t("t");
 	return vector.begin()->find("nodeID")->second;
 
 }
@@ -151,6 +150,7 @@ std::string Sql::updateSensorsInNode(int nodeID, SensorType name, int sensorID)
 }
 
 
+
 std::string Sql::getNodeAddress(int nodeID)
 {
 	std::string query("SELECT zigbee64bitaddress from  nodes WHERE nodeID = " + std::to_string(nodeID));
@@ -166,6 +166,40 @@ std::string Sql::getNodeAddress(int nodeID)
 	}
 	return "Null";
 
+}
+
+int Sql::getNodeID(std::string zigbee64bitaddress)
+{
+	std::string query("SELECT nodeID from nodes WHERE zigbee64bitaddress = " + zigbee64bitaddress);
+	auto data = executeQuery(query);
+	for(auto it = data.begin(); it < data.end(); ++it)
+	{
+		auto field = it->find("nodeID");
+		if(field != it->end())
+		{
+			return boost::lexical_cast<int>(field->second);		
+		}
+		
+	}
+	return -1;
+
+}
+
+int Sql::getInstallationID(std::string zigbee64bitaddress)
+{
+
+	std::string query("SELECT installationID from nodes WHERE zigbee64bitaddress = " + zigbee64bitaddress);
+	auto data = executeQuery(query);
+	for(auto it = data.begin(); it < data.end(); ++it)
+	{
+		auto field = it->find("installationID");
+		if(field != it->end())
+		{
+			return boost::lexical_cast<int>(field->second);		
+		}
+		
+	}
+	return -1;
 }
 
 #define CHECKSENSOR(name, sensortype)\

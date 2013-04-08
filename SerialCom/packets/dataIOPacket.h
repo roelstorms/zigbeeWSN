@@ -30,6 +30,7 @@ class DataIOPacket : public IncomingPacket
 	void setAnalogChannelMask(std::vector<unsigned char>);
 
 
+	PacketType getPacketType(){ return ZB_IO; };
 };
 
 #endif

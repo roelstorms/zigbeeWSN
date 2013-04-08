@@ -29,7 +29,7 @@ MainClass::MainClass(int argc, char * argv[])
 		std::cerr << "also provide the port number" << std::endl;
 		//return 1;
 	}
-	
+	db = new Sql("./sqlite/zigbee.dbs");
 	con = new Connection(); 
 	int connectionDescriptor = con->openPort(atoi(argv[1]), 9600);
 
@@ -69,7 +69,8 @@ MainClass::~MainClass()
 {
 	delete socket;
 	delete con;
-	
+	delete db;
+
 	delete mainConditionVariable;
 	delete conditionVariableMutex;
 
@@ -135,7 +136,7 @@ void MainClass::operator() ()
 			packet = localZBReceiveQueue->front();
 			localZBReceiveQueue->pop();
 			std::cout << "popped ZBPacket from local ZBQueue, type:" << typeid(packet).name() << std::endl;
-			if(typeid(packet) ==  typeid(LibelIOPacket *))
+			if(packet->getPacketType() == ZB_LIBEL_IO)
 			{
 				std::cout << "ZB_LIBEL_IO received in main" << std::endl;
 				libelIOHandler(packet);
@@ -148,7 +149,7 @@ void MainClass::operator() ()
 			packet = localWSQueue->front();
 			localWSQueue->pop();
 			std::cout << "popped WSPacket from local WSQueue, type:" << typeid(packet).name() << std::endl;
-			if(typeid(packet) ==  typeid(WSPacket *))
+			if(packet->getPacketType() == WS_COMMAND)
 			{
 				std::cout << "WS_PACKET received in main" << std::endl;
 				webserviceHandler(packet);	
@@ -178,6 +179,27 @@ void MainClass::libelIOHandler(Packet * packet)
 {
 	LibelIOPacket * libelIOPacket = dynamic_cast<LibelIOPacket *> (packet);
 	std::cout << "temperature: " << libelIOPacket->getTemperature() << std::endl;
+
+	std::vector<unsigned char> zigbee64BitAddress = libelIOPacket->getAddress();
+	std::string zigbee64BitAddressString( zigbee64BitAddress.begin(), zigbee64BitAddress.end());
+	int nodeID = db->getNodeID(zigbee64BitAddressString);
+	int installationID = db->getInstallationID(zigbee64BitAddressString);
+	std::map<SensorType, int> availableSensors = db->getSensorsFromNode(nodeID);
+
+	std::map<SensorType, float> sensorData = libelIOPacket->getSensorData();
+
+	std::vector<std::tuple<SensorType, int, float>> data;
+	
+	for(auto it = sensorData.begin(); it != sensorData.end(); ++it)
+	{
+		auto sensorField = availableSensors.find(it->first);
+
+		data.push_back(std::tuple<SensorType, int, float>(it->first, sensorField->second, it->second ));	
+	}
+
+	delete packet;
+	IpsumUploadPacket * ipsumUploadPacket = new IpsumUploadPacket(installationID, nodeID, data);
+	ipsumSendQueue->addPacket(dynamic_cast<Packet*> (ipsumUploadPacket));
 }
 
 void MainClass::webserviceHandler(Packet * packet)
@@ -186,6 +208,7 @@ void MainClass::webserviceHandler(Packet * packet)
 	switch(wsPacket->getRequestType())
 	{
 		case CHANGE_FREQUENCY:
+			std::cout << "CHANGE_FREQUENCY request being handled" << std::endl;
 			changeFrequencyHandler(wsPacket);
 			break;
 		case ADD_NODE:
@@ -199,6 +222,7 @@ void MainClass::webserviceHandler(Packet * packet)
 		     std::cerr << "unrecognized packet" << std::endl;
 
 	}
+	delete wsPacket;
 }
 
 void MainClass::requestIOHandler(WSPacket * wsPacket)
@@ -210,7 +234,7 @@ void MainClass::requestIOHandler(WSPacket * wsPacket)
 void MainClass::changeFrequencyHandler(WSPacket * wsPacket)
 {
 	wsPacket->getRequestData();
-	findFieldInXML("sensor", "frequency");
+	//findFieldInXML("sensor", "frequency");
 
 	//LibelChangeNodeFreqPacket libelChangeNodeFreqPacket(destination64bitAddress, newFrequency):
 	//zbSenderQueue->addPacket();	
@@ -219,7 +243,7 @@ void MainClass::changeFrequencyHandler(WSPacket * wsPacket)
 
 void MainClass::addNodeHandler(WSPacket * wsPacket)
 {
-	
+		
 
 }
 

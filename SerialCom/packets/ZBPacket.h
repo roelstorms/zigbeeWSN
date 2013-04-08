@@ -21,7 +21,7 @@ class ZBPacket : public Packet
 	public:
 	//ZBPacket(std::vector<unsigned char> input);
 	~ZBPacket();
-	void bindVirtually(){};
+	PacketType getPacketType() = 0;
 
 	unsigned char getChecksum() const;
 	unsigned char getSizeLSB() const;

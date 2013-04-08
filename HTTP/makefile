@@ -1,18 +1,22 @@
-all:	ipsum.o	
+CC = g++
+LFLAGS = -Wall -Werror -std=c++11 -g -lpthread  
+CFlAGS = -Wall -Werror -std=c++11 -g -DDEBUG
+LIBS = -ldl -lcurl -lxerces-c -lboost_thread -lboost_date_time
+#SOURCES = ZBReceiver.cpp
+#DEPENDENCIES = $(SOURCES:.cpp=.h)
+#OBJECTS = $(SOURCES:.cpp=.o)
+OBJECTS = http.o ipsum.o ipsumpacket.o ipsumuploadpacket.o 
 
-test: http.o  http_test.cpp
-	g++ http_test.cpp -o http_test.out http.o ../XML/XML.o -lcurl -lxerces-c -lboost_date_time -g -std=c++11
-http.o:
-	g++ -c http.cpp -o http.o -lcurl -lboost_thread -lboost_date_time -std=c++11 -g
-ipsum.o: ipsumpacket.o ipsum.cpp ipsum.h
-	g++ -c ipsum.cpp -o ipsum.o -std=c++11 -g
-ipsumpacket.o: ipsumuploadpacket.o ipsumpacket.cpp ipsumpacket.h
-	g++ -c ipsumpacket.cpp -o ipsumpacket.o -std=c++11 -g
-ipsumuploadpacket.o: ipsumuploadpacket.cpp ipsumuploadpacket.h
-	g++ -c ipsumuploadpacket.cpp -o ipsumuploadpacket.o -std=c++11 -g
+RM = /bin/rm -f
+
+all : $(OBJECTS)
+http_test.out : http_test.cpp 
+	$(CC)  $(LFLAGS) http_test.cpp -o http_test.out ../XML/XML.o ../packet.o ../packetqueue.o $(OBJECTS) $(LIBS) 
+
+ 
+$(OBJECTS): %.o:  %.cpp %.h
+	$(CC) -c $(LFLAGS) $< -o $@
+
+
 clean:
-	rm http.o ipsumpacket.o ipsum.o ipsumuploadpacket.o
-
-
-
-
+	$(RM) $(OBJECTS)

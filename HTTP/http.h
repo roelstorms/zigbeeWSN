@@ -23,7 +23,6 @@
 
 class Http
 {
-
 	private:
 		CURL *curl;	
 		std::string urlBase;
@@ -32,7 +31,7 @@ class Http
 		boost::posix_time::ptime tokenExpireTime;
 		std::string curlReply;
 		int httpError;
-		XML xmlParser();
+		XML xmlParser;
 		std::string PK;
 	public: 
 		Http(std::string urlBase);
@@ -71,6 +70,7 @@ class Http
 		std::string createNewType(std::string aName, std::vector<std::pair<std::string, std::string>> aListOfFields) throw (HttpError);
 		//std::string createNewSensorGroup(const std::string& installationIDValue, const std::string& nameValue, const std::string& descriptionValue, const std::string& inuseValue) throw (HttpError);
 		
-};	
+};
+
 
 #endif	

@@ -10,6 +10,7 @@
 int main(int argc, char ** argv)
 {
 	//Testing OutgoingPacket
+	/*
 	std::vector<unsigned char> data;
 	data.push_back(0xA);
 	data.push_back(0x24);
@@ -20,7 +21,7 @@ int main(int argc, char ** argv)
 	TestClass::assert(packet.getFrameData() == data, "ZBPacket::getData");
 	TestClass::assert(packet.getFrameType() == 0xA, "ZBPacket::getFrameType");
 	std::cout << "typeid: " << typeid(packet).name() << std::endl;
-
+	*/
 
 	//Testing LibelChangeFrequencyPacket
 	std::cout << "Starting ChangeFreqPacket test" << std::endl;
