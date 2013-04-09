@@ -95,9 +95,35 @@ bool ZBPacket::getValidPacket() const
 	return validPacket;
 }
 
-std::vector<unsigned char> ZBPacket::getFrameData() const
+std::vector<unsigned char> ZBPacket::getFrameData() const throw (ZbCorruptedFrameData)
 {
+	if(encodedPacket.begin() + 3 >= encodedPacket.end() - 1)
+	{
+		throw ZbCorruptedFrameData();
+	}
 	std::vector<unsigned char> data = std::vector<unsigned char>(encodedPacket.begin() + 3, encodedPacket.end() - 1);
 	return data;
+}
+
+void ZBPacket::setFrameData(std::vector<unsigned char> frameData)
+{
+	encodedPacket.clear();
+	encodedPacket.push_back(0x7E);
+	unsigned int size = frameData.size() ;
+	unsigned int sizeMSB = size/256;
+	unsigned int sizeLSB = size%256; //- (sizeMSB * 256);
+	encodedPacket.push_back(sizeMSB);
+	encodedPacket.push_back(sizeLSB);
+	//std::cout << "size of packet MSB: " << std::hex << (int)sizeMSB << "LSB: " << std::hex << (int)sizeLSB << std::endl;
+	int sum = 0;
+	for(auto  it = frameData.begin(); it < frameData.end(); ++it)
+	{
+		//std::cout << std::hex << (int) (*it) << std::endl;
+		encodedPacket.push_back(*it);
+		sum += (*it);
+	}
+	int checksum = 0xFF - sum;
+	encodedPacket.push_back(checksum);
+
 }
 

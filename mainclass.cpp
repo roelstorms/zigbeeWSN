@@ -243,7 +243,56 @@ void MainClass::changeFrequencyHandler(WSPacket * wsPacket)
 
 void MainClass::addNodeHandler(WSPacket * wsPacket)
 {
-		
+	DOMDocument * doc = parseToDom(wsPacket->getRequestData());
+
+	std::string installationID, sensorGroupID, zigbeeAddress;
+	
+	xercesc::DOMElement * docElement = doc->getDocumentElement();	
+	xercesc::DOMElement * nextElement;
+	nextElement = docElement->getFirstElementChild();
+	
+	XMLCh * installationIDString = xercesc::XMLString::transcode("installationID");
+	XMLCh * sensorGroupIDString = xercesc::XMLString::transcode("sensorGroupID");
+	XMLCh * zigbeeAddressString = xercesc::XMLString::transcode("zigbeeAddress");
+	while(nextElement != NULL)
+	{
+		if(xercesc::XMLString::compareIString(nextElement->getTagName(), installationIDString) == 0)
+		{
+			temp = xercesc::XMLString::transcode(nextElement->getTextContent());
+			installationID = std::string(temp);
+			xercesc::XMLString::release(&temp);
+
+		}
+		if(xercesc::XMLString::compareIString(nextElement->getTagName(), sensorGroupIDString) == 0)
+		{
+			temp = xercesc::XMLString::transcode(nextElement->getTextContent());
+			sensorGroupID = std::string(temp);
+			xercesc::XMLString::release(&temp);
+
+		}
+		else if(xercesc::XMLString::compareIString(nextElement->getTagName(), zigbeeAddressString) == 0)
+		{
+			temp = xercesc::XMLString::transcode(nextElement->getTextContent());
+			zigbeeAddress = std::string(temp);
+			xercesc::XMLString::release(&temp);
+		}
+		else
+		{
+			std::cerr << "invalid XML" << std::endl;
+		}
+
+		nextElement = nextElement->getNextElementSibling();
+	}	
+
+
+	std::string makeNewNode(int installationID, int nodeID, std::string zigbee64bitAddress);
+	
+	xercesc::XMLString::release(&installationIDString);
+	xercesc::XMLString::release(&sensorGroupIDString);
+	xercesc::XMLString::release(&zigbeeAddressString);
+
+	db->makeNewNode(boost::lexical_cast<int> installationID, boost::lexical_cast<int> sensorGroupID, zigbeeAddress);
+
 
 }
 
@@ -252,77 +301,28 @@ void MainClass::addSensorHandler(WSPacket * wsPacket)
 
 }
 
-std::string MainClass::findFieldInXML(std::string fieldName, std::string data)
+xercesc::DOMDocument * MainClass::parseToDom(std::string data)
 {
-
-	std::string token;
 
 	XMLCh tempStr[100];
 	char * temp;
+	
 
 	xercesc::DOMImplementation* impl = xercesc::DOMImplementation::getImplementation();
 	xercesc::DOMLSParser *parser = ((xercesc::DOMImplementationLS*)impl)->createLSParser(xercesc::DOMImplementationLS::MODE_SYNCHRONOUS, 0);
 	xercesc::DOMDocument *doc;
-
-
-
 	xercesc::Wrapper4InputSource source(new xercesc::MemBufInputSource((const XMLByte*) (data.c_str()), data.size(), "100"));
-
-	//std::cout << "filename : " << reply << std::endl;
 	doc = parser->parse(&source);
-	
 	
 	if (doc == NULL)
 	{
 		throw InvalidXMLError(); 
 	}
 	
-	xercesc::DOMElement * docElement = doc->getDocumentElement();	
-	std::cout << "docElement count: " << docElement->getChildElementCount () << std::endl;
-	//for(int i = 0; i < docElement->getChildElementCount(); ++i)
-	xercesc::DOMElement * nextElement;
-	nextElement = docElement->getFirstElementChild();
-	while(nextElement != NULL)
-	{
-		//std::cout << "element name: " <<  xercesc::XMLString::transcode(nextElement->getTagName()) << std::endl;
-		XMLCh * tokentemp = xercesc::XMLString::transcode("token");
-		XMLCh * errortemp = xercesc::XMLString::transcode("error");
-
-		if(xercesc::XMLString::compareIString(nextElement->getTagName(), tokentemp) == 0)
-		{
-			//std::cout << "nextelement has children" << std::endl << xercesc::XMLString::transcode(nextElement->getTextContent()) << std::endl;
-			temp = xercesc::XMLString::transcode(nextElement->getTextContent());
-			token = std::string(temp);
-			xercesc::XMLString::release(&temp);
-
-		}
-		else if(xercesc::XMLString::compareIString(nextElement->getTagName(), errortemp) == 0)
-		{
-			temp = xercesc::XMLString::transcode(nextElement->getTextContent());
-			if(std::string(temp) == std::string("True"))
-			{
-				std::cout << "Error occured in receiving the token" << std::endl;
-				token = nullptr;
-				throw IpsumError();	
-			}
-			xercesc::XMLString::release(&temp);
-		}
-		xercesc::XMLString::release(&tokentemp);
-		xercesc::XMLString::release(&errortemp);
-
-		nextElement = nextElement->getNextElementSibling();
-	}	
-
-
-	std::cout << "token: " << token << std::endl;
-
-
-	doc->release();
+	
 //	parser->release();
 
-	std::cout << "XML::analyzeLoginReply() end token: "  <<std::endl;
-	return token;
+	return doc;
 
-	//return fieldValue;
 }
 

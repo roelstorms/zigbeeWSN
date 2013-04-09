@@ -34,6 +34,7 @@ class LibelIOPacket : public ReceivePacket
 		LibelIOPacket(std::vector<unsigned char> input);
 		PacketType getPacketType(){ return ZB_LIBEL_IO; };
 		const std::map<SensorType, float>& getSensorData() const;
+
 		CREATESENSORGETTER(getTemperature, TEMP)		//Macro to generate setters for all the sensor types	
 		CREATESENSORGETTER(getHumidity, HUM)	
 		CREATESENSORGETTER(getPressure, PRES)	

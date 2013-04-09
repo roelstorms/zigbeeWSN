@@ -28,7 +28,10 @@ class ZBPacket : public Packet
 	unsigned char getSizeMSB() const;
 	const std::vector<unsigned char>& getEncodedPacket() const;
 	bool getValidPacket() const;
-	std::vector<unsigned char> getFrameData() const;
+
+	std::vector<unsigned char> getFrameData() const throw (ZbCorruptedFrameData);
+	void setFrameData(std::vector<unsigned char> frameData);
+	
 	unsigned char getFrameType() const;
 	
 	friend std::ostream &operator<<(std::ostream &out, ZBPacket &packet)     //output

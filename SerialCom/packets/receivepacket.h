@@ -5,25 +5,26 @@
 #include <stdio.h>   /* Standard input/output definitions */
 #include <iostream>
 #include "incomingpacket.h"
+#include "libelpacket.h"
 #include <iomanip>
 
-class ReceivePacket : public IncomingPacket 
+class ReceivePacket : public IncomingPacket, public LibelPacket
 {
 	private:
-	std::vector<unsigned char> address, networkAddress;
-	unsigned char receiveOptions;
-	protected:
-	std::vector<unsigned char> receivedData;
+
 	public:
 	ReceivePacket(std::vector<unsigned char> input);
-	void bindVirtually(){};
-
-	const std::vector<unsigned char>& getAddress() const;
-	const std::vector<unsigned char>& getNetworkAddress() const;
-	const std::vector<unsigned char>& getData() const;
-	const unsigned char& getReceiveOptions() const;
 
 	void unescapeData();
+
+
+	void setRFData(std::vector<unsigned char> rfData);
+	
+	virtual std::vector<bool> getMask() const;
+	virtual std::vector<unsigned char> getZigbee16BitAddress() const;
+	virtual std::vector<unsigned char> getZigbee64BitAddress() const ;
+	virtual std::vector<unsigned char> getRFData() const throw (ZbCorruptedFrameData);
+	
 };
 
 #endif

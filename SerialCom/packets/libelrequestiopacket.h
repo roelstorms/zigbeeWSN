@@ -12,7 +12,7 @@ class LibelRequestIOPacket : public TransmitRequestPacket
 	public:
 	LibelRequestIOPacket(std::vector<unsigned char> zigbeeAddress64bit, std::vector<SensorType> sensors);
 
-		PacketType getPacketType(){ return ZB_LIBEL_REQUEST_IO; };
+	PacketType getPacketType(){ return ZB_LIBEL_REQUEST_IO; };
 };
 
 #endif
