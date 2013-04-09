@@ -6,6 +6,7 @@
 #include "packets/libeliopacket.h"
 #include "packets/libeladdnodepacket.h"
 #include "packets/libelrequestiopacket.h"
+#include "packets/libeladdnoderesponse.h"
 #include <cmath>
 int main(int argc, char ** argv)
 {
@@ -24,7 +25,7 @@ int main(int argc, char ** argv)
 	*/
 
 	//Testing LibelChangeFrequencyPacket
-	std::cout << "Starting ChangeFreqPacket test" << std::endl;
+	std::cout << std::endl  << "Starting ChangeFreqPacket test" << std::endl;
 	std::vector<unsigned char> destinationZB64BitAddress{0XAD, 0XAD, 0XAD, 0XAD, 0XAD, 0XAD, 0XAD, 0XAD};
 	
 
@@ -41,10 +42,15 @@ int main(int argc, char ** argv)
 	TestClass::assert(libelChangeFreqPacket.getFrameType() == 0x10, "libelChangeFreqPacket::getFrameType");
 	TestClass::assert(libelChangeFreqPacket.getFrameData() == expectedFrameData, "libelChangeFreqPacket::getFrameData");
 
+	std::cout << "Ended ChangeFreqPacket test" << std::endl;
+
 
 	//Testing LibelIOPacket
+
+	std::cout << std::endl  << "Starting LibelIOPacket test" << std::endl;
 	std::vector<unsigned char> input{0X7E, 0X00/*size*/, 0X16/*size*/, 0X90, 0XAD, 0XAD, 0XAD, 0XAD, 0XAD, 0XAD, 0XAD, 0XAD, 0XFF, 0XFE, 0X00, 0X0A, 0X00, 0X1D, 0X18 /*temp1*/, 0XC4 /*temp2*/, 0XBB /*Pres1*/, 0XB2 /*Pres2*/, 0X58 /*Bat*/, 0X01 /*CO2*/, 0X90 /*CO2*/, 0XB1 /*checksum*/ };
 	LibelIOPacket libelIOPacket(input);
+	std::cout << "LibelIOPacket: " <<  libelIOPacket << std::endl;
 	TestClass::assert(floor(libelIOPacket.getTemperature()*10)/10 == 23.4, "libelIOPacket::getTemperature");
 	TestClass::assert(floor(libelIOPacket.getPressure()*10)/10 == 980.5, "libelIOPacket::getPressure");
 	TestClass::assert(floor(libelIOPacket.getBattery()) == 88, "libelIOPacket::getBattery");
@@ -61,10 +67,12 @@ int main(int argc, char ** argv)
 	}
 	TestClass::assert(testErrorHandling, "libelIOPacket::getHumidity | errorhandling check");
 
+	std::cout << "Ended LibelIOPacket test" << std::endl;
 
 
 	//Testing libelAddNodePacket
 
+	std::cout << std::endl  << "Starting LibelAddNodePacket test" << std::endl;
 	std::vector<unsigned char> zigbeeAddress64bit{0XAB, 0XAB, 0XAB, 0XAB, 0XAB, 0XAB, 0XAB, 0XAB};
 	std::vector<SensorType> sensors{TEMP, HUM, CO2};
 	LibelAddNodePacket libelAddNodePacket (zigbeeAddress64bit, sensors);	 	
@@ -74,25 +82,42 @@ int main(int argc, char ** argv)
 	std::vector<unsigned char> rfData = libelAddNodePacket.getRFData();
 	for(auto it = rfData.begin(); it < rfData.end(); ++it)
 	{
-		std::cout << std::setfill('o') << std::hex << std::setw(2) <<  (int)(*it) << std::endl;
+		std::cout << std::setfill('0') << std::hex << std::setw(2) <<  (int)(*it) << std::endl;
 	}
 #endif	
       	TestClass::assert(libelAddNodePacket.getRFData() == std::vector<unsigned char>{0x01, 0x00, 0X13}, "libelAddNodePacket checking if mask and application ID are set correctly");
 
+	//Testing libelAddNodeResponse
+	std::cout << "Starting LibelAddNodeResponse test" << std::endl;
+	LibelAddNodeResponse libelAddNodeResponse (std::vector<unsigned char>{0x7E, 0x00, 0x0F, 0x90, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xFF, 0xFE, 0x00, 0x02, 0x00, 0x13, 0x05});	 	
+#ifdef DEBUG
+	std::cout << std::endl  << "LibelAddNodeResponse: " << libelAddNodeResponse << std::endl;
+	std::cout << "RFData: " << std::endl;
+	rfData = libelAddNodeResponse.getRFData();
+	for(auto it = rfData.begin(); it < rfData.end(); ++it)
+	{
+		std::cout << std::setfill('0') << std::hex << std::setw(2) <<  (int)(*it) << std::endl;
+	}
+#endif	
+      	TestClass::assert(libelAddNodeResponse.getRFData() == std::vector<unsigned char>{0x02, 0x00, 0X13}, "libelRequestIOPacket checking if rf data is set correctly");
+	
+	TestClass::assert(libelAddNodeResponse.getMask() == std::vector<unsigned char>{0x00, 0X13}, "libelRequestIOPacket checking if mask is  set correctly");
 
 	//Testing libelRequestIOPacket
 
+	std::cout << std::endl << "Starting LibelRequestIO test" << std::endl;
 	LibelRequestIOPacket libelRequestIOPacket (zigbeeAddress64bit, sensors);	 	
 #ifdef DEBUG
 	std::cout << "LibelRequestIOPacket: " << libelRequestIOPacket << std::endl;
 	std::cout << "RFData: " << std::endl;
-	std::vector<unsigned char> rfData = libelRequestIOPacket.getRFData();
+	rfData = libelRequestIOPacket.getRFData();
 	for(auto it = rfData.begin(); it < rfData.end(); ++it)
 	{
-		std::cout << std::setfill('o') << std::hex << std::setw(2) <<  (int)(*it) << std::endl;
+		std::cout << std::setfill('0') << std::hex << std::setw(2) <<  (int)(*it) << std::endl;
 	}
 #endif	
       	TestClass::assert(libelRequestIOPacket.getRFData() == std::vector<unsigned char>{0x09, 0x00, 0X13}, "libelRequestIOPacket checking if mask and application ID are set correctly");
+
 
 
 	return 0;

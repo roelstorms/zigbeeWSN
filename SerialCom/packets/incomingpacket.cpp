@@ -2,6 +2,7 @@
 
 IncomingPacket::IncomingPacket(std::vector<unsigned char> input) throw (CorruptedPacket) : ZBPacket()
 {
+	std::cout << "IncomingPacket(std::vector<unsigned char> input)" << std::endl;
 	if(input.front() != 0x7E)
 	{
 		std::cout << "error: invalid packet" << std::endl;
@@ -27,7 +28,7 @@ IncomingPacket::IncomingPacket(std::vector<unsigned char> input) throw (Corrupte
 
 	if((input.size() - 1) != size)			// -1 because the checksum is not counted
 	{
-		std::cout << "input.size: " << input.size() << std::endl << "size: " << size << std::endl;
+		std::cout << "input.size: " << input.size() - 1	<< std::endl << "size: " << size << std::endl;
 		std::cout << "size does not match" << std::endl;
 		throw CorruptedPacket();
 	}

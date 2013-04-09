@@ -19,7 +19,7 @@ class TransmitRequestPacket : public  OutgoingPacket, public LibelPacket
 		void addRFData(std::vector<unsigned char> rfData);
 
 
-		virtual std::vector<bool> getMask() const;
+		virtual std::vector<unsigned char> getMask() const;
 		virtual std::vector<unsigned char> getZigbee16BitAddress() const;
 		virtual std::vector<unsigned char> getZigbee64BitAddress() const ;
 		virtual std::vector<unsigned char> getRFData() const throw (ZbCorruptedFrameData);

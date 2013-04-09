@@ -12,7 +12,15 @@ LibelIOPacket::LibelIOPacket(std::vector<unsigned char> input) : ReceivePacket(i
 	std::cout << "LibelIOPacket constructor" << std::endl;
 	std::cout << "data length: " << rfData.size() << std::endl;
 
-	std::vector<bool> mask = getMask();
+	std::vector<bool> mask;
+
+
+	unsigned int maskChars = getMask().at(0) * 256 + getMask().at(1);
+	for(int i = 0; i < 16; ++i)
+	{	
+		mask.push_back(maskChars & 0x0001);
+		maskChars = maskChars >> 1;
+	}
 
 	
 	std::cout << "mask: " << std::endl;

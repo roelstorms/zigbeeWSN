@@ -2,7 +2,7 @@
 
 ReceivePacket::ReceivePacket(std::vector<unsigned char> input) : IncomingPacket(input)
 {
-	std::cout << "DataPacket constructor" << std::endl;
+	std::cout << "ReceivePacket(std::vector<unsigned char> input)" << std::endl;
 	if(getFrameType() != 0x90)	std::cerr << "Packet type identifier doesn't match with a data packet" << std::endl;
 	unescapeData();
 	std::cout << "end of DataPacket constructor" << std::endl;
@@ -13,7 +13,8 @@ void ReceivePacket::unescapeData()
 {
 	std::cout << "unescaping data in a libelium packet" << std::endl;
 	std::vector<unsigned char> unescapedData;
-	for(auto it = getRFData().begin(); it < getRFData().end(); ++it)
+	auto rfData = getRFData();
+	for(auto it = rfData.begin(); it < rfData.end(); ++it)
 	{
 		if((*it) == 0xFF)
 		{
@@ -32,6 +33,13 @@ void ReceivePacket::unescapeData()
 			unescapedData.push_back(*it);
 		}
 	}
+	std::cout << "unescaped data: " << std::endl;
+
+	for(auto it = unescapedData.begin(); it < unescapedData.end(); ++it)
+	{
+		std::cout << std::uppercase << std::setw(2) << std::setfill('0') << std::hex  << (int) (*it);
+	}
+	std::cout << std::endl;
 	setRFData(unescapedData);
 
 }
@@ -39,15 +47,35 @@ void ReceivePacket::unescapeData()
 void ReceivePacket::setRFData(std::vector<unsigned char> rfData)
 {
 	auto frameData = getFrameData();
+	std::cout << "before setRF" << std::endl;
+	for(auto it = frameData.begin(); it < frameData.end(); ++it)
+	{
+		std::cout << std::uppercase << std::setw(2) << std::setfill('0') << std::hex  << (int) (*it);
+	}
+	std::cout << std::endl;
+	
 	frameData.erase(frameData.begin() + 12, frameData.end());
+	std::cout << "after erase setRF" << std::endl;
+	for(auto it = frameData.begin(); it < frameData.end(); ++it)
+	{
+		std::cout << std::uppercase << std::setw(2) << std::setfill('0') << std::hex  << (int) (*it);
+	}
+	std::cout << std::endl;
+	
 	frameData.insert(frameData.begin() + 12, rfData.begin(), rfData.end());
+	for(auto it = frameData.begin(); it < frameData.end(); ++it)
+	{
+		std::cout << std::uppercase << std::setw(2) << std::setfill('0') << std::hex  << (int) (*it);
+	}
+	std::cout << std::endl << "after setRF" << std::endl;
 	setFrameData(frameData);
 }
 
 // Bits in the mask have this meaning: 15,14,13,12,11,10,9,8,PLUVIO, ANEMO, CO2, BAT, PRES, HUMID, TEMP
-std::vector<bool> ReceivePacket::getMask() const
+std::vector<unsigned char> ReceivePacket::getMask() const
 {
-	std::vector<bool> mask;
+	/*
+	   std::vector<bool> mask;
 
 	unsigned int maskChars = getRFData().at(1) * 256 + getRFData().at(2);
 	for(int i = 0; i < 16; ++i)
@@ -55,6 +83,10 @@ std::vector<bool> ReceivePacket::getMask() const
 		mask.push_back(maskChars & 0x0001);
 		maskChars = maskChars >> 1;
 	}
+	*/
+	std::vector<unsigned char> mask;
+	mask.push_back(getRFData().at(1));
+	mask.push_back(getRFData().at(2));
 	return mask;
 }
 

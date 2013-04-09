@@ -7,6 +7,7 @@ LibelAddNodePacket::LibelAddNodePacket(std::vector<unsigned char> zigbeeAddress6
 	rfData.push_back(0x01);		// Libelium application ID's, O1 is for ADD_NODE_REQ
 	for( auto it = sensors.begin(); it < sensors.end(); ++it)
 	{
+		std::cout << "iterating over all sensors" << std::endl;
 		switch(*it)
 		{
 			case TEMP:
@@ -37,6 +38,13 @@ LibelAddNodePacket::LibelAddNodePacket(std::vector<unsigned char> zigbeeAddress6
 	}
 	rfData.push_back(mask / 256);
 	rfData.push_back(mask % 256);
+	
+	std::cout << "rfData calculated in LibelAddNodePacket(), this represents the mask of the noded to be added" << std::endl;
+	for(auto it = rfData.begin(); it < rfData.end(); ++it)
+	{
+		std::cout << std::setfill('0') << std::hex << std::setw(2) <<  (int)(*it) << " ";
+	}
+	std::cout << std::endl;
 	
 	addRFData(rfData);
 }

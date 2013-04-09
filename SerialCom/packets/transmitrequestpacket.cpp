@@ -47,16 +47,19 @@ void TransmitRequestPacket::addRFData(std::vector<unsigned char> rfData)
 }
 
 
-std::vector<bool> TransmitRequestPacket::getMask() const
+std::vector<unsigned char> TransmitRequestPacket::getMask() const
 {
-	std::vector<bool> mask;
+/*	std::vector<bool> mask;
 
 	unsigned int maskChars = getRFData().at(1) * 256 + getRFData().at(2);
 	for(int i = 0; i < 16; ++i)
 	{	
 		mask.push_back(maskChars & 0x0001);
 		maskChars = maskChars >> 1;
-	}
+	}*/
+	std::vector<unsigned char> mask;
+	mask.push_back(getRFData().at(1));
+	mask.push_back(getRFData().at(2));
 	return mask;
 }
 
@@ -79,13 +82,13 @@ std::vector<unsigned char> TransmitRequestPacket::getZigbee64BitAddress() const
 std::vector<unsigned char> TransmitRequestPacket::getRFData() const throw (ZbCorruptedFrameData)
 {
 	std::vector<unsigned char> frameData = getFrameData();
-	if(frameData.begin() + 15 >= frameData.end())
+	if(frameData.begin() + 14 >= frameData.end())
 	{
 		std::cerr << "No RFData in this receivepacket packet" << std::endl;
 		throw ZbCorruptedFrameData();
 	}
 
-	std::vector<unsigned char> output(frameData.begin() + 15, frameData.end());
+	std::vector<unsigned char> output(frameData.begin() + 14, frameData.end());
 	return output;
 }
 
