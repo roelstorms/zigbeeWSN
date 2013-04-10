@@ -11,11 +11,16 @@ LibelAddNodeResponse::LibelAddNodeResponse(std::vector<unsigned char> input) : R
 
 
 
-bool LibelAddNodeResponse::correlatesWih(LibelAddNodePacket * packet)
+bool LibelAddNodeResponse::correspondsTo(LibelAddNodePacket * packet)
 {
 	if((getZigbee64BitAddress() == packet->getZigbee64BitAddress()))
 	{
-		
+		std::vector<unsigned char> mask = getMask();
+		std::vector<unsigned char> otherMask = packet->getMask();
+		if((mask.at(0) = otherMask.at(0)) && (mask.at(1) = otherMask.at(1)))
+		{
+			return true;
+		}	
 	}
 
 	return false;

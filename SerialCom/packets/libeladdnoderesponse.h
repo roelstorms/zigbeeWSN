@@ -18,7 +18,7 @@ class LibelAddNodeResponse : public ReceivePacket
 	public:
 		LibelAddNodeResponse(std::vector<unsigned char> input);
 		PacketType getPacketType(){ return ZB_LIBEL_ADD_NODE_RESPONSE; };
-		bool correlatesWih(LibelAddNodePacket * packet);
+		bool correspondsTo(LibelAddNodePacket * packet);
 };
 
 #endif

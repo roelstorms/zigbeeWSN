@@ -9,6 +9,7 @@ OBJECTS = ZBReceiver.o ZBSender.o ./packets/receivepacket.o ./packets/dataIOPack
 	 ./packets/transmitrequestpacket.o ./packets/ZBPacket.o ./packets/outgoingpacket.o\
        	 ./packets/incomingpacket.o ./packets/libelchangenodefreqpacket.o ./packets/libelchangefreqpacket.o ./packets/libeliopacket.o\
 	 ./packets/libeladdnodepacket.o ./packets/libeladdnoderesponse.o ./packets/libelrequestiopacket.o ./packets/libelmaskrequest.o\
+	 ./packets/libelmaskresponse.o
 
 RM = /bin/rm -f
 
