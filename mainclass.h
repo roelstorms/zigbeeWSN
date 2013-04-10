@@ -16,7 +16,14 @@
 #include "./SerialCom/ZBSender.h"
 #include "./SerialCom/connection.h"
 #include "./SerialCom/packets/libeliopacket.h"
+#include "./SerialCom/packets/libelmaskrequest.h"
+#include "./SerialCom/packets/libelmaskresponse.h"
+#include "./SerialCom/packets/libeladdnoderesponse.h"
 #include "./SerialCom/packets/libeladdnodepacket.h"
+#include "./SerialCom/packets/libelchangefreqpacket.h"
+#include "./SerialCom/packets/libelchangefreqresponse.h"
+#include "./SerialCom/packets/libelchangenodefreqpacket.h"
+#include "./SerialCom/packets/libelchangenodefreqresponse.h"
 
 #include "./HTTP/http.h"
 #include "packetqueue.h"
@@ -64,9 +71,10 @@ class MainClass
 	void operator () ();
 
 	void libelIOHandler(Packet * packet);
+	void libelMaskResponseHandler(Packet * packet);
 	void webserviceHandler(Packet * packet);
 	std::string findFieldInXML(std::string fieldName, std::string data);
-
+	xercesc::DOMDocument * parseToDom(std::string data);
 };
 
 #endif

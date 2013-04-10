@@ -141,6 +141,11 @@ void MainClass::operator() ()
 				std::cout << "ZB_LIBEL_IO received in main" << std::endl;
 				libelIOHandler(packet);
 			}
+			else if (packet->getPacketType() == ZB_LIBEL_MASK_RESPONSE)
+			{
+				std::cout << "ZB_LIBEL_MASK_RESPONSE received in main" << std::endl;
+				libelMaskResponseHandler(packet);
+			}
 						
 		}
 		
@@ -180,7 +185,7 @@ void MainClass::libelIOHandler(Packet * packet)
 	LibelIOPacket * libelIOPacket = dynamic_cast<LibelIOPacket *> (packet);
 	std::cout << "temperature: " << libelIOPacket->getTemperature() << std::endl;
 
-	std::vector<unsigned char> zigbee64BitAddress = libelIOPacket->getAddress();
+	std::vector<unsigned char> zigbee64BitAddress = libelIOPacket->getZigbee64BitAddress();
 	std::string zigbee64BitAddressString( zigbee64BitAddress.begin(), zigbee64BitAddress.end());
 	int nodeID = db->getNodeID(zigbee64BitAddressString);
 	int installationID = db->getInstallationID(zigbee64BitAddressString);
@@ -202,6 +207,12 @@ void MainClass::libelIOHandler(Packet * packet)
 	ipsumSendQueue->addPacket(dynamic_cast<Packet*> (ipsumUploadPacket));
 }
 
+void MainClass::libelMaskResponseHandler(Packet * packet)
+{
+	LibelMaskResponse * libelMaskResponse = dynamic_cast<LibelMaskResponse *> (packet);
+
+	delete packet;
+}
 void MainClass::webserviceHandler(Packet * packet)
 {
 	WSPacket * wsPacket = dynamic_cast<WSPacket *> (packet);
@@ -243,7 +254,8 @@ void MainClass::changeFrequencyHandler(WSPacket * wsPacket)
 
 void MainClass::addNodeHandler(WSPacket * wsPacket)
 {
-	DOMDocument * doc = parseToDom(wsPacket->getRequestData());
+	char * temp;
+	xercesc::DOMDocument * doc = parseToDom(wsPacket->getRequestData());
 
 	std::string installationID, sensorGroupID, zigbeeAddress;
 	
@@ -291,7 +303,7 @@ void MainClass::addNodeHandler(WSPacket * wsPacket)
 	xercesc::XMLString::release(&sensorGroupIDString);
 	xercesc::XMLString::release(&zigbeeAddressString);
 
-	db->makeNewNode(boost::lexical_cast<int> installationID, boost::lexical_cast<int> sensorGroupID, zigbeeAddress);
+	db->makeNewNode(boost::lexical_cast<int> (installationID), boost::lexical_cast<int> (sensorGroupID), zigbeeAddress);
 
 
 }
@@ -305,8 +317,8 @@ xercesc::DOMDocument * MainClass::parseToDom(std::string data)
 {
 
 	XMLCh tempStr[100];
-	char * temp;
 	
+	char * temp;
 
 	xercesc::DOMImplementation* impl = xercesc::DOMImplementation::getImplementation();
 	xercesc::DOMLSParser *parser = ((xercesc::DOMImplementationLS*)impl)->createLSParser(xercesc::DOMImplementationLS::MODE_SYNCHRONOUS, 0);

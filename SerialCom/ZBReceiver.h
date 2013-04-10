@@ -10,7 +10,13 @@
 #include "../HTTP/http.h"
 #include "../XML/XML.h"
 #include "../packetqueue.h"
+
 #include "packets/libeliopacket.h"
+#include "packets/libeladdnoderesponse.h"
+#include "packets/libelchangefreqresponse.h"
+#include "packets/libelchangenodefreqresponse.h"
+#include "packets/libelmaskresponse.h"
+
 #include "../errors.h"
 #include <boost/thread/mutex.hpp>
 #include <queue>

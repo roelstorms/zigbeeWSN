@@ -73,9 +73,48 @@ void ZBReceiver::operator() ()
 				case 0x90:
 					switch(packetVector.at(15))	//It is a ZB data packet, all our libelium packets are of this type, so now to figure out what libelium packet we 've got
 					{
-						std::cout << "found libel packet" << std::endl;
+						case 0x2:
+							std::cout << "received LibelAddNodeResponse" << std::endl;
+							packet = dynamic_cast<Packet*> (new LibelAddNodeResponse(packetVector));
+							zbReceiveQueue->addPacket(packet);
+							{
+								std::lock_guard<std::mutex> lg(*conditionVariableMutex);
+								mainConditionVariable->notify_all();
+								std::cout << "main notified" << std::endl;
+							}
+						break;
+						case 0x4:
+							std::cout << "found LibelMaskResponse" << std::endl;
+							packet = dynamic_cast<Packet*> (new LibelMaskResponse(packetVector));
+							zbReceiveQueue->addPacket(packet);
+							{
+								std::lock_guard<std::mutex> lg(*conditionVariableMutex);
+								mainConditionVariable->notify_all();
+								std::cout << "main notified" << std::endl;
+							}
+						break;
+						case 0x6:
+							std::cout << "found LibelChangeNodeFreqResponse" << std::endl;
+							packet = dynamic_cast<Packet*> (new LibelChangeNodeFreqResponse(packetVector));
+							zbReceiveQueue->addPacket(packet);
+							{
+								std::lock_guard<std::mutex> lg(*conditionVariableMutex);
+								mainConditionVariable->notify_all();
+								std::cout << "main notified" << std::endl;
+							}
+						break;
+						case 0x8:
+							std::cout << "found LibelChangeFreqResponse" << std::endl;
+							packet = dynamic_cast<Packet*> (new LibelChangeFreqResponse(packetVector));
+							zbReceiveQueue->addPacket(packet);
+							{
+								std::lock_guard<std::mutex> lg(*conditionVariableMutex);
+								mainConditionVariable->notify_all();
+								std::cout << "main notified" << std::endl;
+							}
+						break;
 						case 0xA:
-							std::cout << "found libelIOpacket" << std::endl;
+							std::cout << "found LibelIOpacket" << std::endl;
 							packet = dynamic_cast<Packet*> (new LibelIOPacket(packetVector));
 							zbReceiveQueue->addPacket(packet);
 							{

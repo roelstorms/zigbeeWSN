@@ -10,6 +10,7 @@
 #include "packets/libelchangenodefreqpacket.h"
 #include "packets/libeladdnodepacket.h"
 #include "packets/libelrequestiopacket.h"
+#include "packets/libelmaskrequest.h"
 #include <typeinfo>
 
 class ZBSender

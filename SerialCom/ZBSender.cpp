@@ -15,7 +15,7 @@ void ZBSender::operator() ()
 
 		while(!zbSendQueue->empty())
 		{
-			if(typeid(packet) ==  typeid(LibelAddNodePacket *) || typeid(packet) ==  typeid(LibelRequestIOPacket *) || typeid(packet) ==  typeid(LibelChangeFreqPacket *) || typeid(packet) ==  typeid(LibelChangeNodeFreqPacket *) )
+			if(typeid(packet) ==  typeid(LibelAddNodePacket *) || typeid(packet) ==  typeid(LibelRequestIOPacket *) || typeid(packet) ==  typeid(LibelChangeFreqPacket *) || typeid(packet) ==  typeid(LibelChangeNodeFreqPacket *) || typeid(packet) ==  typeid(LibelMaskRequest *) )
 			{
 				std::cout << "Sendable packet received in ZBSender" << std::endl;
 				packet = dynamic_cast<ZBPacket *> (zbSendQueue->getPacket());
