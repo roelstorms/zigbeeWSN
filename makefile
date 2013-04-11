@@ -1,9 +1,13 @@
 
 all:	mainclass.o test packet.o packetqueue.o	
-	g++ main.cpp -o main.out ./obj/mainclass.o ./SerialCom/packets/ZBPacket.o ./SerialCom/ZBReceiver.o ./SerialCom/ZBSender.o ./SerialCom/connection.o ./SerialCom/packets/libeliopacket.o ./SerialCom/packets/receivepacket.o ./packetqueue.o packet.o ./SerialCom/packets/incomingpacket.o ./HTTP/http.o ./XML/XML.o ./webservice/webservice.cpp ./webservice/mongoose.o  ./webservice/wspacket.o ./HTTP/ipsum.o ./HTTP/ipsumpacket.o ./HTTP/ipsumuploadpacket.o ./sqlite/sql.o -lpthread -ldl -lcurl -lxerces-c -lboost_thread -lboost_date_time -std=c++11
+	g++ main.cpp -o main.out ./obj/mainclass.o ./SerialCom/packets/ZBPacket.o ./SerialCom/ZBReceiver.o ./SerialCom/ZBSender.o ./SerialCom/connection.o \
+		./SerialCom/packets/libeliopacket.o ./SerialCom/packets/libeladdnoderesponse.o ./SerialCom/packets/libelchangefreqresponse.o \
+		./SerialCom/packets/libelchangenodefreqresponse.o ./SerialCom/packets/libelmaskresponse.o ./SerialCom/packets/receivepacket.o \
+		./packetqueue.o packet.o ./SerialCom/packets/incomingpacket.o ./HTTP/http.o ./XML/XML.o ./webservice/webservice.cpp ./webservice/mongoose.o \
+		./webservice/wspacket.o ./HTTP/ipsum.o ./HTTP/ipsumpacket.o ./HTTP/ipsumuploadpacket.o ./HTTP/ipsumchangefreqpacket.o ./HTTP/ipsumchangeinusepacket.o ./sqlite/sql.o -lpthread -ldl -lcurl -lxerces-c -lboost_thread -lboost_date_time -std=c++11 -g
 
 mainclass.o:
-	g++ -c mainclass.cpp -o ./obj/mainclass.o -std=c++11
+	g++ -c mainclass.cpp -o ./obj/mainclass.o -std=c++11 -g
 test:	
 	g++ mainTest.cpp -o mainTest.out -std=c++11 packet.o
 packet.o: packet.cpp packet.h
@@ -12,3 +16,8 @@ packetqueue.o:
 	g++ -c packetqueue.cpp -o packetqueue.o -std=c++11
 clean:
 	rm packet.o packetqueue.o mainTest.out
+
+
+
+
+

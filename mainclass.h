@@ -72,6 +72,10 @@ class MainClass
 
 	void libelIOHandler(Packet * packet);
 	void libelMaskResponseHandler(Packet * packet);
+	void libelChangeFreqResponseHandler(Packet * packet);
+	void libelChangeNodeFreqResponseHandler(Packet * packet);
+	void libelAddNodeResponseHandler(Packet * packet);
+		
 	void webserviceHandler(Packet * packet);
 	std::string findFieldInXML(std::string fieldName, std::string data);
 	xercesc::DOMDocument * parseToDom(std::string data);

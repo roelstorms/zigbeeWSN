@@ -29,18 +29,6 @@ size_t Http::read_data( void *ptr, size_t size, size_t nmemb)
 	return size * nmemb;
 }
 
-size_t Http::loginReplyWrapper(void *buffer, size_t size, size_t nmemb, void *obj)
-{
-	std::cout << "loginReplyWrapper" << std::endl;
-	return static_cast<Http*>(obj)->loginReply(buffer, size, nmemb);
-}
-
-size_t Http::loginReply(void *buffer, size_t size, size_t nmemb)
-{
-	curlReply = std::string((char *)buffer);
-	return size * nmemb;
-}
-
 size_t Http::standardReplyWrapper(void *buffer, size_t size, size_t nmemb, void *obj)
 {
 	std::cout << "standardReplyWrapper" << std::endl;
@@ -342,16 +330,14 @@ bool Http::login() throw (HttpError, InvalidLogin)
 
 		XML XMLParser;
 		httpError = -1;	
-		std::ofstream myfile;
-		myfile.open ("loginReply");
-		myfile << sendPost(url, XMLParser.login(std::string("roel"), std::string("roel")), &Http::loginReplyWrapper);
-		myfile.close();
+		
+		std::string loginReply = sendPost(url, XMLParser.login(std::string("roel"), std::string("roel")), &Http::standardReplyWrapper);
 		if(httpError != 200)
 		{
 			throw HttpError();
 		}
 
-		token = XMLParser.analyzeLoginReply("loginReply");
+		token = XMLParser.analyzeLoginReply(loginReply);
 		std::cout << "token calculated from login reply:  " << token << std::endl;
 
 		if (token.empty())
@@ -408,6 +394,33 @@ std::string Http::getEntity(std::string destinationBase64) throw (HttpError)
 	// url format for entity: entity/{token}/{destination}/{code}
 	url.clear();
 	url.append("/entity/");
+	url.append(token);		
+	url.append("/");
+	url.append(destinationBase64);
+	url.append("/");
+	temp.clear();
+	temp.append(url);
+	temp.append("a31dd4f1-9169-4475-b316-764e1e737653");
+	url.append(generateCode(temp));
+	return sendGet(url, &Http::standardReplyWrapper);
+	
+
+}
+
+std::string Http::getChildren(std::string destinationBase64) throw (HttpError)
+{
+
+	std::cout << "Http::getEntity" << std::endl;
+	XML XMLParser;
+
+	login();
+	
+	std::string url;
+	std::string temp;
+	
+	// url format for entity: entity/{token}/{destination}/{code}
+	url.clear();
+	url.append("/children/");
 	url.append(token);		
 	url.append("/");
 	url.append(destinationBase64);
@@ -538,6 +551,49 @@ std::string Http::createNewType(std::string aName, std::vector<std::pair<std::st
 
 	return sendPost(url, XMLParser.createNewType(aName, aListOfFields), &Http::standardReplyWrapper);
 }
+
+
+void Http::changeInUse(IpsumChangeInUsePacket * packet) throw(HttpError)
+{
+	std::string entity = getEntity(calculateDestination(21 ,packet->getInstallationID(), packet->getSensorGroupID()));
+	XML XMLParser;
+	xercesc::DOMDocument * doc= XMLParser.parseToDom(entity);
+	xercesc::DOMElement * docElement = doc->getDocumentElement();
+	
+	char * temp;	
+	xercesc::DOMElement * nextElement;
+	nextElement = docElement->getFirstElementChild();
+	while(nextElement != NULL)
+	{
+		XMLCh * inusetemp = xercesc::XMLString::transcode("inuse");
+
+		if(xercesc::XMLString::compareIString(nextElement->getTagName(), inusetemp) == 0)
+		{
+			XMLCh * inUse;
+			if(packet->getInUse())
+			{
+				inUse = xercesc::XMLString::transcode("True");
+			}
+			else
+			{
+
+				inUse = xercesc::XMLString::transcode("False");
+			}
+			nextElement->setTextContent(inUse);
+			token = std::string(temp);
+			xercesc::XMLString::release(&temp);
+
+		}
+
+		xercesc::XMLString::release(&inusetemp);
+
+		nextElement = nextElement->getNextElementSibling();
+	}	
+
+		
+}
+
+
 /*
 std::string Http::createNewSensorGroup(const std::string& installationIDValue, const std::string& nameValue, const std::string& descriptionValue, const std::string& inuseValue)
 {

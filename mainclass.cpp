@@ -146,8 +146,22 @@ void MainClass::operator() ()
 				std::cout << "ZB_LIBEL_MASK_RESPONSE received in main" << std::endl;
 				libelMaskResponseHandler(packet);
 			}
-						
-		}
+			else if (packet->getPacketType() == ZB_LIBEL_CHANGE_FREQ_RESPONSE)
+			{
+				std::cout << "ZB_LIBEL_CHANGE_FREQ_RESPONSE received in main" << std::endl;
+				libelChangeFreqResponseHandler(packet);
+			}
+			else if (packet->getPacketType() == ZB_LIBEL_CHANGE_NODE_FREQ_RESPONSE)
+			{
+				std::cout << "ZB_LIBEL_CHANGE_NODE_FREQ_RESPONSE received in main" << std::endl;
+				libelChangeNodeFreqResponseHandler(packet);
+			}
+			else if (packet->getPacketType() == ZB_LIBEL_ADD_NODE_RESPONSE)
+			{
+				std::cout << "ZB_LIBEL_ADD_NODE_RESPONSE received in main" << std::endl;
+				libelAddNodeResponseHandler(packet);
+			}
+	  	}
 		
 		while(!localWSQueue->empty())
 		{
@@ -203,8 +217,10 @@ void MainClass::libelIOHandler(Packet * packet)
 	}
 
 	delete packet;
-	IpsumUploadPacket * ipsumUploadPacket = new IpsumUploadPacket(installationID, nodeID, data);
-	ipsumSendQueue->addPacket(dynamic_cast<Packet*> (ipsumUploadPacket));
+
+	
+	//IpsumUploadPacket * ipsumUploadPacket = new IpsumUploadPacket(installationID, nodeID, data);
+	//ipsumSendQueue->addPacket(dynamic_cast<Packet*> (ipsumUploadPacket));
 }
 
 void MainClass::libelMaskResponseHandler(Packet * packet)
@@ -213,6 +229,30 @@ void MainClass::libelMaskResponseHandler(Packet * packet)
 
 	delete packet;
 }
+
+	
+void MainClass::libelChangeFreqResponseHandler(Packet * packet)
+{
+	LibelChangeFreqResponse * libelChangeFreqResponse = dynamic_cast<LibelChangeFreqResponse *> (packet);
+
+	delete packet;
+}
+
+void MainClass::libelChangeNodeFreqResponseHandler(Packet * packet)
+{
+	LibelChangeNodeFreqResponse * libelChangeNodeFreqResponse = dynamic_cast<LibelChangeNodeFreqResponse *> (packet);
+
+	delete packet;
+}
+
+void MainClass::libelAddNodeResponseHandler(Packet * packet)
+{
+	LibelAddNodeResponse * libelAddNodeResponse = dynamic_cast<LibelAddNodeResponse *> (packet);
+
+	delete packet;
+}
+
+
 void MainClass::webserviceHandler(Packet * packet)
 {
 	WSPacket * wsPacket = dynamic_cast<WSPacket *> (packet);

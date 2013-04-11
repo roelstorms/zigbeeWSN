@@ -6,8 +6,10 @@
 int main(int argc, char * argv[])
 {
 	//Http socket(std::string("localhost:8080"));//http://ipsum.groept.be"));
-	Http socket(std::string("http://192.168.1.9:8080"));
+	Http socket(std::string("http://ipsum.groept.be"));
 
+	std::cout << "adding sensor" << socket.createNewSensor("320", "getchildren test", "0", "0", "false") << std::endl;
+	std::cout << socket.getChildren(socket.calculateDestination(21, 31,320)) << std::endl ;
 
 	/*
 	std::vector<std::pair<std::string, std::string>> aListOfFields;

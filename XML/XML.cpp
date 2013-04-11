@@ -645,6 +645,32 @@ std::string XML::login(const std::string& username, const std::string& password)
 	return XMLOutput;
 }
 
+xercesc::DOMDocument * XML::parseToDom(std::string data)
+{
+
+	XMLCh tempStr[100];
+	
+	char * temp;
+
+	xercesc::DOMImplementation* impl = xercesc::DOMImplementation::getImplementation();
+	xercesc::DOMLSParser *parser = ((xercesc::DOMImplementationLS*)impl)->createLSParser(xercesc::DOMImplementationLS::MODE_SYNCHRONOUS, 0);
+	xercesc::DOMDocument *doc;
+
+	xercesc::Wrapper4InputSource source(new xercesc::MemBufInputSource((const XMLByte*) (data.c_str()), data.size(), "100"));
+	doc = parser->parse(&source);
+	
+	if (doc == NULL)
+	{
+		throw InvalidXMLError(); 
+	}
+	
+	
+//	parser->release();
+
+	return doc;
+
+}
+
 std::string XML::analyzeLoginReply(const std::string& reply)
 {
 	std::cout << "XML::analyzeLoginReply() begin" << std::endl;
@@ -653,19 +679,11 @@ std::string XML::analyzeLoginReply(const std::string& reply)
 
 	XMLCh tempStr[100];
 	char * temp;
-	//xercesc::XMLString::transcode("impl", tempStr, 99);
 	xercesc::DOMImplementation* impl = xercesc::DOMImplementation::getImplementation();
 
-	xercesc::DOMLSParser *parser = ((xercesc::DOMImplementationLS*)impl)->createLSParser(xercesc::DOMImplementationLS::MODE_SYNCHRONOUS, 0);
-	//	xercesc::DOMConfiguration  *config = parser->getDomConfig();
 	xercesc::DOMDocument *doc;
 
-	//config->setParameter(xercesc::XMLUni::fgDOMNamespaces, doNamespaces);
-	//config->setParameter(xercesc::XMLUni::fgXercesSchema, doSchema);
-	//config->setParameter(xercesc::XMLUni::fgXercesHandleMultipleImports, true);
-	//config->setParameter(xercesc::XMLUni::fgXercesSchemaFullChecking, schemaFullChecking);	
-	std::cout << "filename : " << reply << std::endl;
-	doc = parser->parseURI(reply.c_str());
+	doc = parseToDom(reply/*sting to parse to DOM*/); 
 	if (doc == NULL)
 	{
 		throw InvalidXMLError(); 

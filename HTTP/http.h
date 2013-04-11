@@ -18,6 +18,9 @@
 #include <unistd.h>
 #include <boost/lexical_cast.hpp>
 #include "ipsumuploadpacket.h"
+#include "ipsumchangeinusepacket.h"
+#include "ipsumchangefreqpacket.h"
+
 #include "../XML/XML.h"
 #include "../errors.h"
 
@@ -41,8 +44,6 @@ class Http
 		~Http();
 
 		size_t read_data( void *ptr, size_t size, size_t nmemb);	//Currently not used nor implemented correctly (to send data you just pass a pointer to the data to Curl
-		static size_t loginReplyWrapper(void *buffer, size_t size, size_t nmemb, void *obj);
-		size_t loginReply(void *buffer, size_t size, size_t nmemb);
 		static size_t standardReplyWrapper(void *buffer, size_t size, size_t nmemb, void *obj);
 		size_t write_data(void *buffer, size_t size, size_t nmemb);
 		static size_t headerHandlerWrapper(void *buffer, size_t size, size_t nmemb, void *obj);
@@ -62,12 +63,15 @@ class Http
 		bool login() throw (HttpError, InvalidLogin);
 		void setUserRights(std::string entity, int userID, int rights) throw (HttpError);
 		std::string getEntity(std::string destinationBase64) throw (HttpError);	
+		std::string getChildren(std::string destinationBase64) throw (HttpError);	
 		void setToken(std::string aToken);
 		std::string selectData(std::string destinationBase64, std::vector<std::string> fields) throw (HttpError);
 		std::string testQuery() throw (HttpError);
 		std::string ipsumInfo() throw (HttpError);
 		std::string createNewSensor(std::string sensorGroupIDValue, std::string nameValue, std::string dataNameValue, std::string descriptionValue, std::string inuseValue) throw (HttpError);
 		std::string createNewType(std::string aName, std::vector<std::pair<std::string, std::string>> aListOfFields) throw (HttpError);
+
+		void changeInUse(IpsumChangeInUsePacket * packet) throw(HttpError);
 		//std::string createNewSensorGroup(const std::string& installationIDValue, const std::string& nameValue, const std::string& descriptionValue, const std::string& inuseValue) throw (HttpError);
 		
 };

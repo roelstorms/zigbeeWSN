@@ -24,7 +24,7 @@ class ReceivePacket : public IncomingPacket, public LibelPacket
 	virtual std::vector<unsigned char> getZigbee16BitAddress() const;
 	virtual std::vector<unsigned char> getZigbee64BitAddress() const ;
 	virtual std::vector<unsigned char> getRFData() const throw (ZbCorruptedFrameData);
-	
+	virtual std::vector<unsigned char> getData() const throw (ZbCorruptedFrameData);
 };
 
 #endif

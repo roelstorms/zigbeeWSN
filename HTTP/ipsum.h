@@ -27,6 +27,9 @@ class Ipsum
 
 
 	void uploadDataHandler(IpsumUploadPacket * packet);
+	void changeInUseHandler(IpsumChangeInUsePacket * packet);
+	void changeFrequencyHandler(IpsumChangeFreqPacket * packet);
+
 };
 
 #endif

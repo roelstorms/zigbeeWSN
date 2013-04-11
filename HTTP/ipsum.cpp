@@ -52,3 +52,13 @@ void Ipsum::uploadDataHandler(IpsumUploadPacket * packet)
 {
 	http->uploadData(packet);
 }
+
+void Ipsum::changeInUseHandler(IpsumChangeInUsePacket * packet)
+{
+	
+}
+
+void Ipsum::changeFrequencyHandler(IpsumChangeFreqPacket * packet)
+{
+
+}

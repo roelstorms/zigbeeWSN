@@ -22,7 +22,7 @@ class LibelAddNodePacket : public TransmitRequestPacket
 		//LibelAddNodePacket(std::vector<unsigned char> input);
 		LibelAddNodePacket(std::vector<unsigned char> zigbeeAddress64bit, std::vector<SensorType> sensors);	 	
 
-		PacketType getPacketType(){ return ZB_LIBEL_ADDNODE; };
+		PacketType getPacketType(){ return ZB_LIBEL_ADD_NODE; };
 };
 
 #endif

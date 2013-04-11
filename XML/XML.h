@@ -5,6 +5,8 @@
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/framework/StdOutFormatTarget.hpp>
+#include <xercesc/framework/MemBufInputSource.hpp>
+#include <xercesc/framework/Wrapper4InputSource.hpp>
 
 #include <string>
 #include <iostream>
@@ -39,6 +41,10 @@ class XML
 
 	std::string uploadData(const std::string& type, const std::vector<std::pair<std::string, double>>& input);
 	std::string uploadData(const std::string& type, const std::string& fieldName, float data, std::string timeStamp); 
+	
+
+	xercesc::DOMDocument * parseToDom(std::string data);
+
 	std::string createNewInstallation(const std::string& nameValue, const std::string& descriptionValue, const std::string& inuseValue);
 	std::string createNewSensorGroup(const std::string& installationIDValue, const std::string& nameValue, const std::string& descriptionValue, const std::string& inuseValue); 
 	std::string createNewSensor(const std::string& sensorGroupIDValue, const std::string& nameValue, const std::string& dataNameValue, const std::string& descriptionValue, const std::string& inuseValue);
@@ -88,6 +94,9 @@ class XML
 	 */
 	std::string getCurrentTimestamp();
 
+	/*
+	 *	Get seconds since 1 Jan 1970 0:00-UTC
+	 */
 	std::string getTimeInSeconds();
 };
 

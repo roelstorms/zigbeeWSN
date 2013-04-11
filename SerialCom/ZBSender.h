@@ -24,6 +24,7 @@ class ZBSender
 
 	public:
 	ZBSender(int fd, std::mutex * zbSenderConditionVariableMutex, std::condition_variable * zbSenderConditionVariable, PacketQueue * zbSendQueue);
+	std::vector<unsigned char> escape(std::vector<unsigned char> data);
 	void operator () ();
 
 

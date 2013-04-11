@@ -85,15 +85,15 @@ std::vector<unsigned char> ReceivePacket::getMask() const
 	}
 	*/
 	std::vector<unsigned char> mask;
-	mask.push_back(getRFData().at(1));
-	mask.push_back(getRFData().at(2));
+	mask.push_back(getRFData().at(6));
+	mask.push_back(getRFData().at(7));
 	return mask;
 }
 
 std::vector<unsigned char> ReceivePacket::getZigbee16BitAddress() const
 {
 	auto frameData = getFrameData();
-	std::vector<unsigned char> zigbee16BitAddress(getFrameData().begin() + 9, getFrameData().begin() + 11);
+	std::vector<unsigned char> zigbee16BitAddress(frameData.begin() + 9, frameData.begin() + 11);
 
 	return zigbee16BitAddress;	
 }
@@ -101,7 +101,7 @@ std::vector<unsigned char> ReceivePacket::getZigbee16BitAddress() const
 std::vector<unsigned char> ReceivePacket::getZigbee64BitAddress() const
 {
 	auto frameData = getFrameData();
-	std::vector<unsigned char> zigbee64BitAddress(getFrameData().begin() + 1, getFrameData().begin() + 9);
+	std::vector<unsigned char> zigbee64BitAddress(frameData.begin() + 1, frameData.begin() + 9);
 
 	return zigbee64BitAddress;	
 }
@@ -121,3 +121,8 @@ std::vector<unsigned char> ReceivePacket::getRFData() const throw(ZbCorruptedFra
 	
 }
 
+std::vector<unsigned char> ReceivePacket::getData() const throw(ZbCorruptedFrameData)
+{
+	std::vector<unsigned char> rfData = getRFData();
+	return std::vector<unsigned char> (rfData.begin() + 5, rfData.end());
+}

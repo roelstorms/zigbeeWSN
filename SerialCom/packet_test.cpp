@@ -8,6 +8,7 @@
 #include "packets/libelrequestiopacket.h"
 #include "packets/libeladdnoderesponse.h"
 #include <cmath>
+
 int main(int argc, char ** argv)
 {
 	//Testing OutgoingPacket

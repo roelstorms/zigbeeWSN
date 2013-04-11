@@ -18,7 +18,7 @@ class LibelChangeNodeFreqPacket : public TransmitRequestPacket
 		
 		LibelChangeNodeFreqPacket(std::vector<unsigned char> destinationZB64bitAddress, int newFrequency);
 	
-		PacketType getPacketType(){ return ZB_LIBEL_CHANGENODEFREQ; };
+		PacketType getPacketType(){ return ZB_LIBEL_CHANGE_NODE_FREQ; };
 
 		
 };

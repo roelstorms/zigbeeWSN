@@ -40,7 +40,7 @@ class ZBPacket : public Packet
 		std::vector<unsigned char> encodedPacket = packet.getEncodedPacket();
 		for(auto it = encodedPacket.begin(); it < encodedPacket.end(); ++it)
 		{
-			out << std::uppercase << std::setw(2) << std::setfill('0') << std::hex  << (int) (*it);
+			std::cout << std::uppercase << std::setw(2) << std::setfill('0') << std::hex  << (int) (*it) << " ";
 	
 		}
 
