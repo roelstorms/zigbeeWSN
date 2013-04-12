@@ -11,6 +11,7 @@ class LibelPacket
 	virtual std::vector<unsigned char> getZigbee64BitAddress() const = 0;
 	virtual std::vector<unsigned char> getRFData() const throw (ZbCorruptedFrameData) = 0;
 	virtual std::vector<unsigned char> getData() const throw (ZbCorruptedFrameData) = 0;
+
 };
 
 #endif

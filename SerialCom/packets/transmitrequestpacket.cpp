@@ -17,7 +17,7 @@ TransmitRequestPacket::TransmitRequestPacket(std::vector<unsigned char> zigbeeAd
 
 void TransmitRequestPacket::addFrameData(std::vector<unsigned char> zigbeeAddress64bit, std::vector<unsigned char> zigbeeAddress16bit, unsigned char receiveOptions )
 {
-	frameData.clear();
+    std::vector<unsigned char> frameData;
 	frameData.push_back(0X10);	// Frame type
 	frameData.push_back(0X00);	// Frame ID (set to 0 means no ack will be sent, else an ack with the same frameID will be sent)
 	for(auto it = zigbeeAddress64bit.begin(); it < zigbeeAddress64bit.end(); ++it)
@@ -43,7 +43,13 @@ void TransmitRequestPacket::addRFData(std::vector<unsigned char> rfData)
 	{
 		frameData.push_back(*it);	
 	}
-	setFrameData(frameData);
+    setFrameData(frameData);
+}
+
+void TransmitRequestPacket::addData(std::vector<unsigned char> data)
+{
+    std::vector<unsigned char>
+
 }
 
 
@@ -90,5 +96,11 @@ std::vector<unsigned char> TransmitRequestPacket::getRFData() const throw (ZbCor
 
 	std::vector<unsigned char> output(frameData.begin() + 14, frameData.end());
 	return output;
+}
+
+std::vector<unsigned char> TransmitRequestPacket::getData() const throw(ZbCorruptedFrameData)
+{
+    std::vector<unsigned char> rfData = getRFData();
+    return std::vector<unsigned char> (rfData.begin() + 5, rfData.end());
 }
 

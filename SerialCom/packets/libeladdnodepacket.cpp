@@ -5,6 +5,9 @@ LibelAddNodePacket::LibelAddNodePacket(std::vector<unsigned char> zigbeeAddress6
 	std::vector<unsigned char> rfData;
 	int mask;
 	rfData.push_back(0x01);		// Libelium application ID's, O1 is for ADD_NODE_REQ
+    rfData.push_back(0x01);     // Fragment number = 1 (means number of fragments = 1)
+    rfData.push_back('#');      // Indicates first fragment
+
 	for( auto it = sensors.begin(); it < sensors.end(); ++it)
 	{
 		std::cout << "iterating over all sensors" << std::endl;
